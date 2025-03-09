@@ -569,17 +569,97 @@
     background-color: var(--background-modifier-hover);
 }
 
-/* .sidebar-tab.active {
-    background-color: var(--background-modifier-active);
-} */
+.source-form-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    max-width: 400px;
+    width: 100%;
+    padding: var(--size-4-4);
+    background-color: var(--background-primary);
+    border-radius: var(--radius-m);
+    box-shadow: var(--shadow-l);
+}
 
-.sidebar-tab.active svg {
+.form-group {
+    margin-bottom: var(--size-4-3);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--size-4-1);
+    color: var(--text-normal);
+    font-weight: var(--font-medium);
+}
+
+.form-group input {
+    width: 100%;
+    padding: var(--size-4-2);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-s);
+    background-color: var(--background-primary);
     color: var(--text-normal);
 }
 
-.sidebar-tab:hover svg {
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--size-4-2);
+    margin-top: var(--size-4-4);
+}
+
+.form-submit-btn,
+.form-cancel-btn {
+    padding: var(--size-4-2) var(--size-4-4);
+    border-radius: var(--radius-s);
+    cursor: pointer;
+    border: none;
+    font-size: var(--font-ui-small);
+}
+
+.form-submit-btn {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.form-submit-btn:hover {
+    background-color: var(--interactive-accent-hover);
+}
+
+.form-cancel-btn {
+    background-color: var(--background-secondary-alt);
     color: var(--text-normal);
-    order: 2;
+}
+
+.form-cancel-btn:hover {
+    background-color: var(--background-modifier-active);
+}
+
+.form-cancel-btn.confirm-delete {
+    color: var(--text-error);
+    background-color: var(--background-modifier-error);
+}
+
+.add-source-btn {
+    width: 100%;
+    padding: 8px;
+    margin-top: 12px;
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.add-source-btn:hover {
+    background-color: var(--interactive-accent-hover);
 }
 
 .rss-source-folder {

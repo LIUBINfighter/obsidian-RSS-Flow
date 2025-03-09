@@ -158,7 +158,7 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
                     {t('rss.sources.add', '添加新订阅源')}
                 </button>
 
-                {showSourceForm && (
+                {showSourceForm && !editingSource && (
                     <SourceForm
                         initialData={editingSource || undefined}
                         onSubmit={handleSourceSubmit}
@@ -187,6 +187,13 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
                                 </div>
                                 <div className="rss-source-url">{feed.url}</div>
                             </div>
+                            {editingSource && editingSource.url === feed.url && (
+                                <SourceForm
+                                    initialData={editingSource}
+                                    onSubmit={handleSourceSubmit}
+                                    onCancel={() => setEditingSource(null)}
+                                />
+                            )}
                             <div className="rss-source-actions">
                                 <button 
                                     className="rss-action-btn" 
@@ -201,6 +208,16 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
                                     onClick={() => handleDeleteSource(feed.url)}
                                 ></button>
                             </div>
+                            {showSourceForm && editingSource?.url === feed.url && (
+                                <SourceForm
+                                    initialData={editingSource}
+                                    onSubmit={handleSourceSubmit}
+                                    onCancel={() => {
+                                        setShowSourceForm(false);
+                                        setEditingSource(null);
+                                    }}
+                                />
+                            )}
                         </div>
                     ))}
                 </div>
