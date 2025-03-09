@@ -1,21 +1,57 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setIcon } from 'obsidian';
+import { setIcon, App } from 'obsidian';
 import { SourceForm } from './SourceForm';
 
-
 interface RSSSource {
-    title: string;
+    name: string;
     url: string;
-    category: string;
+    folder: string;
 }
 
-export const Introdcution: React.FC = () => {
+export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
+    const [feeds, setFeeds] = useState<RSSSource[]>([]);
+
+    useEffect(() => {
+        const loadFeeds = async () => {
+            try {
+                const adapter = app.vault.adapter;
+                const filePath = '.obsidian/plugins/obsidian-RSS-Flow/data.json';
+                let content;
+                try {
+                    content = await adapter.read(filePath);
+                } catch (error) {
+                    // 如果文件不存在，创建一个包含空feeds数组的文件
+                    const initialData = { feeds: [] };
+                    await adapter.write(filePath, JSON.stringify(initialData, null, 2));
+                    content = JSON.stringify(initialData);
+                }
+                const data = JSON.parse(content);
+                setFeeds(data.feeds);
+            } catch (error) {
+                console.error('Error loading feeds:', error);
+            }
+        };
+
+        loadFeeds();
+    }, [app.vault.adapter]);
+
     const { t } = useTranslation();
     const [showImportModal, setShowImportModal] = useState(false);
     const [showSourceForm, setShowSourceForm] = useState(false);
     const [editingSource, setEditingSource] = useState<RSSSource | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+    const saveFeeds = async (updatedFeeds: RSSSource[]) => {
+        try {
+            const adapter = app.vault.adapter;
+            const filePath = '.obsidian/plugins/obsidian-RSS-Flow/data.json';
+            await adapter.write(filePath, JSON.stringify({ feeds: updatedFeeds }, null, 2));
+            setFeeds(updatedFeeds);
+        } catch (error) {
+            console.error('Error saving feeds:', error);
+        }
+    };
 
     const handleImport = useCallback(() => {
         const modal = new Modal(app);
@@ -32,7 +68,6 @@ export const Introdcution: React.FC = () => {
                 // TODO: 实现OPML文件解析和数据保存
                 modal.close();
             } else {
-                // TODO: 显示错误提示
                 console.error('请上传.opml文件');
             }
         };
@@ -55,19 +90,23 @@ export const Introdcution: React.FC = () => {
     }, []);
 
     const handleSourceSubmit = useCallback((data: RSSSource) => {
-        // TODO: 保存RSS源数据
+        const updatedFeeds = editingSource
+            ? feeds.map(feed => feed.url === editingSource.url ? data : feed)
+            : [...feeds, data];
+        saveFeeds(updatedFeeds);
         setShowSourceForm(false);
         setEditingSource(null);
-    }, []);
+    }, [feeds, editingSource]);
 
     const handleDeleteSource = useCallback((sourceUrl: string) => {
         if (deleteConfirm === sourceUrl) {
-            // TODO: 执行删除操作
+            const updatedFeeds = feeds.filter(feed => feed.url !== sourceUrl);
+            saveFeeds(updatedFeeds);
             setDeleteConfirm(null);
         } else {
             setDeleteConfirm(sourceUrl);
         }
-    }, [deleteConfirm]);
+    }, [deleteConfirm, feeds]);
 
     return (
         <div className="rss-flow-container">
@@ -80,33 +119,32 @@ export const Introdcution: React.FC = () => {
                     </div>
                 </div>
                 <div className="rss-source-list">
-                    {/* RSS源列表项示例 */}
-                    <div className="rss-source-item">
-                        <div className="rss-source-info">
-                            <div className="rss-source-title">AI - Google News</div>
-                            <div className="rss-source-url">https://blog.google/technology/ai/rss/</div>
+                    {feeds.map((feed) => (
+                        <div key={feed.url} className="rss-source-item">
+                            <div className="rss-source-info">
+                                <div className="rss-source-title">{feed.name}</div>
+                                <div className="rss-source-url">{feed.url}</div>
+                            </div>
+                            <div className="rss-source-actions">
+                                <button 
+                                    className="rss-action-btn" 
+                                    aria-label="编辑" 
+                                    ref={el => el && setIcon(el, 'pencil')}
+                                    onClick={() => handleEditSource({ name: feed.name, url: feed.url, folder: feed.folder })}
+                                ></button>
+                                <button 
+                                    className={`rss-action-btn delete-btn ${deleteConfirm === feed.url ? 'confirm-delete' : ''}`}
+                                    aria-label="删除" 
+                                    ref={el => el && setIcon(el, 'trash')}
+                                    onClick={() => handleDeleteSource(feed.url)}
+                                ></button>
+                            </div>
                         </div>
-                        <div className="rss-source-actions">
-                            <button 
-                                className="rss-action-btn" 
-                                aria-label="编辑" 
-                                ref={el => el && setIcon(el, 'pencil')}
-                                onClick={() => handleEditSource({ title: 'AI - Google News', url: 'https://blog.google/technology/ai/rss/', category: '' })}
-                            ></button>
-                            <button 
-                                className={`rss-action-btn delete-btn ${deleteConfirm === 'https://blog.google/technology/ai/rss/' ? 'confirm-delete' : ''}`}
-                                aria-label="删除" 
-                                ref={el => el && setIcon(el, 'trash')}
-                                onClick={() => handleDeleteSource('https://blog.google/technology/ai/rss/')}
-                            ></button>
-                        </div>
-                    </div>
+                    ))}
                 </div>
                 <button className="add-source-btn" ref={el => el && setIcon(el, 'plus')} onClick={handleAddSource}>
                     {t('rss.sources.add', '添加新订阅源')}
                 </button>
-
-
 
                 {showSourceForm && (
                     <SourceForm

@@ -1,13 +1,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Namespace } from 'i18next';
+import { App } from 'obsidian';
 import { Sidebar } from './Sidebar';
 import { Introdcution } from './Introdcution';
 interface ReadMeProps {
     onLocaleChange?: (locale: string) => void;
+    app: App;
 }
 
-export const ReadMe: React.FC<ReadMeProps> = ({ onLocaleChange }) => {
+export const ReadMe: React.FC<ReadMeProps> = ({ onLocaleChange, app }) => {
     const { t, i18n } = useTranslation<Namespace>('translation');
     const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
@@ -49,7 +51,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ onLocaleChange }) => {
                     </select>
                 </div>
                 <div className="rss-flow-container">
-                    <Introdcution/>
+                    <Introdcution app={app}/>
                 </div>
             </div>
         </div>

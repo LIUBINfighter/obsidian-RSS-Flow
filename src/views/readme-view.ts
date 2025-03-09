@@ -58,6 +58,7 @@ export class ReadMeView extends ItemView {
         this.root = createRoot(mountPoint);
         this.root.render(
             React.createElement(ReadMe, {
+                app: this.app,
                 onLocaleChange: async (locale: string) => {
                     await this.plugin.saveData({ ...savedData, locale });
                 }
