@@ -14,7 +14,7 @@ export default class RSSFlowPlugin extends Plugin {
     settings: ReactLabSettings;
     
     // 添加 activateView 方法
-    async activateView(viewType: VIEW_TYPES) {
+    async activateView(viewType: typeof VIEW_TYPES[keyof typeof VIEW_TYPES]) {
         const { workspace } = this.app;
         
         // 检查视图是否已经打开

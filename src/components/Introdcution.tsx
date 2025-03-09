@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setIcon, App } from 'obsidian';
+import { setIcon, App, Modal } from 'obsidian';
 import { SourceForm } from './SourceForm';
 
 interface RSSSource {
@@ -13,6 +13,11 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
     const [feeds, setFeeds] = useState<RSSSource[]>([]);
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
+    const { t } = useTranslation();
+    const [showImportModal, setShowImportModal] = useState(false);
+    const [showSourceForm, setShowSourceForm] = useState(false);
+    const [editingSource, setEditingSource] = useState<RSSSource | null>(null);
+    const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
     useEffect(() => {
         const loadFeeds = async () => {
@@ -36,12 +41,6 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
 
         loadFeeds();
     }, [app.vault.adapter]);
-
-    const { t } = useTranslation();
-    const [showImportModal, setShowImportModal] = useState(false);
-    const [showSourceForm, setShowSourceForm] = useState(false);
-    const [editingSource, setEditingSource] = useState<RSSSource | null>(null);
-    const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
     const saveFeeds = async (updatedFeeds: RSSSource[]) => {
         try {
@@ -150,11 +149,11 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
                 <div className="rss-sources-header">
                     <h2>{t('rss.sources.title', '订阅源')}</h2>
                     <div className="rss-sources-actions">
-                        <button className="rss-action-btn" aria-label="导入" ref={el => el && setIcon(el, 'download')} onClick={() => setShowImportModal(true)}></button>
-                        <button className="rss-action-btn" aria-label="导出" ref={el => el && setIcon(el, 'upload')} onClick={handleExport}></button>
+                        <button className="rss-action-btn" aria-label="导入" ref={(el) => { if (el) setIcon(el, 'download'); }} onClick={() => setShowImportModal(true)}></button>
+                        <button className="rss-action-btn" aria-label="导出" ref={(el) => { if (el) setIcon(el, 'upload'); }} onClick={handleExport}></button>
                     </div>
                 </div>
-                <button className="add-source-btn" ref={el => el && setIcon(el, 'plus')} onClick={handleAddSource}>
+                <button className="add-source-btn" ref={(el) => { if (el) setIcon(el, 'plus'); }} onClick={handleAddSource}>
                     {t('rss.sources.add', '添加新订阅源')}
                 </button>
 

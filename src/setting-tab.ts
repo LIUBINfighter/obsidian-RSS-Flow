@@ -1,6 +1,5 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type RSSFlowPlugin from "./main";
-import { KanbanLayout } from "./types";
 
 export class ReactLabSettingTab extends PluginSettingTab {
 	plugin: RSSFlowPlugin;
