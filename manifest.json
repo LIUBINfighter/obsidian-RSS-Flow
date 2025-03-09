@@ -1,11 +1,11 @@
 {
-	"id": "react lab",
-	"name": "React Lab",
+	"id": "rss flow",
+	"name": "RSS Flow",
 	"version": "0.0.1",
 	"minAppVersion": "0.15.0",
-	"description": "A sample ReadmeView (in workspace) build with react. Place for fun and development.",
+	"description": "Gallery Management & Better Reading UI! Experience RSS Feeds Visually in Obsidian with Obsidian RSS Flow.",
 	"author": "Jay Bridge",
-	"authorUrl": "https://github.com/LIUBINfighter/obsidian-plugin-react-lab",
-	"fundingUrl": "https://liubinfighter.github.io/obsidian-dev-docs-zh/",
+	"authorUrl": "",
+	"fundingUrl": "",
 	"isDesktopOnly": false
 }
