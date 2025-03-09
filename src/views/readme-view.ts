@@ -39,10 +39,13 @@ export class ReadMeView extends ItemView {
         this.clearStatusBar();
         this.activeLeafHandler = () => this.clearStatusBar();
         this.app.workspace.on('active-leaf-change', this.activeLeafHandler);
-
+    
         const container = this.containerEl.children[1];
         container.empty();
         container.addClass('readme-view-container');
+        
+        // 添加主容器类名，用于响应式布局
+        container.addClass('main-content-container');
         
         const mountPoint = container.createDiv('react-root');
         

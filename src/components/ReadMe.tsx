@@ -1,9 +1,8 @@
 import React from 'react';
-import { useTranslation, UseTranslationResponse } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Namespace } from 'i18next';
-import { MarkdownRenderer } from './MarkdownRenderer';
 import { Sidebar } from './Sidebar';
-
+import { Introdcution } from './Introdcution';
 interface ReadMeProps {
     onLocaleChange?: (locale: string) => void;
 }
@@ -33,25 +32,25 @@ export const ReadMe: React.FC<ReadMeProps> = ({ onLocaleChange }) => {
 
 
     return (
-        <div className="readme-container">
+		
+        <div className={`readme-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
             <Sidebar
                 isOpen={isSidebarOpen}
                 onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
             />
-            <div className="language-selector">
-                <select 
-                    value={i18n.language} 
-                    onChange={handleLanguageChange}
-                >
-                    <option value="en">English</option>
-                    <option value="zh">中文</option>
-                </select>
-            </div>
-            <div className="content">
-                <MarkdownRenderer 
-                    content={markdownContent} 
-                    // customComponents={customComponents}
-                />
+            <div className={`content ${isSidebarOpen ? 'with-sidebar' : ''}`}>
+                <div className="language-selector">
+                    <select 
+                        value={i18n.language} 
+                        onChange={handleLanguageChange}
+                    >
+                        <option value="en">English</option>
+                        <option value="zh">中文</option>
+                    </select>
+                </div>
+                <div className="rss-flow-container">
+                    <Introdcution/>
+                </div>
             </div>
         </div>
     );

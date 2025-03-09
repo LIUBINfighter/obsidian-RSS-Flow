@@ -64,9 +64,11 @@ export default class ReactLabPlugin extends Plugin {
 
 async onunload() {
     // 清除所有已注册的视图
-    this.app.workspace.getLeavesOfType(VIEW_TYPES.README).forEach(leaf => {
-        leaf.detach();
-    });
+	// 测试环境下可以注释掉
+	// 生产环境下，需要加载以下代码，否则会导致插件无法卸载
+    // this.app.workspace.getLeavesOfType(VIEW_TYPES.README).forEach(leaf => {
+    //     leaf.detach();
+    // });
 }
 
 	async loadSettings() {
