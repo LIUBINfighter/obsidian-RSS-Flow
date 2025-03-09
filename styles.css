@@ -1,0 +1,462 @@
+.readme-view-container {
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+    position: relative;
+}
+.sidebar-container {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background-color: var(--background-primary);
+    border-left: 1px solid var(--background-modifier-border);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    width: 250px;
+}
+.sidebar-container.closed {
+    transform: translateX(calc(100% - 30px));
+}
+.sidebar-container.open {
+    transform: translateX(0);
+}
+.sidebar-toggle {
+    position: absolute;
+    left: -25px; /* 调整到 resize 条右侧 */
+    top: 10%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    background-color: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 16px;
+    color: var(--text-muted);
+}
+
+.sidebar-tabs {
+    position: absolute;
+    left: 4px; /* 调整到 resize 条右侧 */
+    top: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 0;
+}
+
+.sidebar-tab {
+    width: 32px;
+    height: 32px;
+    background-color: var(--background-secondary-alt);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    opacity: 0.75;
+}
+
+.sidebar-tab:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+    opacity: 1;
+}
+
+.sidebar-tab.active {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    opacity: 1;
+}
+
+.sidebar-tab:hover {
+    background-color: var(--background-primary-alt);
+    color: var(--text-normal);
+}
+
+.sidebar-tab.active {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+
+.sidebar-content {
+    padding: 20px 24px 20px 54px; /* 增加左侧内边距，为按钮和 resize 条留出空间 */
+    height: 100%;
+    overflow-y: auto;
+    width: 100%;
+    color: var(--text-normal);
+}
+
+.sidebar-content h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-normal);
+}
+
+.sidebar-content p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-muted);
+}
+.sidebar-drag-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    cursor: col-resize;
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-drag-handle:hover,
+.sidebar-drag-handle:active {
+    background-color: var(--interactive-accent);
+}
+
+.sidebar-container.dragging {
+    user-select: none;
+    pointer-events: none;
+}
+
+.sidebar-container.dragging .sidebar-drag-handle {
+    background-color: var(--interactive-accent);
+}
+.readme-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.language-selector {
+    margin-bottom: 20px;
+}
+.language-selector select {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--background-modifier-border);
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+}
+.content {
+    margin-bottom: 30px;
+}
+.demo-components {
+    padding: 20px;
+    background-color: var(--background-primary-alt);
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+/* 看板系统样式 */
+.kanban-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-primary);
+}
+.board-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 16px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    background-color: var(--background-primary-alt);
+}
+.board-tab {
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: var(--background-secondary);
+    border: 1px solid var(--background-modifier-border);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.board-tab.active {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+.board-content {
+    flex: 1;
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    overflow-x: auto;
+    align-items: flex-start;
+}
+.board-content.vertical {
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.board-content.vertical .column {
+    width: 100%;
+    max-width: none;
+}
+.column {
+    min-width: 280px;
+    max-width: 280px;
+    background: var(--background-secondary);
+    border-radius: 6px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.column h3 {
+    margin: 0;
+    padding: 8px;
+    color: var(--text-normal);
+    font-size: 1em;
+    font-weight: 600;
+}
+.column-title-edit {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+}
+.card-list {
+    flex: 1;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.card-list.drag-over {
+    background: var(--background-modifier-hover);
+    border-radius: 4px;
+}
+.card {
+    background: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+.card:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+.card.dragging {
+    opacity: 0.7;
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.card-edit {
+    min-height: 60px;
+    padding: 8px;
+    background: var(--background-primary);
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    outline: none;
+}
+.column button,
+.board-tabs button {
+    padding: 8px 16px;
+    background: var(--background-modifier-hover);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.column button:hover,
+.board-tabs button:hover {
+    background: var(--background-modifier-active);
+    color: var(--text-normal);
+}
+.export-btn {
+    margin-left: auto;
+    background: var(--interactive-accent) !important;
+    color: var(--text-on-accent) !important;
+}
+/* 响应式设计 */
+@media screen and (max-width: 768px) {
+    .board-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+.column {
+        min-width: auto;
+        max-width: none;
+    }
+.board-tabs {
+        flex-wrap: wrap;
+    }
+.export-btn {
+        width: 100%;
+        margin-top: 8px;
+    }
+}
+/* 三列布局基础样式 */
+.three-column-layout {
+    display: flex;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+.column-left,
+.column-right {
+    position: relative;
+    background-color: var(--background-secondary);
+    transition: width 0.3s ease;
+    min-width: 0;
+}
+.column-center {
+    flex: 1;
+    min-width: 0;
+    background-color: var(--background-primary);
+    padding: 16px;
+}
+/* 拖拽调整宽度的样式 */
+.resizer {
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    background-color: var(--background-modifier-border);
+    cursor: col-resize;
+    transition: background-color 0.2s ease;
+}
+.resizer:hover,
+.resizer.dragging {
+    background-color: var(--interactive-accent);
+}
+.resizer-left {
+    right: 0;
+    top: 0;
+}
+.resizer-right {
+    left: 0;
+    top: 0;
+}
+/* 折叠按钮样式 */
+.column-toggle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    padding: 4px;
+    background-color: var(--background-secondary-alt);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.column-toggle:hover {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+.column-toggle-left {
+    right: -20px;
+}
+.column-toggle-right {
+    left: -20px;
+}
+/* 折叠状态样式 */
+.column-left.collapsed,
+.column-right.collapsed {
+    width: 0 !important;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+.column-left.collapsed .column-toggle-left {
+    right: -24px;
+}
+.column-right.collapsed .column-toggle-right {
+    left: -24px;
+}
+/* 响应式布局 */
+@media screen and (max-width: 768px) {
+    .three-column-layout {
+        flex-direction: column;
+    }
+.column-left,
+.column-right {
+        width: 100% !important;
+        height: 300px;
+    }
+.resizer {
+        display: none;
+    }
+.column-toggle {
+        display: none;
+    }
+}
+/* 纵向选项卡样式 */
+.vertical-tabs {
+    display: flex;
+    height: 100%;
+    overflow: hidden;
+}
+.tab-list {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--background-modifier-border);
+    background-color: var(--background-primary-alt);
+    padding: 8px;
+    min-width: 40px;
+}
+.tab-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100%;
+    transition: background-color 0.2s ease;
+}
+.tab-button:hover {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+.tab-button.active {
+    background-color: var(--background-modifier-active);
+    color: var(--text-normal);
+}
+.tab-icon {
+    font-size: 16px;
+}
+.tab-title {
+    font-size: 14px;
+    white-space: nowrap;
+}
+.tab-content {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+}
+.sidebar-tab svg {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+}
+
+.sidebar-tab:hover svg {
+    color: var(--text-normal);
+}
+
+.sidebar-tab.active svg {
+    color: var(--text-on-accent);
+}
