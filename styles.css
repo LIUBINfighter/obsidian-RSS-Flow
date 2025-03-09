@@ -92,114 +92,68 @@
     padding: 20px;
 }
 
+.rss-sources-section {
+    margin-bottom: 20px;
+}
+
 .rss-sources-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .rss-sources-actions {
     display: flex;
-    gap: 10px;
-}
-
-.rss-action-btn {
-    background: transparent;
-    border: 1px solid var(--background-modifier-border);
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.rss-action-btn:hover {
-    background: var(--background-modifier-hover);
-}
-
-.rss-action-btn.delete-btn.confirm-delete {
-    background: var(--background-modifier-error);
-    color: white;
-}
-
-.add-source-btn {
-    width: 100%;
-    padding: 8px;
-    margin-top: 20px;
-    background: var(--interactive-accent);
-    color: var(--text-on-accent);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 8px;
 }
-
-.add-source-btn:hover {
-    background: var(--interactive-accent-hover);
-}
-
-/* 源表单样式 */
-.source-form-container {
-    background: var(--background-primary);
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-.form-group {
-    margin-bottom: 16px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    background: var(--background-primary);
-}
-
-.form-actions {
+.rss-source-item {
+    position: relative;
     display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 20px;
-}
-
-.form-submit-btn,
-.form-cancel-btn {
-    padding: 8px 16px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
     border-radius: 4px;
-    cursor: pointer;
+    background-color: var(--background-secondary);
+    transition: all 0.2s ease;
 }
 
-.form-submit-btn {
-    background: var(--interactive-accent);
-    color: var(--text-on-accent);
-    border: none;
+.rss-source-item.dragging {
+    opacity: 0.5;
+    background-color: var(--background-modifier-success);
+    border: 2px dashed var(--interactive-accent);
 }
 
-.form-cancel-btn {
-    background: transparent;
-    border: 1px solid var(--background-modifier-border);
+.rss-source-item.drop-target {
+    background-color: transparent;
+    position: relative;
 }
 
-.form-submit-btn:hover {
-    background: var(--interactive-accent-hover);
-}
-
-.sidebar-tabs {
+.rss-source-item.drop-target::after {
+    content: '';
     position: absolute;
-    left: 4px; /* 调整到 resize 条右侧 */
-    top: 80px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--interactive-accent);
+    top: 100%;
+}
+    border: 2px solid var(--interactive-accent);
+}
+
+.rss-source-item.drop-target::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background-color: var(--interactive-accent);
+    border-radius: 2px;
+}
+
+.rss-source-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -214,6 +168,7 @@
     border-radius: 6px;
     cursor: pointer;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     justify-content: center;
     padding: 0;
@@ -609,165 +564,84 @@
     transition: color 0.2s ease;
 }
 
-.sidebar-tab:hover svg {
+
+.sidebar-tab:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+/* .sidebar-tab.active {
+    background-color: var(--background-modifier-active);
+} */
+
+.sidebar-tab.active svg {
     color: var(--text-normal);
 }
 
-.sidebar-tab.active svg {
+.sidebar-tab:hover svg {
+    color: var(--text-normal);
+    order: 2;
+}
+
+.rss-source-folder {
+    padding: 2px 8px;
+    background-color: var(--interactive-accent);
     color: var(--text-on-accent);
-}
-
-/* RSS Flow 主容器 */
-.rss-flow-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: var(--background-primary);
-    padding: 16px;
-}
-
-/* RSS 源区域 */
-.rss-sources-section {
-    background-color: var(--background-secondary);
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
-}
-
-/* RSS 源头部区域 */
-.rss-sources-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--background-modifier-border);
-}
-
-/* RSS 源操作按钮区域 */
-.rss-sources-actions {
-    display: flex;
-    gap: 8px;
-}
-
-/* RSS 操作按钮 */
-.rss-action-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 6px;
-    margin-right: 8px;
-    background-color: var(--background-modifier-hover);
-    border: 1px solid var(--background-modifier-border);
     border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 600;
+    order: 1;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.rss-source-url {
     color: var(--text-muted);
+    font-size: 0.9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rss-source-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.rss-action-btn {
+    padding: 4px;
+    background: none;
+    border: none;
     cursor: pointer;
+    color: var(--text-muted);
+    border-radius: 4px;
     transition: all 0.2s ease;
 }
 
 .rss-action-btn:hover {
-    background-color: var(--background-modifier-active);
     color: var(--text-normal);
+    background-color: var(--background-modifier-hover);
 }
 
-/* RSS 操作按钮图标 */
-.rss-action-icon {
-    width: 16px;
-    height: 16px;
+.rss-action-btn.delete-btn.confirm-delete {
+    color: var(--text-error);
+    background-color: var(--background-modifier-error);
 }
 
-/* RSS 源列表 */
-.rss-source-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-/* RSS 源列表项 */
-.rss-source-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px;
-    background-color: var(--background-primary);
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.rss-source-item:hover {
-    background-color: var(--background-primary-alt);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* RSS 源信息 */
-.rss-source-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-}
-
-/* RSS 源标题 */
-.rss-source-title {
-    font-weight: 600;
-    color: var(--text-normal);
-    font-size: 14px;
-}
-
-/* RSS 源 URL */
-.rss-source-url {
-    color: var(--text-muted);
-    font-size: 12px;
-    word-break: break-all;
-}
-
-/* 添加源按钮 */
 .add-source-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
     width: 100%;
-    padding: 12px;
+    padding: 8px;
+    margin-top: 12px;
     background-color: var(--interactive-accent);
     color: var(--text-on-accent);
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
 }
 
 .add-source-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
-/* 添加源图标 */
-.add-source-icon {
-    width: 16px;
-    height: 16px;
-}
-
-/* 响应式适配 */
-@media screen and (max-width: 768px) {
-    .rss-flow-container {
-        padding: 12px;
-    }
-
-    .rss-sources-section {
-        padding: 12px;
-    }
-
-    .rss-source-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-
-    .rss-sources-actions {
-        width: 100%;
-        justify-content: flex-end;
-    }
+    background-color: var(--interactive-accent-hover);
 }

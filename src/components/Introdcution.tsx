@@ -11,6 +11,8 @@ interface RSSSource {
 
 export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
     const [feeds, setFeeds] = useState<RSSSource[]>([]);
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+    const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
     useEffect(() => {
         const loadFeeds = async () => {
@@ -21,7 +23,6 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
                 try {
                     content = await adapter.read(filePath);
                 } catch (error) {
-                    // 如果文件不存在，创建一个包含空feeds数组的文件
                     const initialData = { feeds: [] };
                     await adapter.write(filePath, JSON.stringify(initialData, null, 2));
                     content = JSON.stringify(initialData);
@@ -108,6 +109,41 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
         }
     }, [deleteConfirm, feeds]);
 
+    const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>, index: number) => {
+        e.dataTransfer.setData('text/plain', index.toString());
+        setDraggedIndex(index);
+        e.currentTarget.classList.add('dragging');
+    }, []);
+
+    const handleDragEnd = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+        e.currentTarget.classList.remove('dragging');
+        setDraggedIndex(null);
+        setDropTargetIndex(null);
+    }, []);
+
+    const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>, index: number) => {
+        e.preventDefault();
+        setDropTargetIndex(index);
+    }, []);
+
+    const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        setDropTargetIndex(null);
+    }, []);
+
+    const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>, targetIndex: number) => {
+        e.preventDefault();
+        const sourceIndex = parseInt(e.dataTransfer.getData('text/plain'));
+        if (sourceIndex !== targetIndex) {
+            const updatedFeeds = [...feeds];
+            const [movedItem] = updatedFeeds.splice(sourceIndex, 1);
+            updatedFeeds.splice(targetIndex, 0, movedItem);
+            saveFeeds(updatedFeeds);
+        }
+        setDraggedIndex(null);
+        setDropTargetIndex(null);
+    }, [feeds, saveFeeds]);
+
     return (
         <div className="rss-flow-container">
             <div className="rss-sources-section">
@@ -118,9 +154,32 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
                         <button className="rss-action-btn" aria-label="导出" ref={el => el && setIcon(el, 'upload')} onClick={handleExport}></button>
                     </div>
                 </div>
+                <button className="add-source-btn" ref={el => el && setIcon(el, 'plus')} onClick={handleAddSource}>
+                    {t('rss.sources.add', '添加新订阅源')}
+                </button>
+
+                {showSourceForm && (
+                    <SourceForm
+                        initialData={editingSource || undefined}
+                        onSubmit={handleSourceSubmit}
+                        onCancel={() => {
+                            setShowSourceForm(false);
+                            setEditingSource(null);
+                        }}
+                    />
+                )}
                 <div className="rss-source-list">
-                    {feeds.map((feed) => (
-                        <div key={feed.url} className="rss-source-item">
+                    {feeds.map((feed, index) => (
+                        <div
+                            key={feed.url}
+                            className={`rss-source-item ${draggedIndex === index ? 'dragging' : ''} ${dropTargetIndex === index ? 'drop-target' : ''}`}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, index)}
+                            onDragEnd={handleDragEnd}
+                            onDragOver={(e) => handleDragOver(e, index)}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, index)}
+                        >
                             <div className="rss-source-info">
                                 <div className="rss-source-title">
                                     <span className="rss-source-name">{feed.name}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -145,20 +204,6 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
                         </div>
                     ))}
                 </div>
-                <button className="add-source-btn" ref={el => el && setIcon(el, 'plus')} onClick={handleAddSource}>
-                    {t('rss.sources.add', '添加新订阅源')}
-                </button>
-
-                {showSourceForm && (
-                    <SourceForm
-                        initialData={editingSource || undefined}
-                        onSubmit={handleSourceSubmit}
-                        onCancel={() => {
-                            setShowSourceForm(false);
-                            setEditingSource(null);
-                        }}
-                    />
-                )}
             </div>
         </div>
     );
