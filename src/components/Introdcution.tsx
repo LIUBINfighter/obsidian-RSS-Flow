@@ -122,7 +122,10 @@ export const Introdcution: React.FC<{ app: App }> = ({ app }) => {
                     {feeds.map((feed) => (
                         <div key={feed.url} className="rss-source-item">
                             <div className="rss-source-info">
-                                <div className="rss-source-title">{feed.name}</div>
+                                <div className="rss-source-title">
+                                    <span className="rss-source-name">{feed.name}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <span className="rss-source-folder">#{feed.folder}</span>
+                                </div>
                                 <div className="rss-source-url">{feed.url}</div>
                             </div>
                             <div className="rss-source-actions">

@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from 'react';
 
 interface RSSSource {
-    title: string;
+    name: string;
     url: string;
-    category: string;
+    folder: string;
 }
 
 interface SourceFormProps {
@@ -14,9 +14,9 @@ interface SourceFormProps {
 
 export const SourceForm: React.FC<SourceFormProps> = ({ initialData, onSubmit, onCancel }) => {
     const [formData, setFormData] = useState<RSSSource>(initialData || {
-        title: '',
+        name: '',
         url: '',
-        category: ''
+        folder: ''
     });
 
     const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,12 +36,12 @@ export const SourceForm: React.FC<SourceFormProps> = ({ initialData, onSubmit, o
         <div className="source-form-container">
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="title">名称</label>
+                    <label htmlFor="name">名称</label>
                     <input
                         type="text"
-                        id="title"
-                        name="title"
-                        value={formData.title}
+                        id="name"
+                        name="name"
+                        value={formData.name}
                         onChange={handleChange}
                         placeholder="请输入订阅源名称"
                         required
@@ -60,12 +60,12 @@ export const SourceForm: React.FC<SourceFormProps> = ({ initialData, onSubmit, o
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="category">分类</label>
+                    <label htmlFor="folder">分类</label>
                     <input
                         type="text"
-                        id="category"
-                        name="category"
-                        value={formData.category}
+                        id="folder"
+                        name="folder"
+                        value={formData.folder}
                         onChange={handleChange}
                         placeholder="请输入分类"
                     />
