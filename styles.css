@@ -83,8 +83,10 @@
 }
 .sidebar-toggle {
     position: absolute;
-    left: -25px; /* 调整到 resize 条右侧 */
-    top: 10%;
+	width: 35px;
+	height: 35px;
+    left: -35px; /* 调整到 resize 条右侧 */
+    top: 15%;
 }
 
 /* RSS Flow 样式 */
@@ -684,6 +686,7 @@
 .rss-source-actions {
     display: flex;
     gap: 4px;
+    align-items: center;
 }
 
 .rss-action-btn {
@@ -694,6 +697,9 @@
     color: var(--text-muted);
     border-radius: 4px;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .rss-action-btn:hover {

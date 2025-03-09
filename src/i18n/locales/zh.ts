@@ -4,7 +4,7 @@ export default {
             "title": "边栏内容",
             "content": "这里是边栏的内容"
         },
-		"welcome": "欢迎来到Jay的React Lab!",
+		"welcome": "欢迎来到Jay的RSS Flow!",
 		"settings": {
 			"title": "设置",
 			"content": "你可以在左上角设置语言。"

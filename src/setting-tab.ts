@@ -1,11 +1,11 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import type ReactLabPlugin from "./main";
+import type RSSFlowPlugin from "./main";
 import { KanbanLayout } from "./types";
 
 export class ReactLabSettingTab extends PluginSettingTab {
-	plugin: ReactLabPlugin;
+	plugin: RSSFlowPlugin;
 
-	constructor(app: App, plugin: ReactLabPlugin) {
+	constructor(app: App, plugin: RSSFlowPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -15,7 +15,7 @@ export class ReactLabSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', {text: 'Settings for React Lab.'});
+		containerEl.createEl('h2', {text: 'Settings for RSS Flow.'});
 
 		new Setting(containerEl)
 			.setName('Setting')
@@ -28,16 +28,5 @@ export class ReactLabSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				}));
 
-		new Setting(containerEl)
-			.setName('看板布局')
-			.setDesc('选择看板的布局方式')
-			.addDropdown(dropdown => dropdown
-				.addOption('horizontal', '横向布局')
-				.addOption('vertical', '纵向布局')
-				.setValue(this.plugin.settings.kanbanLayout)
-				.onChange(async (value: KanbanLayout) => {
-					this.plugin.settings.kanbanLayout = value;
-					await this.plugin.saveSettings();
-				}));
 	}
 }

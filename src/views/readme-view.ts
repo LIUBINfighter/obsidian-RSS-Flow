@@ -3,11 +3,11 @@ import { VIEW_TYPES } from "../types";
 import { createRoot } from 'react-dom/client';
 import React from 'react';
 import { ReadMe } from '../components/ReadMe';
-import type ReactLabPlugin from '../main';
+import type RSSFlowPlugin from '../main';
 import { i18n } from '../i18n';
 
 export class ReadMeView extends ItemView {
-    private plugin: ReactLabPlugin;  // 修改类型定义
+    private plugin: RSSFlowPlugin;  // 修改类型定义
     private activeLeafHandler: () => void;
     private root: ReturnType<typeof createRoot> | null = null;
 
@@ -25,7 +25,7 @@ export class ReadMeView extends ItemView {
     }
     
     getDisplayText() {
-        return "React Lab Readme View";
+        return "RSS Flow README";
     }
     
     private clearStatusBar() {

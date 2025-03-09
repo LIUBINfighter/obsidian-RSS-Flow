@@ -37,6 +37,8 @@
 
 3.画廊视图（Gallery View）
 
+> Readme视图的命名既不能和setting tab有关，也不能和readme有关，暂时搁置。
+
 ## 📚 插件平台使用示例
 
 ### 创建一个简单的 React 视图
