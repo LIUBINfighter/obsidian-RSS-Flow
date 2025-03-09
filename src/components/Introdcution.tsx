@@ -1,8 +1,73 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { setIcon } from 'obsidian';
+import { SourceForm } from './SourceForm';
+
+
+interface RSSSource {
+    title: string;
+    url: string;
+    category: string;
+}
 
 export const Introdcution: React.FC = () => {
     const { t } = useTranslation();
+    const [showImportModal, setShowImportModal] = useState(false);
+    const [showSourceForm, setShowSourceForm] = useState(false);
+    const [editingSource, setEditingSource] = useState<RSSSource | null>(null);
+    const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+
+    const handleImport = useCallback(() => {
+        const modal = new Modal(app);
+        modal.titleEl.setText('导入OPML文件');
+        
+        const fileInput = modal.contentEl.createEl('input', {
+            type: 'file',
+            attr: { accept: '.opml' }
+        });
+        
+        fileInput.onchange = async () => {
+            const file = fileInput.files?.[0];
+            if (file && file.name.toLowerCase().endsWith('.opml')) {
+                // TODO: 实现OPML文件解析和数据保存
+                modal.close();
+            } else {
+                // TODO: 显示错误提示
+                console.error('请上传.opml文件');
+            }
+        };
+        
+        modal.open();
+    }, []);
+
+    const handleExport = useCallback(() => {
+        // TODO: 实现数据导出为OPML文件
+    }, []);
+
+    const handleAddSource = useCallback(() => {
+        setEditingSource(null);
+        setShowSourceForm(true);
+    }, []);
+
+    const handleEditSource = useCallback((source: RSSSource) => {
+        setEditingSource(source);
+        setShowSourceForm(true);
+    }, []);
+
+    const handleSourceSubmit = useCallback((data: RSSSource) => {
+        // TODO: 保存RSS源数据
+        setShowSourceForm(false);
+        setEditingSource(null);
+    }, []);
+
+    const handleDeleteSource = useCallback((sourceUrl: string) => {
+        if (deleteConfirm === sourceUrl) {
+            // TODO: 执行删除操作
+            setDeleteConfirm(null);
+        } else {
+            setDeleteConfirm(sourceUrl);
+        }
+    }, [deleteConfirm]);
 
     return (
         <div className="rss-flow-container">
@@ -10,18 +75,8 @@ export const Introdcution: React.FC = () => {
                 <div className="rss-sources-header">
                     <h2>{t('rss.sources.title', '订阅源')}</h2>
                     <div className="rss-sources-actions">
-                        <button className="rss-action-btn" aria-label="导入">
-                            <svg viewBox="0 0 100 100" className="rss-action-icon">
-                                <path fill="currentColor" d="M37.5,75L25,75L25,25L75,25L75,50" />
-                                <path fill="currentColor" d="M55,65L75,65L65,75L75,65L65,55" />
-                            </svg>
-                        </button>
-                        <button className="rss-action-btn" aria-label="导出">
-                            <svg viewBox="0 0 100 100" className="rss-action-icon">
-                                <path fill="currentColor" d="M25,75L75,75L75,25L62.5,25" />
-                                <path fill="currentColor" d="M45,35L25,35L35,25L25,35L35,45" />
-                            </svg>
-                        </button>
+                        <button className="rss-action-btn" aria-label="导入" ref={el => el && setIcon(el, 'download')} onClick={() => setShowImportModal(true)}></button>
+                        <button className="rss-action-btn" aria-label="导出" ref={el => el && setIcon(el, 'upload')} onClick={handleExport}></button>
                     </div>
                 </div>
                 <div className="rss-source-list">
@@ -32,25 +87,37 @@ export const Introdcution: React.FC = () => {
                             <div className="rss-source-url">https://blog.google/technology/ai/rss/</div>
                         </div>
                         <div className="rss-source-actions">
-                            <button className="rss-action-btn" aria-label="编辑">
-                                <svg viewBox="0 0 100 100" className="rss-action-icon">
-                                    <path fill="currentColor" d="M70,20L80,30L40,70L20,80L30,60L70,20" />
-                                </svg>
-                            </button>
-                            <button className="rss-action-btn" aria-label="删除">
-                                <svg viewBox="0 0 100 100" className="rss-action-icon">
-                                    <path fill="currentColor" d="M30,30L70,70M70,30L30,70" />
-                                </svg>
-                            </button>
+                            <button 
+                                className="rss-action-btn" 
+                                aria-label="编辑" 
+                                ref={el => el && setIcon(el, 'pencil')}
+                                onClick={() => handleEditSource({ title: 'AI - Google News', url: 'https://blog.google/technology/ai/rss/', category: '' })}
+                            ></button>
+                            <button 
+                                className={`rss-action-btn delete-btn ${deleteConfirm === 'https://blog.google/technology/ai/rss/' ? 'confirm-delete' : ''}`}
+                                aria-label="删除" 
+                                ref={el => el && setIcon(el, 'trash')}
+                                onClick={() => handleDeleteSource('https://blog.google/technology/ai/rss/')}
+                            ></button>
                         </div>
                     </div>
                 </div>
-                <button className="add-source-btn">
-                    <svg viewBox="0 0 100 100" className="add-source-icon">
-                        <path fill="currentColor" d="M20,50L80,50M50,20L50,80" />
-                    </svg>
+                <button className="add-source-btn" ref={el => el && setIcon(el, 'plus')} onClick={handleAddSource}>
                     {t('rss.sources.add', '添加新订阅源')}
                 </button>
+
+
+
+                {showSourceForm && (
+                    <SourceForm
+                        initialData={editingSource || undefined}
+                        onSubmit={handleSourceSubmit}
+                        onCancel={() => {
+                            setShowSourceForm(false);
+                            setEditingSource(null);
+                        }}
+                    />
+                )}
             </div>
         </div>
     );
