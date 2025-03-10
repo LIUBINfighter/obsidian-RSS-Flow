@@ -96,7 +96,7 @@ export default class RSSFlowPlugin extends Plugin {
             this.activateView(VIEW_TYPES.READ);
             }
         );
-		this.addRibbonIcon('gallery-vertical-end','Open RSS Gallery',
+		this.addRibbonIcon('gallery-vertical-end','RSS Gallery',
 			(evt: MouseEvent) => {
             // 激活视图
             this.activateView(VIEW_TYPES.GALLERY);
