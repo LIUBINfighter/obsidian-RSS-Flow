@@ -731,3 +731,46 @@
 .add-source-btn:hover {
     background-color: var(--interactive-accent-hover);
 }
+/* .feed-items {
+    padding: 20px;
+}
+
+.feed-item {
+    margin-bottom: 24px;
+    padding: 16px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    background-color: var(--background-primary);
+}
+
+.feed-item h3 {
+    margin: 0 0 8px 0;
+}
+
+.feed-item a {
+    color: var(--text-normal);
+    text-decoration: none;
+}
+
+.feed-item a:hover {
+    color: var(--text-accent);
+}
+
+.feed-item-meta {
+    font-size: 0.9em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.feed-item-description {
+    color: var(--text-normal);
+    line-height: 1.5;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: var(--text-muted);
+} */
