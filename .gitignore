@@ -7,6 +7,7 @@
 
 # npm
 node_modules
+node_modules/
 
 # Don't include the compiled main.js file in the repo.
 # They should be uploaded to GitHub releases instead.
@@ -20,9 +21,22 @@ data.json
 
 # Exclude macOS Finder (System Explorer) View States
 .DS_Store
+.DS_Store
+Thumbs.db
 
 # doc
 .reference
 /reference/
 # Exclude generated files
 *.generated.*
+
+# Ignore build artifacts
+dist/
+.hot/
+
+# Ignore reference code that causes build errors
+reference/
+
+# Ignore environment files
+.env
+.env.local
