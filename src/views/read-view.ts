@@ -5,6 +5,7 @@ import RSSFlowPlugin from '../main';
 import { VIEW_TYPES } from '../types';
 import { createRoot } from 'react-dom/client';
 import { Read } from '../components/Read';
+import { i18n } from '../i18n/index';
 
 export class ReadView extends ItemView {
     private activeLeafHandler: () => void;
