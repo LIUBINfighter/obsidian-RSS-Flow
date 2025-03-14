@@ -133,15 +133,7 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                         />
                     </div>
                     
-                    {tableOfContents.length > 0 && (
-                        <button 
-                            onClick={scrollToToc} 
-                            className="clickable-icon" 
-                            aria-label="跳转到文章目录"
-                            title="目录"
-                            ref={tocBtnRef}
-                        />
-                    )}
+                    {/* 移除目录按钮 */}
                     
                     <div className="view-navigation-buttons">
                         <button 
@@ -204,6 +196,17 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                             title="保存收藏段落为笔记"
                             ref={saveHighlightsBtnRef}
                         />
+                        
+                        {/* 添加目录按钮到这里 */}
+                        {tableOfContents.length > 0 && (
+                            <button 
+                                onClick={scrollToToc} 
+                                className="clickable-icon" 
+                                aria-label="跳转到文章目录"
+                                title="目录"
+                                ref={tocBtnRef}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

@@ -1743,3 +1743,25 @@ input:checked + label .toggle-track:before {
     border-right: 1px solid var(--background-modifier-border);
     padding-right: 12px;
 }
+
+/* 文章目录样式 - 确保目录内容显示在右侧 */
+.article-toc {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    background-color: var(--background-secondary);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    max-width: 300px;
+    transition: all 0.3s ease;
+}
+
+/* 确保目录按钮在底部操作栏中样式正确 */
+.article-action-buttons .clickable-icon[title="目录"] {
+    color: var(--text-accent);
+}
+
+.article-action-buttons .clickable-icon[title="目录"]:hover {
+    background-color: var(--background-modifier-hover);
+}

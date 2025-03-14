@@ -39,17 +39,6 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                     <span className="article-date">{new Date(article.publishDate).toLocaleString()}</span>
                     <span className="article-source">来源: {article.feedName}</span>
                 </div>
-                <div className="article-actions">
-                    <a 
-                        href={article.link} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="external-link mod-primary"
-                    >
-                        <span ref={originalLinkBtnRef}></span>
-                        查看原文
-                    </a>
-                </div>
             </div>
             {tableOfContents.length > 0 && (
                 <div className="article-toc">
