@@ -1356,13 +1356,43 @@
 
 /* 媒体块特定样式 */
 .media-block {
-    text-align: center;
+    position: relative;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    margin-bottom: 16px;
+    overflow: hidden;
 }
 
-.media-block-actions {
-    position: absolute;
-    top: 8px;
-    right: 8px;
+.media-block-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.media-type-IMAGE {
+    text-align: center;
+    min-height: 50px;
+}
+
+.media-type-IMAGE img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    display: block;
+    margin: 0 auto;
+}
+
+.media-error {
+    padding: 10px;
+    background-color: var(--background-modifier-error-rgb);
+    color: var(--text-error);
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin: 8px 0;
+    opacity: 0.7;
 }
 
 /* 代码块特定样式 */
