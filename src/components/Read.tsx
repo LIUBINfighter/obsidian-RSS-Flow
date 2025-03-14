@@ -34,7 +34,7 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
     }, []);
 
     return (
-        <div className="read-view-container">
+        <div className="read-view-container" style={{ fontSize: `${fontSize}px` }}>
             <ReadHeader 
                 fontSize={fontSize}
                 handleFontSizeChange={handleFontSizeChange}
@@ -56,6 +56,7 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                     showToc={showToc}
                     toggleToc={toggleToc}
                     scrollToHeading={scrollToHeading}
+                    fontSize={fontSize} // 添加字体大小传递
                 />
             )}
         </div>

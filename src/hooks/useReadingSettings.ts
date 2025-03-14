@@ -8,7 +8,16 @@ export const useReadingSettings = (plugin: RSSFlowPlugin) => {
     const handleFontSizeChange = useCallback(async (change: number) => {
         const newSize = Math.max(12, Math.min(24, fontSize + change));
         setFontSize(newSize);
+        
+        // 同时设置CSS变量和全局样式
         document.documentElement.style.setProperty('--article-font-size', `${newSize}px`);
+        
+        // 确保样式应用到正确的元素
+        const articleContentElements = document.querySelectorAll('.article-content, .text-blocks-container');
+        articleContentElements.forEach(el => {
+            (el as HTMLElement).style.fontSize = `${newSize}px`;
+        });
+        
         try {
             const data = await plugin.loadData() || {};
             data.fontSize = newSize;

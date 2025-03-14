@@ -1,6 +1,6 @@
 import React from 'react';
 import { RSSItem, ContentBlock } from '../types';
-import TableOfContents from './TableOfContents'; // 修改导入方式
+import TableOfContents from './TableOfContents';
 import { ContentBlockView } from './ContentBlock';
 
 interface ArticleViewProps {
@@ -10,6 +10,7 @@ interface ArticleViewProps {
     showToc: boolean;
     toggleToc: () => void;
     scrollToHeading: (headingId: number) => void;
+    fontSize?: number; // 添加字体大小属性
 }
 
 export const ArticleView: React.FC<ArticleViewProps> = ({
@@ -18,10 +19,11 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
     tableOfContents,
     showToc,
     toggleToc,
-    scrollToHeading
+    scrollToHeading,
+    fontSize
 }) => {
     return (
-        <div className="article-container">
+        <div className="article-container" style={{ fontSize: fontSize ? `${fontSize}px` : undefined }}>
             <div className="article-header">
                 <h2 className="article-title">{article.title}</h2>
                 <div className="article-meta">
@@ -36,9 +38,7 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
             {tableOfContents.length > 0 && (
                 <div className="article-toc">
                     <h3 className="toc-title">目录</h3>
-                    <div className="article-toc-content">
-                        <TableOfContents items={tableOfContents} onItemClick={scrollToHeading} />
-                    </div>
+                    <TableOfContents items={tableOfContents} onItemClick={scrollToHeading} />
                 </div>
             )}
             {article.imageUrl && <div className="article-image"><img src={article.imageUrl} alt={article.title} /></div>}

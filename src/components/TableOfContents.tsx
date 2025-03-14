@@ -46,7 +46,7 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ items, onItemC
     }
 
     return (
-        <div className={`article-toc ${isOpen ? 'open' : 'closed'}`}>
+        <>
             <button 
                 className="toc-toggle"
                 onClick={() => setIsOpen(!isOpen)}
@@ -56,32 +56,28 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ items, onItemC
             </button>
             
             {isOpen && (
-                <div className="toc-content">
-                    <h3 className="toc-title">文章目录</h3>
-                    <ul className="toc-list">
-                        {items.map(item => (
-                            <li 
-                                key={item.id} 
-                                className={`toc-item level-${item.level} ${activeItemId === item.id ? 'active' : ''}`}
-                                style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
+                <ul className="toc-list">
+                    {items.map(item => (
+                        <li 
+                            key={item.id} 
+                            className={`toc-item level-${item.level} ${activeItemId === item.id ? 'active' : ''}`}
+                            style={{ paddingLeft: `${(item.level - 1) * 16}px` }}
+                        >
+                            <a 
+                                href={`#heading-${item.id}`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    onItemClick(item.id);
+                                }}
                             >
-                                <a 
-                                    href={`#heading-${item.id}`}
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        onItemClick(item.id);
-                                    }}
-                                >
-                                    {item.title}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                                {item.title}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
             )}
-        </div>
+        </>
     );
 };
 
-// 添加默认导出
 export default TableOfContents;
