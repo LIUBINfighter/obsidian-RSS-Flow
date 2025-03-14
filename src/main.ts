@@ -95,24 +95,41 @@ export default class RSSFlowPlugin extends Plugin {
         workspace.revealLeaf(leaf);
     }
 
-    // 添加激活ReadView并打开特定文章的方法
+    // 修改激活ReadView的方法
     async activateReadView(articleId?: string): Promise<void> {
-        // 设置当前文章ID
+        // 如果有文章ID，先设置它
         if (articleId) {
-            console.log('Setting current article ID:', articleId);
+            console.log('设置currentArticleId:', articleId);
             this.currentArticleId = articleId;
         }
         
-        // 激活Read视图
-        await this.activateView(VIEW_TYPES.READ);
+        // 检查是否已有打开的Read视图
+        const existingLeaf = this.app.workspace.getLeavesOfType(VIEW_TYPES.READ)[0];
         
-        // 获取已激活的Read视图实例
-        const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPES.READ)[0];
-        if (leaf && articleId) {
-            const view = leaf.view as ReadView;
-            if (view && typeof view.openArticle === 'function') {
-                // 调用视图中的openArticle方法
-                await view.openArticle(articleId);
+        if (existingLeaf) {
+            // 先激活视图
+            this.app.workspace.setActiveLeaf(existingLeaf);
+            
+            if (articleId) {
+                // 如果有文章ID，告诉视图打开特定文章
+                const view = existingLeaf.view as ReadView;
+                if (view && typeof view.openArticle === 'function') {
+                    await view.openArticle(articleId);
+                }
+            }
+        } else {
+            // 如果视图不存在，创建新视图
+            await this.activateView(VIEW_TYPES.READ);
+            
+            // 如果有文章ID，确保打开特定文章
+            if (articleId) {
+                const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPES.READ)[0];
+                if (leaf) {
+                    const view = leaf.view as ReadView;
+                    if (view && typeof view.openArticle === 'function') {
+                        await view.openArticle(articleId);
+                    }
+                }
             }
         }
     }

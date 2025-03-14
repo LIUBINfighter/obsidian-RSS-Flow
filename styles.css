@@ -1694,3 +1694,52 @@ input:checked + label .toggle-track:before {
         display: none; /* 在小屏幕上隐藏目录和设置 */
     }
 }
+
+/* 阅读视图头部布局 */
+.read-header {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid var(--background-modifier-border);
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+.read-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.read-header-bottom {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 4px;
+}
+
+.read-actions {
+    display: flex;
+    align-items: center;
+}
+
+.primary-actions {
+    gap: 16px;
+}
+
+.secondary-actions {
+    gap: 24px;
+}
+
+.read-actions-group, 
+.view-navigation-buttons, 
+.article-navigation-buttons,
+.article-action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.article-navigation-buttons {
+    border-right: 1px solid var(--background-modifier-border);
+    padding-right: 12px;
+}
