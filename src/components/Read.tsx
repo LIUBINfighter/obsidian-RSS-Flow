@@ -141,17 +141,22 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                 exportToMarkdown={exportToMarkdown}
                 tableOfContents={tableOfContents}
                 toggleSidebar={toggleSidebar}
+                toggleToc={toggleToc}  // 传递toggleToc函数
                 articleLink={article?.link}
             />
             <div className="read-main-content">
                 {loading ? (
-                    <LoadingState />
+                    <div className="article-container">
+                        <LoadingState />
+                    </div>
                 ) : !article ? (
-                    <EmptyState 
-                        plugin={plugin}
-                        handleSync={handleSync} 
-                        handleRandomArticle={handleRandomArticle} 
-                    />
+                    <div className="article-container">
+                        <EmptyState 
+                            plugin={plugin}
+                            handleSync={handleSync} 
+                            handleRandomArticle={handleRandomArticle} 
+                        />
+                    </div>
                 ) : (
                     <ArticleView 
                         article={article}
@@ -163,15 +168,15 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                         fontSize={fontSize}
                     />
                 )}
-                
-                <ReadSidebar 
-                    isOpen={isSidebarOpen}
-                    onToggle={toggleSidebar}
-                    favorites={getFavorites()}
-                    currentArticleId={article?.id}
-                    onRemoveFavorite={removeFavorite}
-                />
             </div>
+            
+            <ReadSidebar 
+                isOpen={isSidebarOpen}
+                onToggle={toggleSidebar}
+                favorites={getFavorites()}
+                currentArticleId={article?.id}
+                onRemoveFavorite={removeFavorite}
+            />
         </div>
     );
 };

@@ -16,6 +16,7 @@ interface ReadHeaderProps {
     exportToMarkdown: () => void;
     tableOfContents: any[];
     toggleSidebar: () => void;  // 修改为toggleSidebar
+    toggleToc: () => void;  // 添加toggleToc属性
     articleLink?: string;
 }
 
@@ -32,6 +33,7 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     exportToMarkdown,
     tableOfContents,
     toggleSidebar,  // 修改为toggleSidebar
+    toggleToc,  // 添加toggleToc参数
     articleLink
 }) => {
     // 创建refs用于设置图标
@@ -209,9 +211,9 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                         {/* 添加目录按钮到这里 */}
                         {tableOfContents.length > 0 && (
                             <button 
-                                onClick={scrollToToc} 
+                                onClick={toggleToc} // 修改为toggleToc代替scrollToToc
                                 className="clickable-icon" 
-                                aria-label="跳转到文章目录"
+                                aria-label="显示/隐藏文章目录"
                                 title="目录"
                                 ref={tocBtnRef}
                             />
