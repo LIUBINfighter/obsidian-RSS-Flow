@@ -1468,3 +1468,229 @@
 .media-type-HTML {
     width: 100%;
 }
+
+/* 文章目录样式 */
+.article-toc {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    background-color: var(--background-secondary);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    max-width: 300px;
+    transition: all 0.3s ease;
+}
+
+.article-toc.closed {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+}
+
+.article-toc.open {
+    width: 250px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.toc-toggle {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-secondary);
+    color: var(--text-muted);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.toc-content {
+    padding: 16px;
+    padding-top: 40px; /* 为按钮留出空间 */
+}
+
+.toc-title {
+    margin: 0 0 12px 0;
+    font-size: 1em;
+    color: var(--text-normal);
+}
+
+.toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc-item {
+    margin: 4px 0;
+}
+
+.toc-item a {
+    display: block;
+    padding: 4px 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 0.9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.toc-item a:hover {
+    color: var(--text-normal);
+    background-color: var(--background-modifier-hover);
+}
+
+.toc-item.active a {
+    color: var(--text-accent);
+    font-weight: 600;
+}
+
+/* 阅读设置样式 */
+.reading-settings {
+    position: fixed;
+    left: 20px;
+    top: 100px;
+    z-index: 100;
+}
+
+.settings-toggle {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-secondary);
+    color: var(--text-muted);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.settings-panel {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background-color: var(--background-secondary);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    width: 220px;
+}
+
+.settings-panel h3 {
+    margin: 0 0 12px 0;
+    font-size: 1em;
+    color: var(--text-normal);
+}
+
+.setting-item {
+    margin-bottom: 12px;
+}
+
+.setting-item label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-muted);
+    font-size: 0.9em;
+}
+
+.font-size-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.font-size-controls button {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background-color: var(--background-modifier-hover);
+    color: var(--text-normal);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.font-size-controls span {
+    flex: 1;
+    text-align: center;
+}
+
+.theme-switch {
+    display: inline-block;
+    position: relative;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-track {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+    background-color: var(--background-modifier-border);
+    border-radius: 12px;
+    transition: 0.4s;
+    cursor: pointer;
+}
+
+.toggle-track:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--background-primary);
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+input:checked + label .toggle-track {
+    background-color: var(--interactive-accent);
+}
+
+input:checked + label .toggle-track:before {
+    transform: translateX(24px);
+}
+
+/* 阅读进度条 */
+.article-reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--background-modifier-border);
+    z-index: 1000;
+}
+
+.reading-progress-bar {
+    height: 100%;
+    background-color: var(--interactive-accent);
+    width: 0;
+    transition: width 0.3s ease;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 768px) {
+    .article-toc, .reading-settings {
+        display: none; /* 在小屏幕上隐藏目录和设置 */
+    }
+}
