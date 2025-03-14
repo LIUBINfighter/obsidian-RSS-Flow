@@ -82,3 +82,6 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ items, onItemC
         </div>
     );
 };
+
+// 添加默认导出
+export default TableOfContents;
