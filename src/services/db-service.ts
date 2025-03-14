@@ -370,6 +370,35 @@ export class DBService {
             count 
         }));
     }
+
+    /**
+     * 将文章标记为已读
+     * @param itemId 文章ID
+     */
+    async markItemAsRead(itemId: string): Promise<void> {
+        try {
+            // 获取数据库引用
+            const db = await this.getDB();
+            
+            // 查找文章
+            const tx = db.transaction('items', 'readwrite');
+            const store = tx.objectStore('items');
+            const item = await store.get(itemId);
+            
+            if (item) {
+                // 更新已读状态
+                item.isRead = true;
+                await store.put(item);
+                console.log(`文章已标记为已读: ${itemId}`);
+            } else {
+                console.warn(`未找到要标记为已读的文章: ${itemId}`);
+            }
+            
+            await tx.done;
+        } catch (error) {
+            console.error('标记文章为已读时出错:', error);
+        }
+    }
 }
 
 // 导出单例

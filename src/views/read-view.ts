@@ -34,6 +34,16 @@ export class ReadView extends ItemView {
         }
     }
 
+    // 打开指定文章的方法
+    async openArticle(articleId: string) {
+        if (this.root) {
+            // 告诉React组件加载指定文章
+            this.plugin.currentArticleId = articleId;
+            // 触发React组件重新渲染
+            this.onResize();
+        }
+    }
+
     async onOpen() {
         this.clearStatusBar();
         this.activeLeafHandler = () => this.clearStatusBar();

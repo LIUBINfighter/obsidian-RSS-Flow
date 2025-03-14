@@ -34,6 +34,30 @@ export interface RSSItem {
     tags?: string[];    // 标签
 }
 
+// 内容块类型定义
+export enum ContentBlockType {
+    TEXT = 'text',
+    PARAGRAPH = 'paragraph',
+    HEADING = 'heading',
+    IMAGE = 'image',
+    VIDEO = 'video',
+    EMBED = 'embed',
+    CODE = 'code',
+    BLOCKQUOTE = 'blockquote',
+    LIST = 'list',
+    TABLE = 'table',
+    HTML = 'html'  // 其他复杂HTML内容
+}
+
+export interface ContentBlock {
+    id: number;
+    type: ContentBlockType;
+    content: string;
+    sourceUrl?: string; // 媒体资源的原始URL
+    level?: number;     // 用于标题级别 (h1-h6) 或列表嵌套级别
+    language?: string;  // 用于代码块的语言
+}
+
 // Feed元数据接口定义
 export interface FeedMeta {
     url: string;

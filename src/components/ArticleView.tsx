@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { RSSItem } from '../types';
 import { setIcon } from 'obsidian';
 
@@ -10,16 +10,8 @@ interface ArticleViewProps {
 }
 
 export const ArticleView: React.FC<ArticleViewProps> = ({ article, loading, onRefresh, onSync }) => {
-    const syncButtonRef = useRef<HTMLButtonElement>(null);
-    const refreshButtonRef = useRef<HTMLButtonElement>(null);
-    const linkButtonRef = useRef<HTMLAnchorElement>(null);
-    const randomButtonRef = useRef<HTMLButtonElement>(null);
-    
     useEffect(() => {
-        if (syncButtonRef.current) setIcon(syncButtonRef.current, 'refresh-cw');
-        if (refreshButtonRef.current) setIcon(refreshButtonRef.current, 'rotate-ccw');
-        if (linkButtonRef.current && article) setIcon(linkButtonRef.current, 'external-link');
-        if (randomButtonRef.current) setIcon(randomButtonRef.current, 'refresh-cw');
+        if (article) setIcon(document.querySelector('.article-link-btn'), 'external-link');
     }, [article]);
     
     if (loading) {
@@ -39,14 +31,12 @@ export const ArticleView: React.FC<ArticleViewProps> = ({ article, loading, onRe
                     <button 
                         className="article-sync-btn" 
                         onClick={onSync}
-                        ref={syncButtonRef}
                     >
                         同步RSS源
                     </button>
                     <button 
                         className="article-refresh-btn" 
                         onClick={onRefresh}
-                        ref={refreshButtonRef}
                     >
                         刷新
                     </button>
@@ -79,14 +69,12 @@ export const ArticleView: React.FC<ArticleViewProps> = ({ article, loading, onRe
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="article-link-btn"
-                        ref={linkButtonRef}
                     >
                         查看原文
                     </a>
                     <button 
                         className="article-refresh-btn" 
                         onClick={onRefresh}
-                        ref={randomButtonRef}
                     >
                         随机文章
                     </button>
