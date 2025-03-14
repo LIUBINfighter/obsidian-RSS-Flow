@@ -19,7 +19,7 @@ export const Read: React.FC<ReadProps> = ({ plugin }) => {
 
 // 内部组件，使用FavoriteContext
 const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
-    const { article, contentBlocks, loading, handleRefresh, handleSync } = useArticle(plugin);
+    const { article, contentBlocks, loading, handleRandomArticle, handleSync } = useArticle(plugin);
     const { readingProgress, saveReadingProgress } = useReadingProgress(plugin, article);
     const { fontSize, isDarkMode, handleFontSizeChange, handleThemeChange } = useReadingSettings(plugin);
     const { tableOfContents, showToc, toggleToc, scrollToHeading } = useTableOfContents(contentBlocks);
@@ -39,7 +39,7 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                 fontSize={fontSize}
                 handleFontSizeChange={handleFontSizeChange}
                 handleSync={handleSync}
-                handleRefresh={handleRefresh}
+                handleRandomArticle={handleRandomArticle}
                 exportToMarkdown={exportToMarkdown}
                 tableOfContents={tableOfContents}
                 scrollToToc={scrollToToc}
@@ -47,7 +47,11 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
             {loading ? (
                 <LoadingState />
             ) : !article ? (
-                <EmptyState handleSync={handleSync} handleRefresh={handleRefresh} />
+                <EmptyState 
+                    plugin={plugin}
+                    handleSync={handleSync} 
+                    handleRandomArticle={handleRandomArticle} 
+                />
             ) : (
                 <ArticleView 
                     article={article}
@@ -56,7 +60,7 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                     showToc={showToc}
                     toggleToc={toggleToc}
                     scrollToHeading={scrollToHeading}
-                    fontSize={fontSize} // 添加字体大小传递
+                    fontSize={fontSize}
                 />
             )}
         </div>

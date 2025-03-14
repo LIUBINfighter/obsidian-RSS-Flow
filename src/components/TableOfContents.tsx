@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { setIcon } from 'obsidian';
 
 interface TocItem {
     id: number;
@@ -14,6 +15,13 @@ interface TableOfContentsProps {
 export const TableOfContents: React.FC<TableOfContentsProps> = ({ items, onItemClick }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeItemId, setActiveItemId] = useState<number | null>(null);
+    const toggleButtonRef = useRef<HTMLButtonElement>(null);
+    
+    useEffect(() => {
+        if (toggleButtonRef.current) {
+            setIcon(toggleButtonRef.current, isOpen ? 'chevron-down' : 'chevron-right');
+        }
+    }, [isOpen]);
     
     // 监听滚动，高亮当前可见的标题
     useEffect(() => {
@@ -48,12 +56,11 @@ export const TableOfContents: React.FC<TableOfContentsProps> = ({ items, onItemC
     return (
         <>
             <button 
-                className="toc-toggle"
+                className="clickable-icon toc-toggle"
                 onClick={() => setIsOpen(!isOpen)}
                 title={isOpen ? "隐藏目录" : "显示目录"}
-            >
-                {isOpen ? "×" : "≡"}
-            </button>
+                ref={toggleButtonRef}
+            />
             
             {isOpen && (
                 <ul className="toc-list">

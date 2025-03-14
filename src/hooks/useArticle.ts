@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import RSSFlowPlugin from '../main';
 import { dbService } from '../services/db-service';
 import { RSSItem, ContentBlock } from '../types';
@@ -20,34 +20,60 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
                     setContentBlocks(processHtmlContent(specificItem.content));
                     await dbService.markItemAsRead(articleId);
                     plugin.currentArticleId = null;
+                } else {
+                    // 找不到指定文章
+                    setArticle(null);
                 }
             } else {
-                const randomItem = await dbService.getRandomItem();
-                if (randomItem) {
-                    setArticle(randomItem);
-                    setContentBlocks(processHtmlContent(randomItem.content));
-                    await dbService.markItemAsRead(randomItem.id);
-                }
+                // 不再自动加载随机文章，而是显示空状态
+                setArticle(null);
             }
         } catch (error) {
             console.error('加载文章失败:', error);
+            setArticle(null);
         } finally {
             setLoading(false);
         }
     }, [plugin]);
 
-    const handleRefresh = useCallback(async () => {
-        await loadArticle();
-    }, [loadArticle]);
+    // 专门用于随机加载文章的函数
+    const handleRandomArticle = useCallback(async () => {
+        setLoading(true);
+        try {
+            await dbService.init();
+            const randomItem = await dbService.getRandomItem();
+            if (randomItem) {
+                setArticle(randomItem);
+                setContentBlocks(processHtmlContent(randomItem.content));
+                await dbService.markItemAsRead(randomItem.id);
+            } else {
+                setArticle(null);
+            }
+        } catch (error) {
+            console.error('加载随机文章失败:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     const handleSync = useCallback(async () => {
         try {
             await plugin.syncRSSFeeds();
-            await loadArticle();
         } catch (error) {
             console.error('同步RSS失败:', error);
         }
-    }, [plugin, loadArticle]);
+    }, [plugin]);
 
-    return { article, contentBlocks, loading, handleRefresh, handleSync };
+    // 当组件挂载或currentArticleId变化时加载文章
+    useEffect(() => {
+        loadArticle(plugin.currentArticleId || undefined);
+    }, [loadArticle, plugin.currentArticleId]);
+
+    return { 
+        article, 
+        contentBlocks, 
+        loading, 
+        handleRandomArticle, 
+        handleSync 
+    };
 };

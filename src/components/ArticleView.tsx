@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { RSSItem, ContentBlock } from '../types';
 import TableOfContents from './TableOfContents';
 import { ContentBlockView } from './ContentBlock';
+import { setIcon } from 'obsidian';
 
 interface ArticleViewProps {
     article: RSSItem;
@@ -22,6 +23,13 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
     scrollToHeading,
     fontSize
 }) => {
+    // 创建ref用于设置图标
+    const originalLinkBtnRef = useRef<HTMLSpanElement>(null);
+    
+    useEffect(() => {
+        if (originalLinkBtnRef.current) setIcon(originalLinkBtnRef.current, 'external-link');
+    }, []);
+    
     return (
         <div className="article-container" style={{ fontSize: fontSize ? `${fontSize}px` : undefined }}>
             <div className="article-header">
@@ -32,7 +40,15 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                     <span className="article-source">来源: {article.feedName}</span>
                 </div>
                 <div className="article-actions">
-                    <a href={article.link} target="_blank" rel="noopener noreferrer" className="article-link-btn">查看原文</a>
+                    <a 
+                        href={article.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="external-link mod-primary"
+                    >
+                        <span ref={originalLinkBtnRef}></span>
+                        查看原文
+                    </a>
                 </div>
             </div>
             {tableOfContents.length > 0 && (

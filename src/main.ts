@@ -97,11 +97,24 @@ export default class RSSFlowPlugin extends Plugin {
 
     // 添加激活ReadView并打开特定文章的方法
     async activateReadView(articleId?: string): Promise<void> {
+        // 设置当前文章ID
         if (articleId) {
+            console.log('Setting current article ID:', articleId);
             this.currentArticleId = articleId;
         }
         
+        // 激活Read视图
         await this.activateView(VIEW_TYPES.READ);
+        
+        // 获取已激活的Read视图实例
+        const leaf = this.app.workspace.getLeavesOfType(VIEW_TYPES.READ)[0];
+        if (leaf && articleId) {
+            const view = leaf.view as ReadView;
+            if (view && typeof view.openArticle === 'function') {
+                // 调用视图中的openArticle方法
+                await view.openArticle(articleId);
+            }
+        }
     }
 
     async onload() {

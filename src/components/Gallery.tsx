@@ -90,6 +90,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
 
     const handleOpenInReadView = useCallback(async (articleId: string) => {
         // 打开ReadView并传递文章ID
+        console.log('Opening article in Read View:', articleId);
         await plugin.activateReadView(articleId);
     }, [plugin]);
 
