@@ -15,7 +15,7 @@ interface ReadHeaderProps {
     handleSaveHighlightsToNote: () => Promise<void>;
     exportToMarkdown: () => void;
     tableOfContents: any[];
-    scrollToToc: () => void;
+    toggleSidebar: () => void;  // 修改为toggleSidebar
     articleLink?: string;
 }
 
@@ -31,7 +31,7 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     handleSaveHighlightsToNote,
     exportToMarkdown,
     tableOfContents,
-    scrollToToc,
+    toggleSidebar,  // 修改为toggleSidebar
     articleLink
 }) => {
     // 创建refs用于设置图标
@@ -43,6 +43,7 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     const tocBtnRef = useRef<HTMLButtonElement>(null);
     const readmeBtnRef = useRef<HTMLButtonElement>(null);
     const galleryBtnRef = useRef<HTMLButtonElement>(null);
+    const sidebarBtnRef = useRef<HTMLButtonElement>(null);  // 添加边栏按钮的ref
     
     // 创建第二组按钮的refs
     const prevBtnRef = useRef<HTMLButtonElement>(null);
@@ -61,6 +62,7 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
         if (tocBtnRef.current) setIcon(tocBtnRef.current, 'list');
         if (readmeBtnRef.current) setIcon(readmeBtnRef.current, 'info');
         if (galleryBtnRef.current) setIcon(galleryBtnRef.current, 'layout-grid');
+        if (sidebarBtnRef.current) setIcon(sidebarBtnRef.current, 'star');  // 添加边栏按钮图标
         
         // 设置第二排按钮图标
         if (prevBtnRef.current) setIcon(prevBtnRef.current, 'arrow-left');
@@ -136,6 +138,13 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                     {/* 移除目录按钮 */}
                     
                     <div className="view-navigation-buttons">
+                        <button 
+                            onClick={toggleSidebar} 
+                            className="clickable-icon" 
+                            aria-label="显示/隐藏收藏边栏"
+                            title="收藏边栏"
+                            ref={sidebarBtnRef}
+                        />
                         <button 
                             onClick={goToReadmeView} 
                             className="clickable-icon" 

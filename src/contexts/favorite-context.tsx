@@ -19,6 +19,7 @@ interface FavoriteContextType {
     removeFavorite: (articleId: string, blockId: number) => void;
     isFavorited: (articleId: string, blockId: number) => boolean;
     exportToMarkdown: () => Promise<void>;
+    getFavorites: () => FavoritedBlock[]; // 添加获取所有收藏的函数
 }
 
 const FavoriteContext = createContext<FavoriteContextType | undefined>(undefined);
@@ -122,12 +123,18 @@ export const FavoriteProvider: React.FC<{
         }
     };
 
+    // 获取所有收藏
+    const getFavorites = () => {
+        return favoritedBlocks;
+    };
+
     const value = {
         favoritedBlocks,
         addFavorite,
         removeFavorite,
         isFavorited,
-        exportToMarkdown
+        exportToMarkdown,
+        getFavorites // 添加到context值中
     };
 
     return (

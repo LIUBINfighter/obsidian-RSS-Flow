@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import RSSFlowPlugin from '../main';
 import { FavoriteProvider, useFavorites } from '../contexts/favorite-context';
 import { useArticle, useReadingProgress, useReadingSettings, useTableOfContents } from '../hooks';
 import { ReadHeader, ArticleView, LoadingState, EmptyState } from './components';
+import ReadSidebar from './ReadSidebar';
 
 interface ReadProps {
     plugin: RSSFlowPlugin;
@@ -23,7 +24,15 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
     const { readingProgress, saveReadingProgress } = useReadingProgress(plugin, article);
     const { fontSize, isDarkMode, handleFontSizeChange, handleThemeChange } = useReadingSettings(plugin);
     const { tableOfContents, showToc, toggleToc, scrollToHeading } = useTableOfContents(contentBlocks);
-    const { exportToMarkdown } = useFavorites();
+    const { exportToMarkdown, getFavorites, removeFavorite } = useFavorites();
+    
+    // 边栏状态管理
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
+    
+    // 切换边栏显示状态
+    const toggleSidebar = useCallback(() => {
+        setSidebarOpen(prev => !prev);
+    }, []);
     
     // 添加滚动到目录的函数
     const scrollToToc = useCallback(() => {
@@ -118,7 +127,7 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
     }, [article, plugin]);
 
     return (
-        <div className="read-view-container" style={{ fontSize: `${fontSize}px` }}>
+        <div className={`read-view-container ${isSidebarOpen ? 'with-sidebar' : ''}`} style={{ fontSize: `${fontSize}px` }}>
             <ReadHeader 
                 fontSize={fontSize}
                 plugin={plugin}
@@ -131,28 +140,38 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                 handleSaveHighlightsToNote={handleSaveHighlightsToNote}
                 exportToMarkdown={exportToMarkdown}
                 tableOfContents={tableOfContents}
-                scrollToToc={scrollToToc}
+                toggleSidebar={toggleSidebar}
                 articleLink={article?.link}
             />
-            {loading ? (
-                <LoadingState />
-            ) : !article ? (
-                <EmptyState 
-                    plugin={plugin}
-                    handleSync={handleSync} 
-                    handleRandomArticle={handleRandomArticle} 
+            <div className="read-main-content">
+                {loading ? (
+                    <LoadingState />
+                ) : !article ? (
+                    <EmptyState 
+                        plugin={plugin}
+                        handleSync={handleSync} 
+                        handleRandomArticle={handleRandomArticle} 
+                    />
+                ) : (
+                    <ArticleView 
+                        article={article}
+                        contentBlocks={contentBlocks}
+                        tableOfContents={tableOfContents}
+                        showToc={showToc}
+                        toggleToc={toggleToc}
+                        scrollToHeading={scrollToHeading}
+                        fontSize={fontSize}
+                    />
+                )}
+                
+                <ReadSidebar 
+                    isOpen={isSidebarOpen}
+                    onToggle={toggleSidebar}
+                    favorites={getFavorites()}
+                    currentArticleId={article?.id}
+                    onRemoveFavorite={removeFavorite}
                 />
-            ) : (
-                <ArticleView 
-                    article={article}
-                    contentBlocks={contentBlocks}
-                    tableOfContents={tableOfContents}
-                    showToc={showToc}
-                    toggleToc={toggleToc}
-                    scrollToHeading={scrollToHeading}
-                    fontSize={fontSize}
-                />
-            )}
+            </div>
         </div>
     );
 };
