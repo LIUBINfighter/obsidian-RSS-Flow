@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
-import { VIEW_TYPES } from '../types';
-import RSSFlowPlugin from '../main';
+import { VIEW_TYPES } from '../../types';
+import RSSFlowPlugin from '../../main';
 import { setIcon } from 'obsidian';
 
 interface EmptyStateProps {

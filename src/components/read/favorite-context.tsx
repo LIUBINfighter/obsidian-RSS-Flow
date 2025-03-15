@@ -3,7 +3,7 @@
  */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Notice } from 'obsidian';
-import RSSFlowPlugin from '../main';
+import RSSFlowPlugin from '../../main';
 
 interface FavoritedBlock {
     id: number;

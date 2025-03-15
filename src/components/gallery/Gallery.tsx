@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { dbService } from '../services/db-service';
-import { RSSItem, FeedMeta } from '../types';
+import { dbService } from '../../services/db-service';
+import { RSSItem, FeedMeta } from '../../types';
 import { ArticleCard } from './ArticleCard';
-import RSSFlowPlugin from '../main';
+import RSSFlowPlugin from '../../main';
 import { setIcon } from 'obsidian';
 
 interface GalleryProps {

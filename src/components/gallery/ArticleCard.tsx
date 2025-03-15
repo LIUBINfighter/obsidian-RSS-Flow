@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { RSSItem } from '../types';
+import { RSSItem } from '../../types';
 import { setIcon } from 'obsidian';
-import { dbService } from '../services/db-service';
+import { dbService } from '../../services/db-service';
 
 interface ArticleCardProps {
     article: RSSItem;

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { setIcon } from 'obsidian';
-import { ContentBlock, ContentBlockType } from '../types';
-import { useFavorites } from '../contexts/favorite-context';
+import { ContentBlock, ContentBlockType } from '../../types';
+import { useFavorites } from './favorite-context';
 
 interface ContentBlockProps {
     block: ContentBlock;

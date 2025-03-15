@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { setIcon } from 'obsidian';
-import { VIEW_TYPES } from '../types';
-import RSSFlowPlugin from '../main';
+import { VIEW_TYPES } from '../../types';
+import RSSFlowPlugin from '../../main';
 
 interface ReadHeaderProps {
     fontSize: number;

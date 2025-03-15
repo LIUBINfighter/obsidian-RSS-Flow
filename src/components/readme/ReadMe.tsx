@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import RSSFlowPlugin from '../main';
+import RSSFlowPlugin from '../../main';
 import { App, Modal, Notice } from 'obsidian';
 import { Introduction } from './Introduction';
-import { RSSSource } from '../types';
+import { RSSSource } from '../../types';
 // import { Sidebar } from './Sidebar';
 
 interface ReadMeProps {

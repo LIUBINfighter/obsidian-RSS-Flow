@@ -3,7 +3,7 @@ import { ItemView, WorkspaceLeaf } from 'obsidian';
 import RSSFlowPlugin from '../main';
 import { VIEW_TYPES } from '../types';
 import { createRoot } from 'react-dom/client';
-import { Gallery } from '../components/Gallery';
+import { Gallery } from '../components/gallery/Gallery';
 import { i18n } from '../i18n/index';
 
 export class GalleryView extends ItemView {

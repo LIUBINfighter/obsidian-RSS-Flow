@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import RSSFlowPlugin from '../main';
-import { FavoriteProvider, useFavorites } from '../contexts/favorite-context';
-import { useArticle, useReadingProgress, useReadingSettings, useTableOfContents } from '../hooks';
-import { ReadHeader, ArticleView, LoadingState, EmptyState } from './components';
-import ReadSidebar from './ReadSidebar';
+import RSSFlowPlugin from '../../main';
+import { FavoriteProvider, useFavorites } from './favorite-context';
+import { useArticle, useReadingProgress, useReadingSettings, useTableOfContents } from '../../hooks';
+import { ReadHeader, ArticleView, LoadingState, EmptyState } from '../components';
+import { ReadSidebar } from './ReadSidebar';
 
 interface ReadProps {
     plugin: RSSFlowPlugin;

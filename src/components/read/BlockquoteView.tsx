@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { setIcon } from 'obsidian';
-import { ContentBlock } from '../types';
+import { ContentBlock } from '../../types';
 
-interface HeadingBlockProps {
+interface BlockquoteProps {
     block: ContentBlock;
     onFavorite: (content: string, blockId: number) => void;
 }
 
-export const HeadingBlockView: React.FC<HeadingBlockProps> = ({ block, onFavorite }) => {
+export const BlockquoteView: React.FC<BlockquoteProps> = ({ block, onFavorite }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isFavorited, setIsFavorited] = useState(false);
     const favoriteButtonRef = useRef<HTMLButtonElement>(null);
@@ -23,17 +23,14 @@ export const HeadingBlockView: React.FC<HeadingBlockProps> = ({ block, onFavorit
         onFavorite(block.content, block.id);
     };
     
-    // 动态渲染不同级别的标题
-    const HeadingTag = `h${block.level || 2}` as keyof JSX.IntrinsicElements;
-    
     return (
         <div 
-            className={`heading-block block level-${block.level} ${isHovered ? 'hovered' : ''} ${isFavorited ? 'favorited' : ''}`}
+            className={`blockquote-block block ${isHovered ? 'hovered' : ''} ${isFavorited ? 'favorited' : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            <HeadingTag 
-                className={`heading-content heading-${block.level}`}
+            <blockquote 
+                className="blockquote-content"
                 dangerouslySetInnerHTML={{ __html: block.content }}
             />
             

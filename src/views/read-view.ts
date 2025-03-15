@@ -4,7 +4,7 @@ import { ItemView, WorkspaceLeaf } from 'obsidian';
 import RSSFlowPlugin from '../main';
 import { VIEW_TYPES } from '../types';
 import { createRoot } from 'react-dom/client';
-import { Read } from '../components/Read';
+import { Read } from '../components/read/Read';
 import { i18n } from '../i18n/index';
 
 export class ReadView extends ItemView {
