@@ -1790,13 +1790,13 @@ input:checked + label .toggle-track:before {
     position: relative;
   }
   
-  .read-main-content {
+  /* .read-main-content {
     display: flex;
     flex: 1;
     overflow: hidden;
     position: relative;
   }
-  
+   */
   /* 响应式边栏样式 */
   .read-sidebar {
     position: absolute;

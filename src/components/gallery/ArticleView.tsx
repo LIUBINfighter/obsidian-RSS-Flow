@@ -36,7 +36,6 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
     // 简化视图模式（原components子文件夹下的ArticleView功能）
     if (simpleView) {
         return (
-            <div className="article-container">
                 <div className="article-view">
                     <h1 className="article-title">{article.title}</h1>
                     <div className="article-meta">
@@ -79,14 +78,13 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                         ))}
                     </div>
                 </div>
-            </div>
         );
     }
     
     // 默认视图模式（原components文件夹下的ArticleView功能）
     return (
-        <div className="article-container" style={{ fontSize: fontSize ? `${fontSize}px` : undefined }}>
-            <div className="article-header">
+        <>
+            <div className="article-header"style={{ fontSize: fontSize ? `${fontSize}px` : undefined }}>
                 <h2 className="article-title">{article.title}</h2>
                 <div className="article-meta">
                     {article.author && <span className="article-author">by {article.author}</span>}
@@ -111,6 +109,6 @@ export const ArticleView: React.FC<ArticleViewProps> = ({
                     {article.tags.map(tag => <span key={tag} className="article-tag">#{tag}</span>)}
                 </div>
             )}
-        </div>
+        </>
     );
 };

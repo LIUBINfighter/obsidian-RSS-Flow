@@ -146,11 +146,11 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
             />
             <div className="read-main-content">
                 {loading ? (
-                    <div className="article-container">
+                    <div>
                         <LoadingState />
                     </div>
                 ) : !article ? (
-                    <div className="article-container">
+                    <div>
                         <EmptyState 
                             plugin={plugin}
                             handleSync={handleSync} 
