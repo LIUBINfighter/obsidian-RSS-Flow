@@ -3,7 +3,7 @@ import RSSFlowPlugin from '../main';
 import { App, Modal, Notice } from 'obsidian';
 import { Introduction } from './Introduction';
 import { RSSSource } from '../types';
-import { Sidebar } from './Sidebar';
+// import { Sidebar } from './Sidebar';
 
 interface ReadMeProps {
     app: App;
@@ -314,10 +314,10 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
 
     return (
         <div className={`readme-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
-            <Sidebar
+            {/* <Sidebar
                 isOpen={isSidebarOpen}
                 onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-            />
+            /> */}
             <div className={`content ${isSidebarOpen ? 'with-sidebar' : ''}`}>
                 <div className="language-selector">
                     <select onChange={handleLanguageChange}>

@@ -273,7 +273,7 @@ export const Introduction: React.FC<{ app: App }> = ({ app }) => {
                 <div className="rss-sources-header">
                     <h2>{t('rss.sources.title', '订阅源')}</h2>
                     <div className="rss-sources-actions">
-                        <button className="rss-action-btn" aria-label="导入" ref={(el) => { if (el) setIcon(el, 'download'); }} onClick={() => setShowImportModal(true)}></button>
+                        <button className="rss-action-btn" aria-label="导入" ref={(el) => { if (el) setIcon(el, 'download'); }} onClick={handleImport}></button>
                         <button className="rss-action-btn" aria-label="导出" ref={(el) => { if (el) setIcon(el, 'upload'); }} onClick={handleExport}></button>
                     </div>
                 </div>
