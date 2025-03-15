@@ -1926,3 +1926,29 @@ input:checked + label .toggle-track:before {
   .theme-light .read-sidebar {
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
   }
+
+
+  /* 已读文章样式 */
+.article-card.article-read {
+    opacity: 0.8;
+    border-left: 3px solid var(--text-muted);
+}
+
+.article-card.article-read .article-card-title {
+    color: var(--text-muted);
+}
+
+.article-card-read-status {
+    font-size: 0.8em;
+    padding: 2px 6px;
+    background-color: var(--background-modifier-success);
+    color: var(--text-on-accent);
+    border-radius: 4px;
+    margin-left: 6px;
+}
+
+/* 已读/未读切换按钮高亮 */
+.article-card-action.active {
+    background-color: var(--background-modifier-hover);
+    color: var(--text-accent);
+}

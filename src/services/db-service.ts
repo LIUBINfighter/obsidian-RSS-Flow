@@ -377,27 +377,128 @@ export class DBService {
      */
     async markItemAsRead(itemId: string): Promise<void> {
         try {
-            // 获取数据库引用
-            const db = await this.getDB();
-            
-            // 查找文章
-            const tx = db.transaction('items', 'readwrite');
-            const store = tx.objectStore('items');
-            const item = await store.get(itemId);
-            
-            if (item) {
-                // 更新已读状态
-                item.isRead = true;
-                await store.put(item);
-                console.log(`文章已标记为已读: ${itemId}`);
-            } else {
-                console.warn(`未找到要标记为已读的文章: ${itemId}`);
+            // 确保数据库已初始化
+            if (!this.db) {
+                await this.init();
             }
             
-            await tx.done;
+            if (!this.db) {
+                throw new Error('数据库未初始化');
+            }
+            
+            // 使用已存在的 db 属性而不是 getDB 方法
+            const transaction = this.db.transaction([STORES.ITEMS], 'readwrite');
+            const store = transaction.objectStore(STORES.ITEMS);
+            
+            // 获取文章
+            const getRequest = store.get(itemId);
+            
+            getRequest.onsuccess = () => {
+                const item = getRequest.result;
+                if (item) {
+                    // 更新已读状态
+                    item.isRead = true;
+                    const putRequest = store.put(item);
+                    
+                    putRequest.onsuccess = () => {
+                        console.log(`文章已标记为已读: ${itemId}`);
+                    };
+                    
+                    putRequest.onerror = (event) => {
+                        console.error('更新文章已读状态失败:', event);
+                    };
+                } else {
+                    console.warn(`未找到要标记为已读的文章: ${itemId}`);
+                }
+            };
+            
+            getRequest.onerror = (event) => {
+                console.error('获取文章失败:', event);
+            };
         } catch (error) {
             console.error('标记文章为已读时出错:', error);
         }
+    }
+
+    /**
+     * 获取已读文章
+     */
+    async getReadItems(): Promise<RSSItem[]> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        return new Promise((resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            const transaction = this.db.transaction([STORES.ITEMS], 'readonly');
+            const store = transaction.objectStore(STORES.ITEMS);
+            const index = store.index('isRead');
+            
+            // 使用IDBKeyRange.only()创建精确匹配的键范围
+            const keyRange = IDBKeyRange.only(true);
+            const request = index.getAll(keyRange);
+            
+            request.onsuccess = () => {
+                resolve(request.result);
+            };
+            
+            request.onerror = (event) => {
+                console.error('获取已读文章失败:', event);
+                reject([]);
+            };
+        });
+    }
+
+    /**
+     * 更新文章已读状态
+     * @param id 文章ID
+     * @param isRead 已读状态
+     */
+    async setReadStatus(id: string, isRead: boolean): Promise<boolean> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        return new Promise(async (resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            try {
+                // 先获取当前文章
+                const item = await this.getItemById(id);
+                if (!item) {
+                    reject(new Error('文章不存在'));
+                    return;
+                }
+                
+                // 设置已读状态
+                item.isRead = isRead;
+                
+                // 更新文章
+                const transaction = this.db.transaction([STORES.ITEMS], 'readwrite');
+                const store = transaction.objectStore(STORES.ITEMS);
+                
+                const request = store.put(item);
+                
+                request.onsuccess = () => {
+                    resolve(true);
+                };
+                
+                request.onerror = (event) => {
+                    console.error('更新已读状态失败:', event);
+                    reject(false);
+                };
+            } catch (error) {
+                console.error('更新已读状态失败:', error);
+                reject(false);
+            }
+        });
     }
 }
 

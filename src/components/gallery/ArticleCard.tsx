@@ -11,12 +11,14 @@ interface ArticleCardProps {
 
 export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadView, onRefresh }) => {
     const [isFavorite, setIsFavorite] = useState<boolean>(article.isFavorite);
+    const [isRead, setIsRead] = useState<boolean>(article.isRead);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     
     // 使用 useRef 替代直接在 ref 属性中使用函数
     const favoriteButtonRef = useRef<HTMLButtonElement>(null);
     const browserButtonRef = useRef<HTMLButtonElement>(null);
     const readButtonRef = useRef<HTMLButtonElement>(null);
+    const readStatusButtonRef = useRef<HTMLButtonElement>(null);
     
     // 使用 useEffect 设置图标
     useEffect(() => {
@@ -29,7 +31,10 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
         if (readButtonRef.current) {
             setIcon(readButtonRef.current, 'book-open');
         }
-    }, [isFavorite]);
+        if (readStatusButtonRef.current) {
+            setIcon(readStatusButtonRef.current, isRead ? 'eye' : 'eye-off');
+        }
+    }, [isFavorite, isRead]);
     
     const handleToggleFavorite = async (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -46,6 +51,23 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
         }
     };
     
+    const handleToggleReadStatus = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsLoading(true);
+        
+        try {
+            // 切换已读状态
+            const newReadState = !isRead;
+            await dbService.setReadStatus(article.id, newReadState);
+            setIsRead(newReadState);
+            if (onRefresh) onRefresh();
+        } catch (error) {
+            console.error('无法更新已读状态:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
     const handleOpenInBrowser = (e: React.MouseEvent) => {
         e.stopPropagation();
         window.open(article.link, '_blank');
@@ -54,6 +76,14 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
     const handleOpenInReadView = (e: React.MouseEvent) => {
         e.stopPropagation();
         onOpenInReadView(article.id);
+        
+        // 打开阅读视图时自动标记为已读
+        if (!isRead) {
+            dbService.markItemAsRead(article.id).then(() => {
+                setIsRead(true);
+                if (onRefresh) onRefresh();
+            });
+        }
     };
     
     const formatDate = (dateString: string) => {
@@ -62,7 +92,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
     };
     
     return (
-        <div className="article-card">
+        <div className={`article-card ${isRead ? 'article-read' : ''}`}>
             {article.imageUrl && (
                 <div className="article-card-image">
                     <img src={article.imageUrl} alt={article.title} />
@@ -78,6 +108,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                     {article.folder && (
                         <span className="article-card-folder">{article.folder}</span>
                     )}
+                    {isRead && (
+                        <span className="article-card-read-status">已读</span>
+                    )}
                 </div>
                 
                 <p className="article-card-summary">{article.summary}</p>
@@ -90,6 +123,14 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                     disabled={isLoading}
                     title={isFavorite ? '取消收藏' : '添加收藏'}
                     ref={favoriteButtonRef}
+                ></button>
+                
+                <button
+                    className={`article-card-action ${isRead ? 'active' : ''}`}
+                    onClick={handleToggleReadStatus}
+                    disabled={isLoading}
+                    title={isRead ? '标记为未读' : '标记为已读'}
+                    ref={readStatusButtonRef}
                 ></button>
                 
                 <button
