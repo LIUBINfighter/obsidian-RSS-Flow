@@ -372,6 +372,133 @@ export class DBService {
     }
 
     /**
+     * 删除指定URL的Feed
+     * @param url Feed的URL
+     */
+    async deleteFeedByUrl(url: string): Promise<boolean> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        return new Promise((resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            const transaction = this.db.transaction([STORES.FEEDS], 'readwrite');
+            const store = transaction.objectStore(STORES.FEEDS);
+            
+            const request = store.delete(url);
+            
+            request.onsuccess = () => {
+                console.log(`成功删除Feed: ${url}`);
+                resolve(true);
+            };
+            
+            request.onerror = (event) => {
+                console.error('删除Feed失败:', event);
+                reject(false);
+            };
+        });
+    }
+
+    /**
+     * 删除与特定Feed URL关联的所有文章
+     * @param feedUrl Feed的URL
+     */
+    async deleteItemsByFeedUrl(feedUrl: string): Promise<boolean> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        return new Promise((resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            const transaction = this.db.transaction([STORES.ITEMS], 'readwrite');
+            const store = transaction.objectStore(STORES.ITEMS);
+            const index = store.index('feedUrl');
+            
+            // 先获取所有匹配的文章
+            const getRequest = index.getAll(feedUrl);
+            
+            getRequest.onsuccess = () => {
+                const items = getRequest.result;
+                if (items.length === 0) {
+                    resolve(true);
+                    return;
+                }
+                
+                let deletedCount = 0;
+                items.forEach(item => {
+                    const deleteRequest = store.delete(item.id);
+                    
+                    deleteRequest.onsuccess = () => {
+                        deletedCount++;
+                        if (deletedCount === items.length) {
+                            console.log(`成功删除${deletedCount}篇与Feed ${feedUrl} 相关的文章`);
+                            resolve(true);
+                        }
+                    };
+                    
+                    deleteRequest.onerror = (event) => {
+                        console.error('删除文章失败:', event);
+                        reject(false);
+                    };
+                });
+            };
+            
+            getRequest.onerror = (event) => {
+                console.error('获取Feed相关文章失败:', event);
+                reject(false);
+            };
+        });
+    }
+
+    /**
+     * 清理不再存在于有效列表中的Feeds及其相关文章
+     * @param validFeedUrls 有效的Feed URL列表
+     */
+    async cleanupOrphanedFeeds(validFeedUrls: string[]): Promise<boolean> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        try {
+            // 获取所有存储的feeds
+            const storedFeeds = await this.getAllFeeds();
+            
+            // 找出需要删除的feeds (存在于数据库但不在有效列表中)
+            const feedsToDelete = storedFeeds.filter(feed => !validFeedUrls.includes(feed.url));
+            
+            if (feedsToDelete.length === 0) {
+                console.log('没有需要删除的feeds');
+                return true;
+            }
+            
+            console.log(`发现${feedsToDelete.length}个需要删除的feeds`);
+            
+            // 对每个需要删除的feed执行删除操作
+            for (const feed of feedsToDelete) {
+                // 先删除相关的文章
+                await this.deleteItemsByFeedUrl(feed.url);
+                
+                // 然后删除feed本身
+                await this.deleteFeedByUrl(feed.url);
+            }
+            
+            console.log(`成功清理了${feedsToDelete.length}个过期的feeds及其相关文章`);
+            return true;
+        } catch (error) {
+            console.error('清理过期feeds时出错:', error);
+            return false;
+        }
+    }
+
+    /**
      * 将文章标记为已读
      * @param itemId 文章ID
      */
@@ -499,6 +626,39 @@ export class DBService {
                 reject(false);
             }
         });
+    }
+
+    /**
+     * 数据库与配置同步方法
+     * 确保IndexedDB中的feeds与配置文件中的feeds保持一致
+     * @param validFeeds 配置文件中的有效feeds
+     */
+    async synchronizeWithConfig(validFeeds: FeedMeta[]): Promise<boolean> {
+        try {
+            if (!this.db) {
+                await this.init();
+            }
+            
+            // 提取所有有效的feed URLs
+            const validFeedUrls = validFeeds.map(feed => feed.url);
+            
+            // 清理不在配置中的feeds
+            const cleanupResult = await this.cleanupOrphanedFeeds(validFeedUrls);
+            if (!cleanupResult) {
+                console.error('清理过期feeds失败');
+            }
+            
+            // 更新或添加当前有效的feeds元数据
+            for (const feed of validFeeds) {
+                await this.saveFeedMeta(feed);
+            }
+            
+            console.log('数据库与配置同步完成');
+            return true;
+        } catch (error) {
+            console.error('数据库与配置同步失败:', error);
+            return false;
+        }
     }
 }
 

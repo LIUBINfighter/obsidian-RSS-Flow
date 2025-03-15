@@ -5,6 +5,7 @@ import { VIEW_TYPES } from '../types';
 import { createRoot } from 'react-dom/client';
 import { Gallery } from '../components/gallery/Gallery';
 import { i18n } from '../i18n/index';
+import { dbService } from '../services/db-service';
 
 export class GalleryView extends ItemView {
     private activeLeafHandler: () => void;
@@ -38,6 +39,19 @@ export class GalleryView extends ItemView {
         this.activeLeafHandler = () => this.clearStatusBar();
         this.app.workspace.on('active-leaf-change', this.activeLeafHandler);
     
+        // 在加载视图前进行数据同步
+        try {
+            // 从插件设置中获取有效的Feed列表
+            const pluginData = await this.plugin.loadData() || {};
+            const validFeeds = pluginData.feeds || [];
+            
+            // 同步数据库与配置文件
+            await dbService.synchronizeWithConfig(validFeeds);
+            console.log('Gallery视图打开时已同步数据库与配置');
+        } catch (error) {
+            console.error('Gallery视图打开时同步数据失败:', error);
+        }
+        
         const container = this.containerEl.children[1];
         container.empty();
         container.addClass('gallery-view-container');
