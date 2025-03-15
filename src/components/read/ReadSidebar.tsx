@@ -27,7 +27,11 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
     const toggleBtnRef = useRef<HTMLButtonElement>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [isResizing, setIsResizing] = useState(false);
-    const [sidebarWidth, setSidebarWidth] = useState(300);
+    const [sidebarWidth, setSidebarWidth] = useState(() => {
+        // 从localStorage获取保存的宽度，默认300
+        const savedWidth = localStorage.getItem('rss-flow-sidebar-width');
+        return savedWidth ? parseInt(savedWidth) : 300;
+    });
     
     // 根据当前文章过滤收藏内容
     const currentArticleFavorites = currentArticleId
@@ -58,7 +62,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
             
             // 更新宽度
             if (sidebarRef.current) {
-                sidebarRef.current.style.setProperty('--sidebar-width', `${newWidth}px`);
+                sidebarRef.current.style.width = `${newWidth}px`;
             }
             
             setSidebarWidth(newWidth);
@@ -83,10 +87,6 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
         if (savedWidth) {
             const width = parseInt(savedWidth);
             setSidebarWidth(width);
-            
-            if (sidebarRef.current) {
-                sidebarRef.current.style.setProperty('--sidebar-width', `${width}px`);
-            }
         }
     }, []);
     
@@ -98,36 +98,119 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
     }, [isOpen]);
     
     return (
-        <div 
-            className={`read-sidebar ${isOpen ? 'open' : ''}`}
-            ref={sidebarRef}
-            style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}
-        >
+        <>
+            {/* 边栏切换按钮 - 始终可见 */}
             <button 
-                className="sidebar-toggle clickable-icon" 
+                className="sidebar-toggle-floating clickable-icon" 
                 ref={toggleBtnRef}
                 onClick={onToggle}
                 aria-label={isOpen ? "收起边栏" : "展开边栏"}
                 title={isOpen ? "收起边栏" : "展开边栏"}
-                style={{ top: '40px', right: '10px', position: 'fixed' }}
+                style={{ 
+                    position: 'fixed',
+                    top: '80px',
+                    right: isOpen ? `${sidebarWidth + 10}px` : '10px',
+                    zIndex: 1000,
+                    transition: 'right 0.3s ease-in-out',
+                    backgroundColor: 'var(--background-primary)',
+                    borderRadius: '50%',
+                    boxShadow: '0 2px 8px var(--background-modifier-border)',
+                    width: '32px',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    border: '1px solid var(--background-modifier-border)'
+                }}
             />
             
-            {isOpen && (
+            {/* 悬浮侧边栏 */}
+            <div 
+                className={`read-sidebar ${isOpen ? 'open' : ''}`}
+                ref={sidebarRef}
+                style={{ 
+                    position: 'fixed',
+                    top: 0,
+                    right: 0,
+                    height: '100%',
+                    width: `${sidebarWidth}px`,
+                    backgroundColor: 'var(--background-primary)', 
+                    borderLeft: '1px solid var(--background-modifier-border)',
+                    boxShadow: '-2px 0 8px rgba(0, 0, 0, 0.1)',
+                    zIndex: 999,
+                    transform: isOpen ? 'translateX(0)' : `translateX(100%)`,
+                    transition: 'transform 0.3s ease-in-out',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden'
+                }}
+            >
+                {/* 调整大小的手柄 */}
                 <div 
                     className={`sidebar-resize-handle ${isResizing ? 'active' : ''}`}
                     onMouseDown={startResize}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '6px',
+                        height: '100%',
+                        cursor: 'col-resize',
+                        backgroundColor: 'transparent',
+                        '&:hover': {
+                            backgroundColor: 'var(--interactive-accent)'
+                        }
+                    }}
                 />
-            )}
-            
-            <div className="sidebar-content">
-                <h3>收藏内容</h3>
                 
-                {currentArticleId && (
-                    <>
-                        <h4>当前文章</h4>
-                        {currentArticleFavorites.length > 0 ? (
-                            <div className="favorites-list">
-                                {currentArticleFavorites.map(fav => (
+                {/* 边栏内容 */}
+                <div className="sidebar-content" style={{ 
+                    padding: '16px', 
+                    height: '100%', 
+                    overflowY: 'auto',
+                    paddingTop: '48px' // 为顶部按钮留出空间
+                }}>
+                    <h3>收藏内容</h3>
+                    
+                    {currentArticleId && (
+                        <>
+                            <h4>当前文章</h4>
+                            {currentArticleFavorites.length > 0 ? (
+                                <div className="favorites-list">
+                                    {currentArticleFavorites.map(fav => (
+                                        <div key={`${fav.articleId}-${fav.id}`} className="favorite-item">
+                                            <div 
+                                                className="favorite-text"
+                                                dangerouslySetInnerHTML={{ __html: fav.text }}
+                                            />
+                                            <div className="favorite-actions">
+                                                <div className="favorite-source">{fav.source}</div>
+                                                <div className="favorite-timestamp">{new Date(fav.timestamp).toLocaleString()}</div>
+                                                {onRemoveFavorite && (
+                                                    <button 
+                                                        className="remove-favorite small-button"
+                                                        onClick={() => onRemoveFavorite(fav.articleId, fav.id)}
+                                                        title="移除收藏"
+                                                    >
+                                                        移除
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="empty-message">当前文章没有收藏内容</p>
+                            )}
+                        </>
+                    )}
+                    
+                    {otherArticleFavorites.length > 0 && (
+                        <>
+                            <h4>其他文章</h4>
+                            <div className="favorites-list other-articles">
+                                {otherArticleFavorites.map(fav => (
                                     <div key={`${fav.articleId}-${fav.id}`} className="favorite-item">
                                         <div 
                                             className="favorite-text"
@@ -149,46 +232,15 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                                     </div>
                                 ))}
                             </div>
-                        ) : (
-                            <p className="empty-message">当前文章没有收藏内容</p>
-                        )}
-                    </>
-                )}
-                
-                {otherArticleFavorites.length > 0 && (
-                    <>
-                        <h4>其他文章</h4>
-                        <div className="favorites-list other-articles">
-                            {otherArticleFavorites.map(fav => (
-                                <div key={`${fav.articleId}-${fav.id}`} className="favorite-item">
-                                    <div 
-                                        className="favorite-text"
-                                        dangerouslySetInnerHTML={{ __html: fav.text }}
-                                    />
-                                    <div className="favorite-actions">
-                                        <div className="favorite-source">{fav.source}</div>
-                                        <div className="favorite-timestamp">{new Date(fav.timestamp).toLocaleString()}</div>
-                                        {onRemoveFavorite && (
-                                            <button 
-                                                className="remove-favorite small-button"
-                                                onClick={() => onRemoveFavorite(fav.articleId, fav.id)}
-                                                title="移除收藏"
-                                            >
-                                                移除
-                                            </button>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </>
-                )}
-                
-                {favorites.length === 0 && (
-                    <p className="empty-message">暂无收藏内容</p>
-                )}
+                        </>
+                    )}
+                    
+                    {favorites.length === 0 && (
+                        <p className="empty-message">暂无收藏内容</p>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

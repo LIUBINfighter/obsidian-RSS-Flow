@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import RSSFlowPlugin from '../../main';
 import { FavoriteProvider, useFavorites } from './favorite-context';
 import { useArticle, useReadingProgress, useReadingSettings, useTableOfContents } from '../../hooks';
@@ -127,7 +127,7 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
     }, [article, plugin]);
 
     return (
-        <div className={`read-view-container ${isSidebarOpen ? 'with-sidebar' : ''}`} style={{ fontSize: `${fontSize}px` }}>
+        <div className="read-view-container" style={{ fontSize: `${fontSize}px` }}>
             <ReadHeader 
                 fontSize={fontSize}
                 plugin={plugin}
@@ -141,16 +141,17 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                 exportToMarkdown={exportToMarkdown}
                 tableOfContents={tableOfContents}
                 toggleSidebar={toggleSidebar}
-                toggleToc={toggleToc}  // 传递toggleToc函数
+                isSidebarOpen={isSidebarOpen} // 添加状态传递到Header
+                toggleToc={toggleToc} 
                 articleLink={article?.link}
             />
             <div className="read-main-content">
                 {loading ? (
-                    <div>
+                    <div className="article-container">
                         <LoadingState />
                     </div>
                 ) : !article ? (
-                    <div>
+                    <div className="article-container">
                         <EmptyState 
                             plugin={plugin}
                             handleSync={handleSync} 

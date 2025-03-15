@@ -15,8 +15,9 @@ interface ReadHeaderProps {
     handleSaveHighlightsToNote: () => Promise<void>;
     exportToMarkdown: () => void;
     tableOfContents: any[];
-    toggleSidebar: () => void;  // 修改为toggleSidebar
-    toggleToc: () => void;  // 添加toggleToc属性
+    toggleSidebar: () => void;
+    isSidebarOpen: boolean; // 添加侧边栏状态
+    toggleToc: () => void;
     articleLink?: string;
 }
 
@@ -32,8 +33,9 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     handleSaveHighlightsToNote,
     exportToMarkdown,
     tableOfContents,
-    toggleSidebar,  // 修改为toggleSidebar
-    toggleToc,  // 添加toggleToc参数
+    toggleSidebar,
+    isSidebarOpen, // 接收侧边栏状态
+    toggleToc,
     articleLink
 }) => {
     // 创建refs用于设置图标
@@ -64,7 +66,7 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
         if (tocBtnRef.current) setIcon(tocBtnRef.current, 'list');
         if (readmeBtnRef.current) setIcon(readmeBtnRef.current, 'info');
         if (galleryBtnRef.current) setIcon(galleryBtnRef.current, 'layout-grid');
-        if (sidebarBtnRef.current) setIcon(sidebarBtnRef.current, 'star');  // 添加边栏按钮图标
+        if (sidebarBtnRef.current) setIcon(sidebarBtnRef.current, isSidebarOpen ? 'star-fill' : 'star');  // 添加边栏按钮图标
         
         // 设置第二排按钮图标
         if (prevBtnRef.current) setIcon(prevBtnRef.current, 'arrow-left');
@@ -72,7 +74,7 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
         if (browserBtnRef.current) setIcon(browserBtnRef.current, 'external-link');
         if (saveNoteBtnRef.current) setIcon(saveNoteBtnRef.current, 'file-text');
         if (saveHighlightsBtnRef.current) setIcon(saveHighlightsBtnRef.current, 'text-select');
-    }, []);
+    }, [isSidebarOpen]); // 添加依赖项，确保状态变化时图标更新
     
     // 添加导航视图函数
     const goToReadmeView = () => {
@@ -141,10 +143,10 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                     
                     <div className="view-navigation-buttons">
                         <button 
-                            onClick={toggleSidebar} 
-                            className="clickable-icon" 
-                            aria-label="显示/隐藏收藏边栏"
-                            title="收藏边栏"
+                            onClick={toggleSidebar} // 这个按钮仍然绑定toggleSidebar事件
+                            className={`clickable-icon ${isSidebarOpen ? 'active' : ''}`} 
+                            aria-label="收藏管理"
+                            title="收藏管理"
                             ref={sidebarBtnRef}
                         />
                         <button 
