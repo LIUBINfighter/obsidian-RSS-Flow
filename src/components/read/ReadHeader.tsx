@@ -93,7 +93,10 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
         <div className="read-header">
             <div className="read-header-top">
                 <h2>{t('read.header.title', 'RSS Flow Reader')}</h2>
-                <div className="read-actions primary-actions">
+            </div>
+            
+            <div className="read-header-bottom">
+                <div className="read-actions">
                     <div className="read-actions-group">
                         <button 
                             onClick={handleRandomArticle} 
@@ -151,11 +154,7 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                             ref={galleryBtnRef}
                         />
                     </div>
-                </div>
-            </div>
-            
-            <div className="read-header-bottom">
-                <div className="read-actions secondary-actions">
+                    
                     <div className="article-navigation-buttons">
                         <button 
                             onClick={handlePrevArticle} 
