@@ -3,84 +3,13 @@ import RSSFlowPlugin from '../../main';
 import { App, Modal, Notice } from 'obsidian';
 import { Introduction } from './Introduction';
 import { RSSSource } from '../../types';
+import { parseOPML, generateOPML } from '../../utils/xml-utils';
 // import { Sidebar } from './Sidebar';
 
 interface ReadMeProps {
     app: App;
     plugin: RSSFlowPlugin;
     onLocaleChange?: (locale: string) => void;
-}
-
-// 添加解析OPML的函数
-function parseOPML(xmlContent: string): RSSSource[] {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xmlContent, "text/xml");
-    
-    // 检查解析错误
-    const parserError = xmlDoc.querySelector('parsererror');
-    if (parserError) {
-        throw new Error('XML解析错误');
-    }
-    
-    const sources: RSSSource[] = [];
-    const outlines = xmlDoc.querySelectorAll('outline[type="rss"], outline[type="atom"], outline[xmlUrl]');
-    
-    outlines.forEach(outline => {
-        const title = outline.getAttribute('title') || outline.getAttribute('text') || '未命名源';
-        const url = outline.getAttribute('xmlUrl');
-        // 尝试从父节点获取分类信息
-        let folder = '默认分类';
-        const parentOutline = outline.parentElement;
-        if (parentOutline && parentOutline.tagName === 'outline' && !parentOutline.getAttribute('xmlUrl')) {
-            folder = parentOutline.getAttribute('title') || parentOutline.getAttribute('text') || '默认分类';
-        }
-        
-        if (url) {
-            sources.push({
-                name: title,
-                url: url,
-                folder: folder
-            });
-        }
-    });
-    
-    return sources;
-}
-
-// 添加生成OPML的函数
-function generateOPML(sources: RSSSource[]): string {
-    // 按分类分组
-    const folderMap = new Map<string, RSSSource[]>();
-    sources.forEach(source => {
-        if (!folderMap.has(source.folder)) {
-            folderMap.set(source.folder, []);
-        }
-        folderMap.get(source.folder)?.push(source);
-    });
-    
-    let opmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-<opml version="1.0">
-  <head>
-    <title>RSS Flow Subscriptions</title>
-  </head>
-  <body>
-`;
-    
-    // 添加每个分类和源
-    folderMap.forEach((sourcesInFolder, folder) => {
-        opmlContent += `    <outline text="${folder}" title="${folder}">\n`;
-        
-        sourcesInFolder.forEach(source => {
-            opmlContent += `      <outline text="${source.name}" title="${source.name}" type="rss" xmlUrl="${source.url}"/>\n`;
-        });
-        
-        opmlContent += `    </outline>\n`;
-    });
-    
-    opmlContent += `  </body>
-</opml>`;
-
-    return opmlContent;
 }
 
 export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) => {
@@ -90,8 +19,17 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
     // 加载RSS源数据
     useEffect(() => {
         async function loadData() {
-            const data = await plugin.loadData() || {};
-            setSources(data.feeds || []);
+            if (!plugin || !plugin.loadData) {
+                console.error('Plugin or plugin.loadData is undefined');
+                return;
+            }
+            
+            try {
+                const data = await plugin.loadData() || {};
+                setSources(data.feeds || []);
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
         }
         loadData();
     }, [plugin]);
@@ -226,33 +164,45 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
                 reader.onload = async (e) => {
                     try {
                         const content = e.target?.result as string;
-                        const parsedSources = parseOPML(content);
+                        // 添加日志以帮助调试
+                        console.log('OPML内容预览:', content.substring(0, 200) + '...');
                         
-                        if (parsedSources.length === 0) {
-                            new Notice('未找到有效的RSS源');
-                            return;
+                        try {
+                            const parsedSources = parseOPML(content);
+                            
+                            if (parsedSources.length === 0) {
+                                new Notice('未找到有效的RSS源');
+                                return;
+                            }
+                            
+                            // 合并现有源和新导入的源，避免重复
+                            const existingUrls = new Set(sources.map(s => s.url));
+                            const newSources = parsedSources.filter(s => !existingUrls.has(s.url));
+                            
+                            const updatedSources = [...sources, ...newSources];
+                            setSources(updatedSources);
+                            
+                            // 保存到plugin数据
+                            if (plugin && plugin.loadData && plugin.saveData) {
+                                const data = await plugin.loadData() || {};
+                                await plugin.saveData({
+                                    ...data,
+                                    feeds: updatedSources
+                                });
+                                
+                                // 同步新导入的源
+                                if (plugin.syncRSSFeeds) {
+                                    await plugin.syncRSSFeeds();
+                                }
+                            } else {
+                                console.error('插件方法不可用');
+                            }
+                            
+                            new Notice(`成功导入 ${newSources.length} 个RSS源`);
+                        } catch (error) {
+                            console.error('导入OPML解析出错:', error);
+                            new Notice('解析OPML文件失败: ' + (error as Error).message);
                         }
-                        
-                        // 合并现有源和新导入的源，避免重复
-                        const existingUrls = new Set(sources.map(s => s.url));
-                        const newSources = parsedSources.filter(s => !existingUrls.has(s.url));
-                        
-                        const updatedSources = [...sources, ...newSources];
-                        setSources(updatedSources);
-                        
-                        // 保存到plugin数据
-                        const data = await plugin.loadData() || {};
-                        await plugin.saveData({
-                            ...data,
-                            feeds: updatedSources
-                        });
-                        
-                        // 同步新导入的源
-                        if (plugin.syncRSSFeeds) {
-                            await plugin.syncRSSFeeds();
-                        }
-                        
-                        new Notice(`成功导入 ${newSources.length} 个RSS源`);
                     } catch (error) {
                         console.error('导入OPML出错:', error);
                         new Notice('导入OPML文件失败: ' + (error as Error).message);
@@ -295,16 +245,20 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
         }
     };
     
-    // 更新源顺序
-    const handleSaveOrder = async (updatedSources: RSSSource[]) => {
+    // 保存源数据到插件
+    const handleSaveSources = async (updatedSources: RSSSource[]) => {
         setSources(updatedSources);
         
         // 保存到plugin数据
-        const data = await plugin.loadData() || {};
-        await plugin.saveData({
-            ...data,
-            feeds: updatedSources
-        });
+        if (plugin && plugin.loadData && plugin.saveData) {
+            const data = await plugin.loadData() || {};
+            await plugin.saveData({
+                ...data,
+                feeds: updatedSources
+            });
+        } else {
+            console.error('Plugin methods are unavailable');
+        }
     };
 
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -337,7 +291,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
                         onDeleteSource={handleDeleteSource}
                         onImport={handleImport}
                         onExport={handleExport}
-                        onSaveOrder={handleSaveOrder}
+                        onSaveSources={handleSaveSources}
                     />
                 </div>
             </div>

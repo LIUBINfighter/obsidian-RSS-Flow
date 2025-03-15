@@ -1952,3 +1952,41 @@ input:checked + label .toggle-track:before {
     background-color: var(--background-modifier-hover);
     color: var(--text-accent);
 }
+
+
+.rss-import-export {
+	display: flex;
+	justify-content: flex-end;
+	margin-bottom: 15px;
+	padding: 0 10px;
+  }
+  
+  .rss-import-export-actions {
+	display: flex;
+	gap: 10px;
+  }
+  
+  .rss-import-export-actions button {
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border: none;
+	border-radius: 4px;
+	padding: 5px 10px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+  }
+  
+  .rss-import-export-actions button:hover {
+	background-color: var(--interactive-accent-hover);
+  }
+  
+  .rss-controls-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 15px;
+  }
+  
