@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { setIcon } from 'obsidian';
 import { VIEW_TYPES } from '../../types';
 import RSSFlowPlugin from '../../main';
+import { useTranslation } from 'react-i18next';
 
 interface ReadHeaderProps {
     fontSize: number;
@@ -34,6 +35,8 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     isSidebarOpen,
     articleLink
 }) => {
+    const { t } = useTranslation();
+    
     // 创建refs用于设置图标
     const randomBtnRef = useRef<HTMLButtonElement>(null);
     const syncBtnRef = useRef<HTMLButtonElement>(null);
@@ -89,28 +92,25 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     return (
         <div className="read-header">
             <div className="read-header-top">
-                <h2>RSS Flow Reader</h2>
+                <h2>{t('read.header.title', 'RSS Flow Reader')}</h2>
                 <div className="read-actions primary-actions">
                     <div className="read-actions-group">
                         <button 
                             onClick={handleRandomArticle} 
                             className="clickable-icon" 
-                            aria-label="随机阅读"
-                            title="随机阅读"
+                            aria-label={t('read.header.tooltip.random')}
                             ref={randomBtnRef}
                         />
                         <button 
                             onClick={handleSync} 
                             className="clickable-icon" 
-                            aria-label="同步RSS"
-                            title="同步RSS"
+                            aria-label={t('read.header.tooltip.sync')}
                             ref={syncBtnRef}
                         />
                         <button 
                             onClick={exportToMarkdown} 
                             className="clickable-icon" 
-                            aria-label="导出收藏为Markdown"
-                            title="导出收藏"
+                            aria-label={t('read.header.tooltip.export')}
                             ref={exportBtnRef}
                         />
                     </div>
@@ -119,16 +119,14 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                         <button 
                             onClick={() => handleFontSizeChange(-1)} 
                             className="clickable-icon" 
-                            aria-label="减小字体"
-                            title="减小字体"
+                            aria-label={t('read.header.tooltip.decreaseFont')}
                             ref={fontDecreaseBtnRef}
                         />
                         <span className="font-size-display">{fontSize}px</span>
                         <button 
                             onClick={() => handleFontSizeChange(1)} 
                             className="clickable-icon" 
-                            aria-label="增大字体"
-                            title="增大字体"
+                            aria-label={t('read.header.tooltip.increaseFont')}
                             ref={fontIncreaseBtnRef}
                         />
                     </div>
@@ -137,22 +135,19 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                         <button 
                             onClick={toggleSidebar}
                             className={`clickable-icon ${isSidebarOpen ? 'active' : ''}`} 
-                            aria-label="收藏管理"
-                            title="收藏管理"
+                            aria-label={t('read.header.tooltip.sidebar')}
                             ref={sidebarBtnRef}
                         />
                         <button 
                             onClick={goToReadmeView} 
                             className="clickable-icon" 
-                            aria-label="查看帮助"
-                            title="帮助"
+                            aria-label={t('read.header.tooltip.readme')}
                             ref={readmeBtnRef}
                         />
                         <button 
                             onClick={goToGalleryView} 
                             className="clickable-icon" 
-                            aria-label="文章库"
-                            title="文章库"
+                            aria-label={t('read.header.tooltip.gallery')}
                             ref={galleryBtnRef}
                         />
                     </div>
@@ -165,15 +160,13 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                         <button 
                             onClick={handlePrevArticle} 
                             className="clickable-icon" 
-                            aria-label="上一篇"
-                            title="上一篇文章"
+                            aria-label={t('read.header.tooltip.prev')}
                             ref={prevBtnRef}
                         />
                         <button 
                             onClick={handleNextArticle} 
                             className="clickable-icon" 
-                            aria-label="下一篇"
-                            title="下一篇文章"
+                            aria-label={t('read.header.tooltip.next')}
                             ref={nextBtnRef}
                         />
                     </div>
@@ -182,23 +175,20 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
                         <button 
                             onClick={openInBrowser} 
                             className="clickable-icon" 
-                            aria-label="在浏览器中打开"
-                            title="在浏览器中打开"
+                            aria-label={t('read.header.tooltip.browser')}
                             ref={browserBtnRef}
                             disabled={!articleLink}
                         />
                         <button 
                             onClick={handleSaveToNote} 
                             className="clickable-icon" 
-                            aria-label="保存全文为笔记"
-                            title="保存全文为笔记"
+                            aria-label={t('read.header.tooltip.saveArticle')}
                             ref={saveNoteBtnRef}
                         />
                         <button 
                             onClick={handleSaveHighlightsToNote} 
                             className="clickable-icon" 
-                            aria-label="保存收藏段落为笔记"
-                            title="保存收藏段落为笔记"
+                            aria-label={t('read.header.tooltip.saveHighlights')}
                             ref={saveHighlightsBtnRef}
                         />
                     </div>
