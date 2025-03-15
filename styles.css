@@ -1306,18 +1306,18 @@
 .text-blocks-container {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
 }
 
 /* 通用块样式 */
 .block {
-    position: relative;
-    margin: 12px 0;
-    padding: 8px;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    border: 1px solid transparent;
-    box-sizing: border-box; /* 确保边框不会改变元素大小 */
+	position: relative;
+	margin: 6px 0;  /* 减小上下间距从12px到6px */
+	padding: 8px;
+	border-radius: 4px;
+	transition: all 0.2s ease;
+	border: 1px solid transparent;
+	box-sizing: border-box;
 }
 
 .block.hovered {
@@ -1373,8 +1373,9 @@
 .code-content,
 .html-content,
 .media-block-content {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	margin: 4px 0; /* 减小上下间距，原来是默认的段落间距 */
 }
 
 /* 媒体块特定样式 */

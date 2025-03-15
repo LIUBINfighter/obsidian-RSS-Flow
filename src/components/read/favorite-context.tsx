@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Notice } from 'obsidian';
 import RSSFlowPlugin from '../../main';
 
-interface FavoritedBlock {
+export interface FavoritedBlock {
     id: number;
     text: string;
     source: string;
@@ -19,7 +19,8 @@ interface FavoriteContextType {
     removeFavorite: (articleId: string, blockId: number) => void;
     isFavorited: (articleId: string, blockId: number) => boolean;
     exportToMarkdown: () => Promise<void>;
-    getFavorites: () => FavoritedBlock[]; // 添加获取所有收藏的函数
+    getFavorites: () => FavoritedBlock[];
+    clearAllFavorites: () => Promise<void>; // 添加清空所有收藏的方法
 }
 
 const FavoriteContext = createContext<FavoriteContextType | undefined>(undefined);
@@ -128,13 +129,24 @@ export const FavoriteProvider: React.FC<{
         return favoritedBlocks;
     };
 
+    // 清空所有收藏
+    const clearAllFavorites = async () => {
+        // 确认对话框
+        if (confirm('确定要清空所有收藏内容吗？此操作不可恢复。')) {
+            setFavoritedBlocks([]);
+            await saveFavoritesToStorage([]);
+            new Notice('已清空所有收藏内容');
+        }
+    };
+
     const value = {
         favoritedBlocks,
         addFavorite,
         removeFavorite,
         isFavorited,
         exportToMarkdown,
-        getFavorites // 添加到context值中
+        getFavorites,
+        clearAllFavorites // 添加到context值中
     };
 
     return (

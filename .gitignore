@@ -36,6 +36,7 @@ dist/
 
 # Ignore reference code that causes build errors
 reference/
+docs/
 
 # Ignore environment files
 .env

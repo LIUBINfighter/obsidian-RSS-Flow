@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { setIcon } from 'obsidian';
+import { saveAllFavoritesToNote } from '../../utils/note-utils';
 
 interface FavoriteItem {
     id: number;
@@ -15,6 +16,8 @@ interface ReadSidebarProps {
     favorites: FavoriteItem[];
     currentArticleId?: string;
     onRemoveFavorite?: (articleId: string, blockId: number) => void;
+    onClearAllFavorites?: () => Promise<void>; // 添加清空所有收藏的回调
+    plugin: any; // 添加plugin属性
 }
 
 export const ReadSidebar: React.FC<ReadSidebarProps> = ({
@@ -22,7 +25,9 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
     onToggle,
     favorites,
     currentArticleId,
-    onRemoveFavorite
+    onRemoveFavorite,
+    onClearAllFavorites,
+    plugin
 }) => {
     const toggleBtnRef = useRef<HTMLButtonElement>(null);
     const sidebarRef = useRef<HTMLDivElement>(null);
@@ -96,6 +101,21 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
             setIcon(toggleBtnRef.current, isOpen ? 'chevron-right' : 'chevron-left');
         }
     }, [isOpen]);
+    
+    // 保存所有收藏到新文件
+    const handleSaveAllFavorites = useCallback(async () => {
+        if (favorites.length === 0) {
+            new Notice('没有收藏内容可保存');
+            return;
+        }
+        
+        try {
+            await saveAllFavoritesToNote(favorites, plugin);
+        } catch (error) {
+            console.error('保存所有收藏失败:', error);
+            new Notice('保存收藏内容失败');
+        }
+    }, [favorites, plugin]);
     
     return (
         <>
@@ -171,6 +191,36 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                     overflowY: 'auto',
                     paddingTop: '48px' // 为顶部按钮留出空间
                 }}>
+                    <div className="sidebar-header" style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '16px'
+                    }}>
+                        <h3>收藏内容</h3>
+                        <div className="sidebar-actions" style={{
+                            display: 'flex',
+                            gap: '8px'
+                        }}>
+                            <button 
+                                className="mod-cta small-button"
+                                onClick={handleSaveAllFavorites}
+                                title="保存所有收藏内容到新的文件"
+                                disabled={favorites.length === 0}
+                            >
+                                保存全部
+                            </button>
+                            <button 
+                                className="mod-warning small-button"
+                                onClick={onClearAllFavorites}
+                                title="清空所有收藏内容"
+                                disabled={favorites.length === 0}
+                            >
+                                清空
+                            </button>
+                        </div>
+                    </div>
+                    
                     <h3>收藏内容</h3>
                     
                     {currentArticleId && (
