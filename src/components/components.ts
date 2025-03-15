@@ -1,22 +1,66 @@
-// 通用组件
-export { LoadingState } from './read/LoadingState';
-export { TableOfContents } from './read/TableOfContents';
-export { SourceForm } from './readme/SourceForm';
+// 从子文件夹索引文件导入组件
+import { 
+  LoadingState, 
+  TableOfContents, 
+  ReadSidebar, 
+  ReadHeader, 
+  EmptyState, 
+  Read, 
+  HeadingBlockView
+} from './read';
 
-// 介绍和设置相关组件
-export { Introduction } from './readme/Introduction';
+import {
+  SourceForm,
+  Introduction
+} from './readme';
 
-// 阅读视图相关组件
-export { ReadSidebar } from './read/ReadSidebar';
-export { ReadHeader } from './read/ReadHeader';
-export { EmptyState } from './read/EmptyState';
-export { Read } from './read/Read';
-export { HeadingBlockView } from './read/HeadingBlockView';
+import {
+  ArticleView,
+  ArticleCard,
+  Gallery
+} from './gallery';
 
-// 画廊相关组件
-export { ArticleView } from './gallery/ArticleView';
-export { ArticleCard } from './gallery/ArticleCard';
-export { Gallery } from './gallery/Gallery';
+import { Sidebar } from './Sidebar';
 
-// 侧边栏
-export { Sidebar } from './Sidebar';
+// 导出所有组件以保持向后兼容性
+export {
+  // 通用组件
+  LoadingState,
+  TableOfContents,
+  SourceForm,
+  
+  // 介绍和设置相关组件
+  Introduction,
+  
+  // 阅读视图相关组件
+  ReadSidebar,
+  ReadHeader,
+  EmptyState,
+  Read,
+  HeadingBlockView,
+  
+  // 画廊相关组件
+  ArticleView,
+  ArticleCard,
+  Gallery,
+  
+  // 侧边栏
+  Sidebar
+};
+
+// 导出默认对象以支持 import components from './components'
+export default {
+  LoadingState,
+  TableOfContents,
+  SourceForm,
+  Introduction,
+  ReadSidebar,
+  ReadHeader,
+  EmptyState,
+  Read,
+  HeadingBlockView,
+  ArticleView,
+  ArticleCard,
+  Gallery,
+  Sidebar
+};

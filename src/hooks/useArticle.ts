@@ -11,87 +11,55 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
     const [articleHistory, setArticleHistory] = useState<string[]>([]);
     const [historyIndex, setHistoryIndex] = useState<number>(-1);
     
-    // 使用ref存储初始articleId，避免它在多次渲染中丢失
+    // 使用ref存储初始articleId，避免多次渲染问题
     const initialArticleIdRef = useRef<string | null>(plugin.currentArticleId);
     
-    // 只在组件挂载时执行一次的加载文章逻辑
-    useEffect(() => {
-        const articleId = initialArticleIdRef.current;
-        console.log("初始化时的文章ID:", articleId);
-        
-        if (articleId) {
-            // 清理initialArticleIdRef以避免重复加载
-            initialArticleIdRef.current = null;
-            
-            // 立即加载文章
-            const loadInitialArticle = async () => {
-                setLoading(true);
-                try {
-                    await dbService.init();
-                    const specificItem = await dbService.getItemById(articleId);
-                    if (specificItem) {
-                        console.log("成功加载文章:", specificItem.title);
-                        setArticle(specificItem);
-                        setContentBlocks(processHtmlContent(specificItem.content));
-                        await dbService.markItemAsRead(articleId);
-                        
-                        // 添加到历史记录
-                        setArticleHistory([articleId]);
-                        setHistoryIndex(0);
-                    } else {
-                        console.error("找不到指定ID的文章:", articleId);
-                        setArticle(null);
-                    }
-                } catch (error) {
-                    console.error('加载初始文章失败:', error);
-                    setArticle(null);
-                } finally {
-                    setLoading(false);
-                }
-            };
-            
-            loadInitialArticle();
-        } else {
-            // 如果没有初始文章ID，则设置为非加载状态
-            setLoading(false);
-        }
-    }, []); // 仅在组件挂载时执行一次
-
-    const loadArticle = useCallback(async (articleId?: string) => {
+    // 加载文章内容
+    const loadArticleById = useCallback(async (articleId: string, addToHistory = true) => {
         setLoading(true);
         try {
             await dbService.init();
-            if (articleId) {
-                const specificItem = await dbService.getItemById(articleId);
-                if (specificItem) {
-                    setArticle(specificItem);
-                    setContentBlocks(processHtmlContent(specificItem.content));
-                    await dbService.markItemAsRead(articleId);
-                    
-                    // 添加文章到历史记录
+            const item = await dbService.getItemById(articleId);
+            if (item) {
+                setArticle(item);
+                setContentBlocks(processHtmlContent(item.content));
+                await dbService.markItemAsRead(articleId);
+                
+                // 添加到历史记录
+                if (addToHistory) {
                     setArticleHistory(prev => {
-                        // 如果当前不是最后一篇文章，则清除此后的历史
                         const newHistory = [...prev.slice(0, historyIndex + 1), articleId];
                         setHistoryIndex(newHistory.length - 1);
                         return newHistory;
                     });
-                } else {
-                    // 找不到指定文章
-                    setArticle(null);
                 }
+                return true;
             } else {
-                // 不再自动加载随机文章，而是显示空状态
+                console.error("找不到指定ID的文章:", articleId);
                 setArticle(null);
+                return false;
             }
         } catch (error) {
             console.error('加载文章失败:', error);
             setArticle(null);
+            return false;
         } finally {
             setLoading(false);
         }
-    }, [plugin, historyIndex]);
-
-    // 专门用于随机加载文章的函数
+    }, [historyIndex]);
+    
+    // 组件挂载时加载初始文章
+    useEffect(() => {
+        const articleId = initialArticleIdRef.current;
+        if (articleId) {
+            initialArticleIdRef.current = null; // 清除以避免重复加载
+            loadArticleById(articleId, true);
+        } else {
+            setLoading(false);
+        }
+    }, [loadArticleById]);
+    
+    // 随机加载文章
     const handleRandomArticle = useCallback(async () => {
         setLoading(true);
         try {
@@ -102,7 +70,7 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
                 setContentBlocks(processHtmlContent(randomItem.content));
                 await dbService.markItemAsRead(randomItem.id);
                 
-                // 添加新文章到历史记录
+                // 添加到历史记录
                 setArticleHistory(prev => {
                     const newHistory = [...prev.slice(0, historyIndex + 1), randomItem.id];
                     setHistoryIndex(newHistory.length - 1);
@@ -117,7 +85,8 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
             setLoading(false);
         }
     }, [historyIndex]);
-
+    
+    // 同步RSS
     const handleSync = useCallback(async () => {
         try {
             await plugin.syncRSSFeeds();
@@ -125,56 +94,26 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
             console.error('同步RSS失败:', error);
         }
     }, [plugin]);
-
-    // 用于加载下一篇文章
+    
+    // 加载下一篇文章
     const handleNextArticle = useCallback(async () => {
         if (historyIndex < articleHistory.length - 1) {
+            // 直接从历史中加载下一篇
             setHistoryIndex(historyIndex + 1);
-            const nextArticleId = articleHistory[historyIndex + 1];
-            if (nextArticleId) {
-                setLoading(true);
-                try {
-                    await dbService.init();
-                    const nextItem = await dbService.getItemById(nextArticleId);
-                    if (nextItem) {
-                        setArticle(nextItem);
-                        setContentBlocks(processHtmlContent(nextItem.content));
-                        await dbService.markItemAsRead(nextArticleId);
-                    }
-                } catch (error) {
-                    console.error('加载下一篇文章失败:', error);
-                } finally {
-                    setLoading(false);
-                }
-            }
+            await loadArticleById(articleHistory[historyIndex + 1], false);
         } else {
             // 没有下一篇，获取新的随机文章
             await handleRandomArticle();
         }
-    }, [historyIndex, articleHistory, handleRandomArticle]);
-
-    // 用于加载上一篇文章
+    }, [historyIndex, articleHistory, handleRandomArticle, loadArticleById]);
+    
+    // 加载上一篇文章
     const handlePrevArticle = useCallback(async () => {
         if (historyIndex > 0) {
             setHistoryIndex(historyIndex - 1);
-            const prevArticleId = articleHistory[historyIndex - 1];
-            if (prevArticleId) {
-                setLoading(true);
-                try {
-                    await dbService.init();
-                    const prevItem = await dbService.getItemById(prevArticleId);
-                    if (prevItem) {
-                        setArticle(prevItem);
-                        setContentBlocks(processHtmlContent(prevItem.content));
-                    }
-                } catch (error) {
-                    console.error('加载上一篇文章失败:', error);
-                } finally {
-                    setLoading(false);
-                }
-            }
+            await loadArticleById(articleHistory[historyIndex - 1], false);
         }
-    }, [historyIndex, articleHistory]);
+    }, [historyIndex, articleHistory, loadArticleById]);
 
     return { 
         article, 
@@ -183,6 +122,7 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         handleRandomArticle, 
         handleSync,
         handleNextArticle,
-        handlePrevArticle
+        handlePrevArticle,
+        loadArticle: loadArticleById
     };
 };

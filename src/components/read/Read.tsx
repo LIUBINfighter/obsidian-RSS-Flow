@@ -1,8 +1,11 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import RSSFlowPlugin from '../../main';
 import { FavoriteProvider, useFavorites } from './favorite-context';
-import { useArticle, useReadingProgress, useReadingSettings, useTableOfContents } from '../../hooks';
-import { ReadHeader, ArticleView, LoadingState, EmptyState } from '../components';
+import { useArticle, useReadingProgress, useReadingSettings } from '../../hooks';
+import { ReadHeader } from './ReadHeader';
+import { ArticleView } from '../gallery/ArticleView';
+import { LoadingState } from './LoadingState';
+import { EmptyState } from './EmptyState';
 import { ReadSidebar } from './ReadSidebar';
 
 interface ReadProps {
@@ -21,9 +24,8 @@ export const Read: React.FC<ReadProps> = ({ plugin }) => {
 // 内部组件，使用FavoriteContext
 const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
     const { article, contentBlocks, loading, handleRandomArticle, handleSync, handleNextArticle, handlePrevArticle } = useArticle(plugin);
-    const { readingProgress, saveReadingProgress } = useReadingProgress(plugin, article);
-    const { fontSize, isDarkMode, handleFontSizeChange, handleThemeChange } = useReadingSettings(plugin);
-    const { tableOfContents, showToc, toggleToc, scrollToHeading } = useTableOfContents(contentBlocks);
+    const { readingProgress } = useReadingProgress(plugin, article);
+    const { fontSize, isDarkMode, handleFontSizeChange } = useReadingSettings(plugin);
     const { exportToMarkdown, getFavorites, removeFavorite } = useFavorites();
     
     // 边栏状态管理
@@ -34,14 +36,6 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
         setSidebarOpen(prev => !prev);
     }, []);
     
-    // 添加滚动到目录的函数
-    const scrollToToc = useCallback(() => {
-        const tocElement = document.querySelector('.article-toc');
-        if (tocElement) {
-            tocElement.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, []);
-
     // 保存全文为笔记
     const handleSaveToNote = useCallback(async () => {
         if (!article) return;
@@ -139,10 +133,8 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                 handleSaveToNote={handleSaveToNote}
                 handleSaveHighlightsToNote={handleSaveHighlightsToNote}
                 exportToMarkdown={exportToMarkdown}
-                tableOfContents={tableOfContents}
                 toggleSidebar={toggleSidebar}
-                isSidebarOpen={isSidebarOpen} // 添加状态传递到Header
-                toggleToc={toggleToc} 
+                isSidebarOpen={isSidebarOpen}
                 articleLink={article?.link}
             />
             <div className="read-main-content">
@@ -162,10 +154,10 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                     <ArticleView 
                         article={article}
                         contentBlocks={contentBlocks}
-                        tableOfContents={tableOfContents}
-                        showToc={showToc}
-                        toggleToc={toggleToc}
-                        scrollToHeading={scrollToHeading}
+                        tableOfContents={[]}
+                        showToc={false}
+                        toggleToc={() => {}}
+                        scrollToHeading={() => {}}
                         fontSize={fontSize}
                     />
                 )}
