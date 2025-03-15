@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { setIcon } from 'obsidian';
 import { saveAllFavoritesToNote } from '../../utils/note-utils';
+import { useTranslation } from 'react-i18next';
 
 interface FavoriteItem {
     id: number;
@@ -117,6 +118,8 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
         }
     }, [favorites, plugin]);
     
+    const { t } = useTranslation();
+
     return (
         <>
             {/* 边栏切换按钮 - 始终可见 */}

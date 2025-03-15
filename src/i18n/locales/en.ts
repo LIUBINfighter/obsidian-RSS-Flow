@@ -1,5 +1,29 @@
 export default {
     translation: {
+        // Read View
+        'read.empty.title': 'Please select an article to read',
+        'read.empty.description': 'You can select an article from the gallery or read a random one',
+        'read.empty.goToGallery': 'Go to Gallery',
+        'read.empty.randomRead': 'Random Read',
+        'read.empty.syncNow': 'Sync Now',
+        'read.header.tooltip.random': 'Random Article',
+        'read.header.tooltip.sync': 'Sync RSS Feeds',
+        'read.header.tooltip.export': 'Export to Markdown',
+        'read.header.tooltip.decreaseFont': 'Decrease Font Size',
+        'read.header.tooltip.increaseFont': 'Increase Font Size',
+        'read.header.tooltip.readme': 'Open ReadMe',
+        'read.header.tooltip.gallery': 'Open Gallery',
+        'read.header.tooltip.sidebar': 'Toggle Sidebar',
+        'read.header.tooltip.prev': 'Previous Article',
+        'read.header.tooltip.next': 'Next Article',
+        'read.header.tooltip.browser': 'Open in Browser',
+        'read.header.tooltip.saveArticle': 'Save Article to Note',
+        'read.header.tooltip.saveHighlights': 'Save Highlights to Note',
+        'read.sidebar.title': 'Favorites',
+        'read.sidebar.currentArticle': 'Current Article',
+        'read.sidebar.otherArticles': 'Other Articles',
+        'read.sidebar.clearAll': 'Clear All',
+        'read.sidebar.saveAll': 'Save All to Note',
         // RSS sources
         'rss.sources.title': 'RSS Sources',
         'rss.sources.add': 'Add New RSS Source',
@@ -47,6 +71,7 @@ export default {
         'gallery.view.waterfall': 'Waterfall View',
         'gallery.actions.sync': 'Sync RSS Feeds',
         'gallery.loading': 'Loading...',
-        'gallery.empty.noArticles': 'No articles found'
+        'gallery.empty.noArticles': 'No articles found',
+        'read.empty.syncTip': 'Tip: If you are just starting out, you may need to sync RSS feeds first to get articles'
     }
 }

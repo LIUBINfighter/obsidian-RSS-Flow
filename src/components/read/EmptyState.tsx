@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { VIEW_TYPES } from '../../types';
 import RSSFlowPlugin from '../../main';
 import { setIcon } from 'obsidian';
+import { useTranslation } from 'react-i18next';
 
 interface EmptyStateProps {
     plugin: RSSFlowPlugin;
@@ -26,10 +27,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ plugin, handleSync, hand
         plugin.activateView(VIEW_TYPES.GALLERY);
     };
     
+    const { t } = useTranslation();
+
     return (
         <div className="article-empty">
-            <h3>请选择要阅读的文章</h3>
-            <p>您可以从文章库中选择一篇文章，或随机阅读一篇</p>
+            <h3>{t('read.empty.title')}</h3>
+            <p>{t('read.empty.description')}</p>
             
             <div className="article-actions-empty">
                 <button 
@@ -37,27 +40,27 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ plugin, handleSync, hand
                     ref={galleryBtnRef}
                     onClick={goToGallery}
                 >
-                    前往文章库
+                    {t('read.empty.goToGallery')}
                 </button>
                 <button 
                     className="mod-primary"
                     ref={randomBtnRef}
                     onClick={handleRandomArticle}
                 >
-                    随机阅读
+                    {t('read.empty.randomRead')}
                 </button>
             </div>
             
             <div className="sync-section">
                 <p className="article-empty-tip">
-                    提示：如果您刚开始使用，可能需要先同步RSS源获取文章
+                    {t('read.empty.syncTip')}
                 </p>
                 <button 
                     className="mod-warning"
                     ref={syncBtnRef}
                     onClick={handleSync}
                 >
-                    同步RSS源
+                    {t('read.empty.syncNow')}
                 </button>
             </div>
         </div>

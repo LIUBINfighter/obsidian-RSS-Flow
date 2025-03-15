@@ -1,5 +1,29 @@
 export default {
     translation: {
+        // Read View
+        'read.empty.title': '请选择要阅读的文章',
+        'read.empty.description': '您可以从文章库中选择一篇文章，或随机阅读一篇',
+        'read.empty.goToGallery': '前往文章库',
+        'read.empty.randomRead': '随机阅读',
+        'read.empty.syncNow': '立即同步',
+        'read.header.tooltip.random': '随机文章',
+        'read.header.tooltip.sync': '同步RSS源',
+        'read.header.tooltip.export': '导出为Markdown',
+        'read.header.tooltip.decreaseFont': '减小字号',
+        'read.header.tooltip.increaseFont': '增大字号',
+        'read.header.tooltip.readme': '打开ReadMe',
+        'read.header.tooltip.gallery': '打开文章库',
+        'read.header.tooltip.sidebar': '切换侧边栏',
+        'read.header.tooltip.prev': '上一篇文章',
+        'read.header.tooltip.next': '下一篇文章',
+        'read.header.tooltip.browser': '在浏览器中打开',
+        'read.header.tooltip.saveArticle': '保存文章到笔记',
+        'read.header.tooltip.saveHighlights': '保存收藏段落到笔记',
+        'read.sidebar.title': '收藏',
+        'read.sidebar.currentArticle': '当前文章',
+        'read.sidebar.otherArticles': '其他文章',
+        'read.sidebar.clearAll': '清空全部',
+        'read.sidebar.saveAll': '保存全部到笔记',
         // RSS sources
         'rss.sources.title': '订阅源',
         'rss.sources.add': '添加新订阅源',
@@ -47,6 +71,7 @@ export default {
         'gallery.view.waterfall': '瀑布流视图',
         'gallery.actions.sync': '同步RSS源',
         'gallery.loading': '加载中...',
-        'gallery.empty.noArticles': '没有找到文章'
+        'gallery.empty.noArticles': '没有找到文章',
+        'read.empty.syncTip': '提示：如果您刚开始使用，可能需要先同步RSS源获取文章'
     }
 }
