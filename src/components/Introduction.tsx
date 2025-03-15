@@ -1,7 +1,79 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { setIcon, App, Modal } from 'obsidian';
+import { setIcon, App, Modal, Notice } from 'obsidian';
 import { SourceForm } from './SourceForm';
+
+// 添加解析OPML的函数
+function parseOPML(xmlContent: string): RSSSource[] {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xmlContent, "text/xml");
+    
+    // 检查解析错误
+    const parserError = xmlDoc.querySelector('parsererror');
+    if (parserError) {
+        throw new Error('XML解析错误');
+    }
+    
+    const sources: RSSSource[] = [];
+    const outlines = xmlDoc.querySelectorAll('outline[type="rss"], outline[type="atom"], outline[xmlUrl]');
+    
+    outlines.forEach(outline => {
+        const title = outline.getAttribute('title') || outline.getAttribute('text') || '未命名源';
+        const url = outline.getAttribute('xmlUrl');
+        // 尝试从父节点获取分类信息
+        let folder = '默认分类';
+        const parentOutline = outline.parentElement;
+        if (parentOutline && parentOutline.tagName === 'outline' && !parentOutline.getAttribute('xmlUrl')) {
+            folder = parentOutline.getAttribute('title') || parentOutline.getAttribute('text') || '默认分类';
+        }
+        
+        if (url) {
+            sources.push({
+                name: title,
+                url: url,
+                folder: folder
+            });
+        }
+    });
+    
+    return sources;
+}
+
+// 添加生成OPML的函数
+function generateOPML(sources: RSSSource[]): string {
+    // 按分类分组
+    const folderMap = new Map<string, RSSSource[]>();
+    sources.forEach(source => {
+        if (!folderMap.has(source.folder)) {
+            folderMap.set(source.folder, []);
+        }
+        folderMap.get(source.folder)?.push(source);
+    });
+    
+    let opmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+  <head>
+    <title>RSS Flow Subscriptions</title>
+  </head>
+  <body>
+`;
+    
+    // 添加每个分类和源
+    folderMap.forEach((sourcesInFolder, folder) => {
+        opmlContent += `    <outline text="${folder}" title="${folder}">\n`;
+        
+        sourcesInFolder.forEach(source => {
+            opmlContent += `      <outline text="${source.name}" title="${source.name}" type="rss" xmlUrl="${source.url}"/>\n`;
+        });
+        
+        opmlContent += `    </outline>\n`;
+    });
+    
+    opmlContent += `  </body>
+</opml>`;
+
+    return opmlContent;
+}
 
 interface RSSSource {
     name: string;
@@ -59,25 +131,77 @@ export const Introduction: React.FC<{ app: App }> = ({ app }) => {
         
         const fileInput = modal.contentEl.createEl('input', {
             type: 'file',
-            attr: { accept: '.opml' }
+            attr: { accept: '.opml, .xml' }
         });
         
         fileInput.onchange = async () => {
             const file = fileInput.files?.[0];
-            if (file && file.name.toLowerCase().endsWith('.opml')) {
-                // TODO: 实现OPML文件解析和数据保存
+            if (file) {
+                try {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const content = e.target?.result as string;
+                            const parsedSources = parseOPML(content);
+                            
+                            if (parsedSources.length === 0) {
+                                new Notice('未找到有效的RSS源');
+                                return;
+                            }
+                            
+                            // 合并现有源和新导入的源，避免重复
+                            const existingUrls = new Set(feeds.map(s => s.url));
+                            const newSources = parsedSources.filter(s => !existingUrls.has(s.url));
+                            
+                            const updatedFeeds = [...feeds, ...newSources];
+                            saveFeeds(updatedFeeds);
+                            
+                            new Notice(`成功导入 ${newSources.length} 个RSS源`);
+                        } catch (error) {
+                            console.error('导入OPML出错:', error);
+                            new Notice('导入OPML文件失败: ' + (error as Error).message);
+                        }
+                    };
+                    reader.readAsText(file);
+                } catch (error) {
+                    console.error('读取文件错误:', error);
+                    new Notice('读取文件失败');
+                }
                 modal.close();
             } else {
-                console.error('请上传.opml文件');
+                new Notice('请选择有效的OPML文件');
             }
         };
         
         modal.open();
-    }, []);
+    }, [feeds, saveFeeds]);
 
     const handleExport = useCallback(() => {
-        // TODO: 实现数据导出为OPML文件
-    }, []);
+        try {
+            const opmlContent = generateOPML(feeds);
+            
+            // 创建一个blob并生成临时下载链接
+            const blob = new Blob([opmlContent], { type: 'text/xml' });
+            const url = URL.createObjectURL(blob);
+            
+            const downloadLink = document.createElement('a');
+            downloadLink.href = url;
+            downloadLink.download = 'rss_flow_subscriptions.opml';
+            
+            // 触发下载
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            // 释放URL对象
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+            
+            new Notice('OPML文件导出成功');
+        } catch (error) {
+            console.error('导出OPML出错:', error);
+            new Notice('导出OPML文件失败: ' + (error as Error).message);
+        }
+    }, [feeds]);
 
     const handleAddSource = useCallback(() => {
         setEditingSource(null);
