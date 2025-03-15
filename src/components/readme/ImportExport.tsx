@@ -15,7 +15,7 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
 
     const handleImport = useCallback(() => {
         const modal = new Modal(app);
-        modal.titleEl.setText('导入OPML文件');
+        modal.titleEl.setText(t('rss.sources.import', '导入OPML文件'));
         
         const fileInput = modal.contentEl.createEl('input', {
             type: 'file',
@@ -37,7 +37,7 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
                                 const parsedSources = parseOPML(content);
                                 
                                 if (parsedSources.length === 0) {
-                                    new Notice('未找到有效的RSS源');
+                                    new Notice(t('rss.sources.importNoSource', '未找到有效的RSS源'));
                                     return;
                                 }
                                 
@@ -48,24 +48,24 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
                                 const updatedFeeds = [...feeds, ...newSources];
                                 onImportComplete(updatedFeeds);
                                 
-                                new Notice(`成功导入 ${newSources.length} 个RSS源`);
+                                new Notice(t('rss.sources.importSuccess', {count: newSources.length}));
                             } catch (error) {
                                 console.error('导入OPML解析出错:', error);
-                                new Notice('解析OPML文件失败: ' + (error as Error).message);
+                                new Notice(t('rss.sources.importError', {message: (error as Error).message}));
                             }
                         } catch (error) {
                             console.error('导入OPML出错:', error);
-                            new Notice('导入OPML文件失败: ' + (error as Error).message);
+                            new Notice(t('rss.sources.importError', {message: (error as Error).message}));
                         }
                     };
                     reader.readAsText(file);
                 } catch (error) {
                     console.error('读取文件错误:', error);
-                    new Notice('读取文件失败');
+                    new Notice(t('rss.sources.importError', {message: '读取文件失败'}));
                 }
                 modal.close();
             } else {
-                new Notice('请选择有效的OPML文件');
+                new Notice(t('rss.sources.importNoSource', '请选择有效的OPML文件'));
             }
         };
         
@@ -82,7 +82,7 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
             
             const downloadLink = document.createElement('a');
             downloadLink.href = url;
-            downloadLink.download = 'rss_flow_subscriptions.opml';
+            downloadLink.download = 'feed.opml';
             
             // 触发下载
             document.body.appendChild(downloadLink);
@@ -92,10 +92,10 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
             // 释放URL对象
             setTimeout(() => URL.revokeObjectURL(url), 100);
             
-            new Notice('OPML文件导出成功');
+            new Notice(t('rss.sources.exportSuccess', 'OPML文件导出成功'));
         } catch (error) {
             console.error('导出OPML出错:', error);
-            new Notice('导出OPML文件失败: ' + (error as Error).message);
+            new Notice(t('rss.sources.exportError', {message: (error as Error).message}));
         }
     }, [feeds]);
 

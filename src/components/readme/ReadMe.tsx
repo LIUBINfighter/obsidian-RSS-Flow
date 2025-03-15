@@ -4,6 +4,7 @@ import { App, Modal, Notice } from 'obsidian';
 import { Introduction } from './Introduction';
 import { RSSSource } from '../../types';
 import { parseOPML, generateOPML } from '../../utils/xml-utils';
+import { useTranslation } from 'react-i18next';
 // import { Sidebar } from './Sidebar';
 
 interface ReadMeProps {
@@ -13,6 +14,7 @@ interface ReadMeProps {
 }
 
 export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) => {
+    const { t } = useTranslation();
     const [sources, setSources] = useState<RSSSource[]>([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
@@ -38,31 +40,31 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
     const handleAddSource = async () => {
         // 创建一个模态框让用户输入
         const modal = new Modal(app);
-        modal.titleEl.setText("添加新的RSS源");
+        modal.titleEl.setText(t('rss.sources.add'));
 
         const contentEl = modal.contentEl;
         
         // 添加表单
         const nameField = contentEl.createEl("div", { cls: "form-group" });
-        nameField.createEl("label", { text: "名称" });
+        nameField.createEl("label", { text: t('rss.sources.name') });
         const nameInput = nameField.createEl("input", {
             type: "text",
-            placeholder: "订阅源名称"
+            placeholder: t('rss.sources.namePlaceholder')
         });
         
         const urlField = contentEl.createEl("div", { cls: "form-group" });
-        urlField.createEl("label", { text: "URL" });
+        urlField.createEl("label", { text: t('rss.sources.url') });
         const urlInput = urlField.createEl("input", {
             type: "text",
-            placeholder: "https://example.com/feed"
+            placeholder: t('rss.sources.urlPlaceholder')
         });
         
         const folderField = contentEl.createEl("div", { cls: "form-group" });
-        folderField.createEl("label", { text: "分类" });
+        folderField.createEl("label", { text: t('rss.sources.folder') });
         const folderInput = folderField.createEl("input", {
             type: "text",
-            placeholder: "默认分类",
-            value: "默认分类"
+            placeholder: t('rss.sources.folderPlaceholder'),
+            value: t('rss.sources.folderPlaceholder')
         });
         
         // 添加按钮
@@ -71,14 +73,14 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
         // 取消按钮
         const cancelButton = buttonContainer.createEl("button", {
             cls: "form-cancel-btn",
-            text: "取消"
+            text: t('rss.sources.cancel')
         });
         cancelButton.addEventListener("click", () => modal.close());
         
         // 添加按钮
         const submitButton = buttonContainer.createEl("button", {
             cls: "form-submit-btn",
-            text: "添加"
+            text: t('rss.sources.add')
         });
         
         submitButton.addEventListener("click", async () => {
@@ -89,7 +91,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
             }
             
             const newSource: RSSSource = {
-                name: nameInput.value || "未命名源",
+                name: nameInput.value || t('rss.sources.namePlaceholder'),
                 url: urlInput.value,
                 folder: folderInput.value || "默认分类"
             };
@@ -228,7 +230,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
             
             const downloadLink = document.createElement('a');
             downloadLink.href = url;
-            downloadLink.download = 'rss_flow_subscriptions.opml';
+            downloadLink.download = 'feed.opml';
             
             // 触发下载
             document.body.appendChild(downloadLink);
@@ -281,7 +283,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
                 </div>
                 <div className="readme-view-container">
                     <h1>RSS Flow</h1>
-                    <p>欢迎使用 RSS Flow，一个用于在 Obsidian 中阅读和管理 RSS 源的插件。</p>
+                    <p>{t('rss.readme.welcome')}</p>
                     
                     <Introduction 
                         app={app}
