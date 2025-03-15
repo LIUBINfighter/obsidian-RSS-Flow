@@ -61,7 +61,16 @@ export class ReadMeView extends ItemView {
                 app: this.app,
                 plugin: this.plugin,  // 确保正确传递plugin实例
                 onLocaleChange: async (locale: string) => {
-                    await this.plugin.saveData({ ...savedData, locale });
+                    // 更新插件设置
+                    this.plugin.settings.locale = locale;
+                    await this.plugin.saveSettings();
+                    
+                    // 更新i18n语言
+                    i18n.changeLanguage(locale);
+                    
+                    // 保存数据
+                    const data = await this.plugin.loadData() || {};
+                    await this.plugin.saveData({ ...data, locale });
                 }
             })
         );

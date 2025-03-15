@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { RSSItem } from '../../types';
 import { setIcon } from 'obsidian';
 import { dbService } from '../../services/db-service';
+import { useTranslation } from 'react-i18next';
 
 interface ArticleCardProps {
     article: RSSItem;
@@ -10,6 +11,7 @@ interface ArticleCardProps {
 }
 
 export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadView, onRefresh }) => {
+    const { t } = useTranslation();
     const [isFavorite, setIsFavorite] = useState<boolean>(article.isFavorite);
     const [isRead, setIsRead] = useState<boolean>(article.isRead);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -45,7 +47,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
             setIsFavorite(newFavoriteState);
             if (onRefresh) onRefresh();
         } catch (error) {
-            console.error('无法更新收藏状态:', error);
+            console.error(t('articleCard.errors.updateFavorite'), error);
         } finally {
             setIsLoading(false);
         }
@@ -109,7 +111,9 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                         <span className="article-card-folder">{article.folder}</span>
                     )}
                     {isRead && (
-                        <span className="article-card-read-status">已读</span>
+                        <span className="article-card-read-status">
+                            {t('articleCard.status.read')}
+                        </span>
                     )}
                 </div>
                 
@@ -121,7 +125,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                     className={`article-card-action ${isFavorite ? 'active' : ''}`}
                     onClick={handleToggleFavorite}
                     disabled={isLoading}
-                    title={isFavorite ? '取消收藏' : '添加收藏'}
+                    title={t(isFavorite ? 'articleCard.actions.unfavorite' : 'articleCard.actions.favorite')}
                     ref={favoriteButtonRef}
                 ></button>
                 
@@ -129,21 +133,21 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                     className={`article-card-action ${isRead ? 'active' : ''}`}
                     onClick={handleToggleReadStatus}
                     disabled={isLoading}
-                    title={isRead ? '标记为未读' : '标记为已读'}
+                    title={t(isRead ? 'articleCard.actions.markUnread' : 'articleCard.actions.markRead')}
                     ref={readStatusButtonRef}
                 ></button>
                 
                 <button
                     className="article-card-action"
                     onClick={handleOpenInBrowser}
-                    title="在浏览器中打开"
+                    title={t('articleCard.actions.openBrowser')}
                     ref={browserButtonRef}
                 ></button>
                 
                 <button
                     className="article-card-action"
                     onClick={handleOpenInReadView}
-                    title="在阅读视图中打开"
+                    title={t('articleCard.actions.openReader')}
                     ref={readButtonRef}
                 ></button>
             </div>
