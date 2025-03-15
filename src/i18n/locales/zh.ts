@@ -24,6 +24,8 @@ export default {
         'read.sidebar.otherArticles': '其他文章',
         'read.sidebar.clearAll': '清空全部',
         'read.sidebar.saveAll': '保存全部到笔记',
+        'read.sidebar.noFavorites': '暂无收藏内容',
+        'read.sidebar.remove': '移除',
         // RSS sources
         'rss.sources.title': '订阅源',
         'rss.sources.add': '添加新订阅源',

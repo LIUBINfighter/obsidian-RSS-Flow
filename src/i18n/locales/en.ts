@@ -24,6 +24,8 @@ export default {
         'read.sidebar.otherArticles': 'Other Articles',
         'read.sidebar.clearAll': 'Clear All',
         'read.sidebar.saveAll': 'Save All to Note',
+        'read.sidebar.noFavorites': 'No favorites yet',
+        'read.sidebar.remove': 'Remove',
         // RSS sources
         'rss.sources.title': 'RSS Sources',
         'rss.sources.add': 'Add New RSS Source',

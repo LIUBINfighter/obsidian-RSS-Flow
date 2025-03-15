@@ -21,7 +21,7 @@ export class ReadMeView extends ItemView {
     }
     
     getIcon() {
-        return 'flask-conical';
+        return 'settings';
     }
     
     getDisplayText() {
