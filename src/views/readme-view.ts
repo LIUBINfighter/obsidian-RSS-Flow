@@ -2,7 +2,7 @@ import { ItemView, WorkspaceLeaf } from "obsidian";
 import { VIEW_TYPES } from "../types";
 import { createRoot } from 'react-dom/client';
 import React from 'react';
-import { ReadMe } from '../components/ReadMe';
+import { ReadMe } from '../components/readme/ReadMe';
 import type RSSFlowPlugin from '../main';
 import { i18n } from '../i18n';
 
@@ -59,6 +59,7 @@ export class ReadMeView extends ItemView {
         this.root.render(
             React.createElement(ReadMe, {
                 app: this.app,
+                plugin: this.plugin,  // 确保正确传递plugin实例
                 onLocaleChange: async (locale: string) => {
                     await this.plugin.saveData({ ...savedData, locale });
                 }
