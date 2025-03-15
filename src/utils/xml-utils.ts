@@ -1,136 +1,133 @@
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import { RSSSource } from '../types';
 
 /**
- * 预处理XML内容，处理常见的特殊字符问题
+ * 解析OPML文件内容，提取出RSS订阅源
+ * @param opmlContent OPML文件内容
+ * @returns RSS源数组
  */
-export function preprocessXML(xmlContent: string): string {
-    // 处理未转义的&字符（不是已有实体如&amp;, &lt;等的一部分）
-    let processed = xmlContent.replace(/&(?!(?:amp|lt|gt|apos|quot|#\d+);)/g, '&amp;');
-    
-    // 处理其他可能的特殊字符
-    processed = processed.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    
-    // 恢复XML标签
-    processed = processed.replace(/&lt;(\/?)([a-zA-Z][a-zA-Z0-9]*)((?:\s+[a-zA-Z][a-zA-Z0-9]*(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^'">\s]+))?)*)\s*(\/?)\s*&gt;/g, 
-        (match, close, tag, attrs, end) => {
-            // 恢复标签，但保持属性值中的实体编码
-            const processedAttrs = attrs.replace(/=\s*"([^"]*)"/g, (m, content) => {
-                return `="${content}"`;
-            });
-            return `<${close}${tag}${processedAttrs}${end}>`;
-        });
-    
-    return processed;
-}
-
-/**
- * 解析OPML文件内容为RSS源数组
- */
-export function parseOPML(xmlContent: string): RSSSource[] {
+export function parseOPML(opmlContent: string): RSSSource[] {
     try {
-        // 预处理XML内容
-        const processedContent = preprocessXML(xmlContent);
+        const parserOptions = {
+            ignoreAttributes: false,
+            attributeNamePrefix: '@_',
+            isArray: (name: string) => ['outline'].includes(name)
+        };
         
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(processedContent, "text/xml");
+        const parser = new XMLParser(parserOptions);
+        const result = parser.parse(opmlContent);
         
-        // 检查解析错误
-        const parserError = xmlDoc.querySelector('parsererror');
-        if (parserError) {
-            throw new Error('XML解析错误: ' + parserError.textContent);
+        if (!result.opml || !result.opml.body) {
+            console.error('无效的OPML格式：缺少opml或body标签');
+            return [];
         }
-        
+
         const sources: RSSSource[] = [];
-        // 更全面的选择器，兼容各种OPML格式
-        const outlines = xmlDoc.querySelectorAll('outline[type="rss"], outline[type="atom"], outline[xmlUrl], outline[xmlurl]');
-        
-        outlines.forEach(outline => {
-            const title = outline.getAttribute('title') || outline.getAttribute('text') || '未命名源';
-            // 兼容不同的属性名
-            const url = outline.getAttribute('xmlUrl') || outline.getAttribute('xmlurl');
-            // 尝试从父节点获取分类信息
-            let folder = '默认分类';
-            const parentOutline = outline.parentElement;
-            if (parentOutline && parentOutline.tagName.toLowerCase() === 'outline' && 
-                !parentOutline.getAttribute('xmlUrl') && !parentOutline.getAttribute('xmlurl')) {
-                folder = parentOutline.getAttribute('title') || parentOutline.getAttribute('text') || '默认分类';
-            }
+        const processOutlines = (outlines: any[], folder = '默认分类') => {
+            if (!outlines) return;
             
-            if (url) {
-                sources.push({
-                    name: title,
-                    url: url,
-                    folder: folder
-                });
+            for (const outline of outlines) {
+                // RSS源通常具有xmlUrl属性
+                if (outline['@_xmlUrl']) {
+                    sources.push({
+                        name: outline['@_text'] || outline['@_title'] || '未命名源',
+                        url: outline['@_xmlUrl'],
+                        folder: folder
+                    });
+                } 
+                // 如果有子项但没有xmlUrl，可能是一个分类
+                else if (outline.outline) {
+                    const newFolder = outline['@_text'] || outline['@_title'] || folder;
+                    processOutlines(outline.outline, newFolder);
+                }
             }
-        });
+        };
+        
+        if (result.opml.body.outline) {
+            processOutlines(result.opml.body.outline);
+        }
         
         return sources;
     } catch (error) {
         console.error('解析OPML出错:', error);
-        throw error;
+        throw new Error(`解析OPML失败: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
 
 /**
  * 生成OPML文件内容
+ * @param sources RSS源数组
+ * @returns OPML文件内容
  */
 export function generateOPML(sources: RSSSource[]): string {
     try {
-        // 按分类分组
+        // 按文件夹分组
         const folderMap = new Map<string, RSSSource[]>();
-        sources.forEach(source => {
-            if (!folderMap.has(source.folder)) {
-                folderMap.set(source.folder, []);
+        
+        for (const source of sources) {
+            const folder = source.folder || '默认分类';
+            if (!folderMap.has(folder)) {
+                folderMap.set(folder, []);
             }
-            folderMap.get(source.folder)?.push(source);
+            folderMap.get(folder)!.push(source);
+        }
+        
+        // 构建OPML结构
+        const outlines: any[] = [];
+        
+        // 添加每个文件夹及其源
+        folderMap.forEach((folderSources, folderName) => {
+            if (folderName === '默认分类') {
+                // 直接添加到顶层
+                folderSources.forEach(source => {
+                    outlines.push({
+                        '@_text': source.name,
+                        '@_title': source.name,
+                        '@_type': 'rss',
+                        '@_xmlUrl': source.url,
+                    });
+                });
+            } else {
+                // 创建文件夹并添加子项
+                const folderOutline = {
+                    '@_text': folderName,
+                    '@_title': folderName,
+                    outline: folderSources.map(source => ({
+                        '@_text': source.name,
+                        '@_title': source.name,
+                        '@_type': 'rss',
+                        '@_xmlUrl': source.url,
+                    }))
+                };
+                outlines.push(folderOutline);
+            }
         });
         
-        let opmlContent = `<?xml version="1.0" encoding="UTF-8"?>
-<opml version="1.0">
-  <head>
-    <title>RSS Flow Subscriptions</title>
-  </head>
-  <body>
-`;
+        const opmlObj = {
+            opml: {
+                '@_version': '1.0',
+                head: {
+                    title: 'RSS Flow Subscriptions'
+                },
+                body: {
+                    outline: outlines
+                }
+            }
+        };
         
-        // 添加每个分类和源
-        folderMap.forEach((sourcesInFolder, folder) => {
-            // 确保文件夹名称中的特殊字符被正确转义
-            const escapedFolder = folder
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;');
-            
-            opmlContent += `    <outline text="${escapedFolder}" title="${escapedFolder}">\n`;
-            
-            sourcesInFolder.forEach(source => {
-                // 确保名称和URL中的特殊字符被正确转义
-                const escapedName = source.name
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;');
-                
-                const escapedUrl = source.url
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/"/g, '&quot;');
-                
-                opmlContent += `      <outline text="${escapedName}" title="${escapedName}" type="rss" xmlUrl="${escapedUrl}"/>\n`;
-            });
-            
-            opmlContent += `    </outline>\n`;
-        });
+        const builderOptions = {
+            ignoreAttributes: false,
+            attributeNamePrefix: '@_',
+            format: true
+        };
         
-        opmlContent += `  </body>
-</opml>`;
-
-        return opmlContent;
+        const builder = new XMLBuilder(builderOptions);
+        const xmlContent = builder.build(opmlObj);
+        
+        // 添加XML声明
+        return `<?xml version="1.0" encoding="UTF-8"?>\n${xmlContent}`;
     } catch (error) {
         console.error('生成OPML出错:', error);
-        throw error;
+        throw new Error(`生成OPML失败: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
