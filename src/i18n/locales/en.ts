@@ -36,6 +36,17 @@ export default {
         rssGalleryView: 'RSS Gallery',
 
         // ReadMe
-        'rss.readme.welcome': 'Welcome to RSS Flow, a plugin for reading and managing RSS feeds in Obsidian.'
+        'rss.readme.welcome': 'Welcome to RSS Flow, a plugin for reading and managing RSS feeds in Obsidian.',
+
+        // Gallery
+        'gallery.title': 'RSS Gallery',
+        'gallery.search.placeholder': 'Search articles...',
+        'gallery.filter.all': 'All',
+        'gallery.filter.favorite': 'Favorites',
+        'gallery.view.card': 'Card View',
+        'gallery.view.waterfall': 'Waterfall View',
+        'gallery.actions.sync': 'Sync RSS Feeds',
+        'gallery.loading': 'Loading...',
+        'gallery.empty.noArticles': 'No articles found'
     }
 }

@@ -36,6 +36,17 @@ export default {
         rssGalleryView: 'RSS图库',
 
         // ReadMe
-        'rss.readme.welcome': '欢迎使用 RSS Flow，一个用于在 Obsidian 中阅读和管理 RSS 源的插件。'
+        'rss.readme.welcome': '欢迎使用 RSS Flow，一个用于在 Obsidian 中阅读和管理 RSS 源的插件。',
+
+        // Gallery
+        'gallery.title': 'RSS 文章库',
+        'gallery.search.placeholder': '搜索文章...',
+        'gallery.filter.all': '全部',
+        'gallery.filter.favorite': '收藏',
+        'gallery.view.card': '卡片视图',
+        'gallery.view.waterfall': '瀑布流视图',
+        'gallery.actions.sync': '同步RSS源',
+        'gallery.loading': '加载中...',
+        'gallery.empty.noArticles': '没有找到文章'
     }
 }

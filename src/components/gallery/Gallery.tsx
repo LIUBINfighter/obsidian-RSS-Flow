@@ -4,12 +4,14 @@ import { RSSItem, FeedMeta } from '../../types';
 import { ArticleCard } from './ArticleCard';
 import RSSFlowPlugin from '../../main';
 import { setIcon } from 'obsidian';
+import { useTranslation } from 'react-i18next';
 
 interface GalleryProps {
     plugin: RSSFlowPlugin;
 }
 
 export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
+    const { t } = useTranslation();
     const [feeds, setFeeds] = useState<FeedMeta[]>([]);
     const [articles, setArticles] = useState<RSSItem[]>([]);
     const [expandedFeeds, setExpandedFeeds] = useState<Record<string, boolean>>({});
@@ -137,13 +139,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
     return (
         <div className="gallery-container">
             <div className="gallery-header">
-                <h2>RSS 文章库</h2>
+                <h2>{t('gallery.title')}</h2>
                 
                 <div className="gallery-controls">
                     <div className="gallery-search">
                         <input
                             type="text"
-                            placeholder="搜索文章..."
+                            placeholder={t('gallery.search.placeholder')}
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
@@ -160,13 +162,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                             className={`gallery-filter ${filter === 'all' ? 'active' : ''}`}
                             onClick={() => setFilter('all')}
                         >
-                            全部
+                            {t('gallery.filter.all')}
                         </button>
                         <button 
                             className={`gallery-filter ${filter === 'favorite' ? 'active' : ''}`}
                             onClick={() => setFilter('favorite')}
                         >
-                            收藏
+                            {t('gallery.filter.favorite')}
                         </button>
                     </div>
                     
@@ -174,13 +176,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                         <button 
                             className={`gallery-view-btn ${view === 'card' ? 'active' : ''}`}
                             onClick={() => setView('card')}
-                            title="卡片视图"
+                            title={t('gallery.view.card')}
                             ref={cardViewButtonRef}
                         ></button>
                         <button 
                             className={`gallery-view-btn ${view === 'waterfall' ? 'active' : ''}`}
                             onClick={() => setView('waterfall')}
-                            title="瀑布流视图"
+                            title={t('gallery.view.waterfall')}
                             ref={waterfallViewButtonRef}
                             disabled
                         ></button>
@@ -189,7 +191,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                     <button 
                         className="gallery-sync-btn"
                         onClick={handleSyncFeeds}
-                        title="同步RSS源"
+                        title={t('gallery.actions.sync', '同步RSS源')}
                         ref={syncButtonRef}
                     ></button>
                 </div>
@@ -198,16 +200,16 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
             {loading ? (
                 <div className="gallery-loading">
                     <div className="gallery-loading-spinner"></div>
-                    <p>加载中...</p>
+                    <p>{t('gallery.loading')}</p>
                 </div>
             ) : articles.length === 0 ? (
                 <div className="gallery-empty">
-                    <p>没有找到文章</p>
+                    <p>{t('gallery.empty.noArticles')}</p>
                     <button 
                         className="gallery-sync-btn-large"
                         onClick={handleSyncFeeds}
                     >
-                        同步RSS源
+                        {t('gallery.actions.sync')}
                     </button>
                 </div>
             ) : (
