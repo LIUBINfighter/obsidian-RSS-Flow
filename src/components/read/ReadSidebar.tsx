@@ -221,7 +221,6 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                         </div>
                     </div>
                     
-                    <h3>收藏内容</h3>
                     
                     {currentArticleId && (
                         <>

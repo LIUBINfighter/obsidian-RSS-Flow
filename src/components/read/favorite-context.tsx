@@ -2,7 +2,7 @@
  * 收藏内容上下文，集中管理收藏状态
  */
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Notice } from 'obsidian';
+import { Notice, Modal, App } from 'obsidian';
 import RSSFlowPlugin from '../../main';
 
 export interface FavoritedBlock {
@@ -11,6 +11,60 @@ export interface FavoritedBlock {
     source: string;
     articleId: string;
     timestamp: number;
+}
+
+// 添加确认模态框
+class ConfirmationModal extends Modal {
+    result: boolean;
+    message: string;
+    onConfirm: () => void;
+    
+    constructor(app: App, message: string, onConfirm: () => void) {
+        super(app);
+        this.message = message;
+        this.onConfirm = onConfirm;
+    }
+
+    onOpen() {
+        const {contentEl} = this;
+        
+        contentEl.createEl('h3', {text: '确认操作'});
+        contentEl.createEl('p', {text: this.message});
+        
+        const buttonContainer = contentEl.createEl('div', {
+            cls: 'modal-button-container',
+        });
+        
+        // 添加样式
+        buttonContainer.style.display = 'flex';
+        buttonContainer.style.justifyContent = 'flex-end';
+        buttonContainer.style.gap = '10px';
+        buttonContainer.style.marginTop = '20px';
+        
+        // 取消按钮
+        const cancelButton = buttonContainer.createEl('button', {
+            text: '取消',
+            cls: 'mod-muted',
+        });
+        cancelButton.addEventListener('click', () => {
+            this.close();
+        });
+        
+        // 确认按钮
+        const confirmButton = buttonContainer.createEl('button', {
+            text: '确认',
+            cls: 'mod-warning',
+        });
+        confirmButton.addEventListener('click', () => {
+            this.onConfirm();
+            this.close();
+        });
+    }
+
+    onClose() {
+        const {contentEl} = this;
+        contentEl.empty();
+    }
 }
 
 interface FavoriteContextType {
@@ -129,14 +183,14 @@ export const FavoriteProvider: React.FC<{
         return favoritedBlocks;
     };
 
-    // 清空所有收藏
+    // 清空所有收藏 - 使用Obsidian模态框
     const clearAllFavorites = async () => {
-        // 确认对话框
-        if (confirm('确定要清空所有收藏内容吗？此操作不可恢复。')) {
+        // 使用Obsidian的Modal代替浏览器confirm
+        new ConfirmationModal(plugin.app, '确定要清空所有收藏内容吗？此操作不可恢复。', async () => {
             setFavoritedBlocks([]);
             await saveFavoritesToStorage([]);
             new Notice('已清空所有收藏内容');
-        }
+        }).open();
     };
 
     const value = {
