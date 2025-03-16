@@ -97,6 +97,38 @@ export class DBService {
         });
     }
 
+    /**
+     * 保存文章到数据库，保留现有文章的已读状态和收藏状态
+     * @param items 要保存的文章列表
+     */
+    async saveItemsPreserveStatus(items: RSSItem[]): Promise<boolean> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        try {
+            // 对每篇文章进行处理
+            for (const newItem of items) {
+                // 查询该文章是否已存在
+                const existingItem = await this.getItemById(newItem.id);
+                
+                // 如果文章已存在，保留已读状态和收藏状态
+                if (existingItem) {
+                    // 保留用户状态
+                    newItem.isRead = existingItem.isRead;
+                    newItem.isFavorite = existingItem.isFavorite;
+                    console.log(`保留文章状态: ${newItem.title}, isRead: ${newItem.isRead}, isFavorite: ${newItem.isFavorite}`);
+                }
+            }
+            
+            // 批量保存处理后的文章
+            return await this.saveItems(items);
+        } catch (error) {
+            console.error('保存文章并保留状态失败:', error);
+            return false;
+        }
+    }
+
     // 添加或更新Feed元数据
     async saveFeedMeta(feedMeta: FeedMeta): Promise<boolean> {
         if (!this.db) {

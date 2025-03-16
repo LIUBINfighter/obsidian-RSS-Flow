@@ -3,7 +3,7 @@ import { dbService } from '../../services/db-service';
 import { RSSItem, FeedMeta } from '../../types';
 import { ArticleCard } from './ArticleCard';
 import RSSFlowPlugin from '../../main';
-import { setIcon } from 'obsidian';
+import { setIcon, Notice } from 'obsidian';
 import { useTranslation } from 'react-i18next';
 import { FolderSelector } from './FolderSelector'; // 导入新组件
 
@@ -22,12 +22,14 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [folders, setFolders] = useState<string[]>([]);
     const [selectedFolder, setSelectedFolder] = useState<string>('all');
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     
     // 使用refs存储DOM元素引用
     const clearButtonRef = useRef<HTMLButtonElement>(null);
     const cardViewButtonRef = useRef<HTMLButtonElement>(null);
     const waterfallViewButtonRef = useRef<HTMLButtonElement>(null);
     const syncButtonRef = useRef<HTMLButtonElement>(null);
+    const refreshButtonRef = useRef<HTMLButtonElement>(null);
     
     // 存储动态生成的折叠图标refs
     const toggleRefs = useRef<{[key: string]: HTMLSpanElement | null}>({});
@@ -38,6 +40,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         if (cardViewButtonRef.current) setIcon(cardViewButtonRef.current, 'layout-grid');
         if (waterfallViewButtonRef.current) setIcon(waterfallViewButtonRef.current, 'layout-columns');
         if (syncButtonRef.current) setIcon(syncButtonRef.current, 'refresh-cw');
+        if (refreshButtonRef.current) setIcon(refreshButtonRef.current, 'rotate-cw');
     }, []);
     
     // 更新切换图标状态
@@ -115,6 +118,22 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
     useEffect(() => {
         loadData();
     }, [loadData]);
+    
+    // 添加刷新按钮处理函数
+    const handleRefresh = useCallback(async () => {
+        if (isRefreshing) return; // 防止重复点击
+        
+        setIsRefreshing(true);
+        try {
+            await loadData();
+            new Notice(t('gallery.refreshSuccess', '已刷新文章列表'));
+        } catch (error) {
+            console.error('刷新失败:', error);
+            new Notice(t('gallery.refreshError', '刷新失败'));
+        } finally {
+            setIsRefreshing(false);
+        }
+    }, [loadData, isRefreshing]);
 
     const handleOpenInReadView = useCallback(async (articleId: string) => {
         // 添加更详细的日志
@@ -224,6 +243,15 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                             disabled
                         ></button>
                     </div>
+                    
+                    {/* 添加刷新按钮 */}
+                    <button 
+                        className="gallery-refresh-btn"
+                        onClick={handleRefresh}
+                        title={t('gallery.actions.refresh', '刷新文章状态')}
+                        ref={refreshButtonRef}
+                        disabled={isRefreshing}
+                    ></button>
                     
                     <button 
                         className="gallery-sync-btn"
