@@ -78,6 +78,7 @@ export default {
         'gallery.empty.noArticles': '没有找到文章',
         'gallery.refreshSuccess': '已刷新文章列表',
         'gallery.refreshError': '刷新失败',
-        'read.empty.syncTip': '提示：如果您刚开始使用，可能需要先同步RSS源获取文章'
+        'read.empty.syncTip': '提示：如果您刚开始使用，可能需要先同步RSS源获取文章',
+		'articleCard.status.read': '已读'
     }
 }

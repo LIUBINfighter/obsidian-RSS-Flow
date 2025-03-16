@@ -78,6 +78,7 @@ export default {
         'gallery.empty.noArticles': 'No articles found',
         'gallery.refreshSuccess': 'Articles list refreshed',
         'gallery.refreshError': 'Refresh failed',
-        'read.empty.syncTip': 'Tip: If you are just starting out, you may need to sync RSS feeds first to get articles'
+        'read.empty.syncTip': 'Tip: If you are just starting out, you may need to sync RSS feeds first to get articles',
+		'articleCard.status.read': 'Done'
     }
 }

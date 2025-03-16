@@ -199,12 +199,6 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
-                        <button 
-                            className="gallery-search-clear"
-                            onClick={() => setSearchTerm('')}
-                            style={{ display: searchTerm ? 'block' : 'none' }}
-                            ref={clearButtonRef}
-                        ></button>
                     </div>
                     
                     {/* 添加文件夹选择器 */}
@@ -231,13 +225,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                     
                     <div className="gallery-views">
                         <button 
-                            className={`gallery-view-btn ${view === 'card' ? 'active' : ''}`}
+                            className={`rss-action-btn ${view === 'card' ? 'active' : ''}`}
                             onClick={() => setView('card')}
                             title={ensureString(t, 'gallery.view.card', '卡片视图')}
                             ref={cardViewButtonRef}
                         ></button>
                         <button 
-                            className={`gallery-view-btn ${view === 'waterfall' ? 'active' : ''}`}
+                            className={`rss-action-btn ${view === 'waterfall' ? 'active' : ''}`}
                             onClick={() => setView('waterfall')}
                             title={ensureString(t, 'gallery.view.waterfall', '瀑布流视图')}
                             ref={waterfallViewButtonRef}
@@ -247,7 +241,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                     
                     {/* 添加刷新按钮 */}
                     <button 
-                        className="gallery-refresh-btn"
+                        className="rss-action-btn"
                         onClick={handleRefresh}
                         title={ensureString(t, 'gallery.actions.refresh', '刷新文章状态')}
                         ref={refreshButtonRef}
@@ -255,7 +249,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                     ></button>
                     
                     <button 
-                        className="gallery-sync-btn"
+                        className="rss-action-btn"
                         onClick={handleSyncFeeds}
                         title={ensureString(t, 'gallery.actions.sync', '同步RSS源')}
                         ref={syncButtonRef}
@@ -265,14 +259,14 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
 
             {loading ? (
                 <div className="gallery-loading">
-                    <div className="gallery-loading-spinner"></div>
+                    <div className="rss-action-btn"></div>
                     <p>{t('gallery.loading')}</p>
                 </div>
             ) : articles.length === 0 ? (
                 <div className="gallery-empty">
                     <p>{t('gallery.empty.noArticles')}</p>
                     <button 
-                        className="gallery-sync-btn-large"
+                        className="rss-action-btn"
                         onClick={handleSyncFeeds}
                     >
                         {t('gallery.actions.sync')}
