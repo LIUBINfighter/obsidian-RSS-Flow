@@ -81,10 +81,19 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
         
         // 打开阅读视图时自动标记为已读
         if (!isRead) {
-            dbService.markItemAsRead(article.id).then(() => {
-                setIsRead(true);
-                if (onRefresh) onRefresh();
-            });
+            setIsLoading(true);
+            dbService.markItemAsRead(article.id)
+                .then(() => {
+                    setIsRead(true);
+                    if (onRefresh) onRefresh();
+                })
+                .catch(error => {
+                    console.error('标记文章已读失败:', error);
+                    // 可选：显示通知给用户
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
     };
     

@@ -45,7 +45,13 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
             if (item) {
                 setArticle(item);
                 setContentBlocks(processHtmlContent(item.content));
-                await dbService.markItemAsRead(articleId);
+                
+                // 标记为已读，捕获可能的错误
+                try {
+                    await dbService.markItemAsRead(articleId);
+                } catch (error) {
+                    console.error('标记文章已读失败:', error);
+                }
                 
                 // 添加到历史记录
                 if (addToHistory) {
@@ -110,7 +116,12 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
                 
                 setArticle(randomItem);
                 setContentBlocks(processHtmlContent(randomItem.content));
-                await dbService.markItemAsRead(randomItem.id);
+                
+                try {
+                    await dbService.markItemAsRead(randomItem.id);
+                } catch (error) {
+                    console.error('标记随机文章已读失败:', error);
+                }
                 
                 // 添加到历史记录
                 setArticleHistory(prev => {
@@ -168,7 +179,12 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
                 if (nextArticle) {
                     setArticle(nextArticle);
                     setContentBlocks(processHtmlContent(nextArticle.content));
-                    await dbService.markItemAsRead(nextArticle.id);
+                    
+                    try {
+                        await dbService.markItemAsRead(nextArticle.id);
+                    } catch (error) {
+                        console.error('标记下一篇文章已读失败:', error);
+                    }
                     
                     // 添加到历史记录
                     setArticleHistory(prev => {

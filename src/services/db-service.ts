@@ -558,49 +558,55 @@ export class DBService {
      * 将文章标记为已读
      * @param itemId 文章ID
      */
-    async markItemAsRead(itemId: string): Promise<void> {
-        try {
-            // 确保数据库已初始化
-            if (!this.db) {
-                await this.init();
-            }
-            
-            if (!this.db) {
-                throw new Error('数据库未初始化');
-            }
-            
-            // 使用已存在的 db 属性而不是 getDB 方法
-            const transaction = this.db.transaction([STORES.ITEMS], 'readwrite');
-            const store = transaction.objectStore(STORES.ITEMS);
-            
-            // 获取文章
-            const getRequest = store.get(itemId);
-            
-            getRequest.onsuccess = () => {
-                const item = getRequest.result;
-                if (item) {
-                    // 更新已读状态
-                    item.isRead = true;
-                    const putRequest = store.put(item);
-                    
-                    putRequest.onsuccess = () => {
-                        console.log(`文章已标记为已读: ${itemId}`);
-                    };
-                    
-                    putRequest.onerror = (event) => {
-                        console.error('更新文章已读状态失败:', event);
-                    };
-                } else {
-                    console.warn(`未找到要标记为已读的文章: ${itemId}`);
-                }
-            };
-            
-            getRequest.onerror = (event) => {
-                console.error('获取文章失败:', event);
-            };
-        } catch (error) {
-            console.error('标记文章为已读时出错:', error);
+    async markItemAsRead(itemId: string): Promise<boolean> {
+        if (!this.db) {
+            await this.init();
         }
+
+        return new Promise(async (resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            try {
+                const transaction = this.db.transaction([STORES.ITEMS], 'readwrite');
+                const store = transaction.objectStore(STORES.ITEMS);
+                
+                // 获取文章
+                const getRequest = store.get(itemId);
+                
+                getRequest.onsuccess = () => {
+                    const item = getRequest.result;
+                    if (item) {
+                        // 更新已读状态
+                        item.isRead = true;
+                        const putRequest = store.put(item);
+                        
+                        putRequest.onsuccess = () => {
+                            console.log(`文章已标记为已读: ${itemId}`);
+                            resolve(true);
+                        };
+                        
+                        putRequest.onerror = (event) => {
+                            console.error('更新文章已读状态失败:', event);
+                            reject(new Error('更新文章已读状态失败'));
+                        };
+                    } else {
+                        console.warn(`未找到要标记为已读的文章: ${itemId}`);
+                        reject(new Error('文章不存在'));
+                    }
+                };
+                
+                getRequest.onerror = (event) => {
+                    console.error('获取文章失败:', event);
+                    reject(new Error('获取文章失败'));
+                };
+            } catch (error) {
+                console.error('标记文章为已读时出错:', error);
+                reject(error);
+            }
+        });
     }
 
     /**
