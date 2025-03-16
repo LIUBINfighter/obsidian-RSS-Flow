@@ -79,6 +79,10 @@ export default {
         'gallery.refreshSuccess': 'Articles list refreshed',
         'gallery.refreshError': 'Refresh failed',
         'read.empty.syncTip': 'Tip: If you are just starting out, you may need to sync RSS feeds first to get articles',
-		'articleCard.status.read': 'Done'
+		'articleCard.status.read': 'Done',
+		'articleCard.actions.favorite': 'Favorite',
+		'articleCard.actions.unfavorite': 'Unfavorite',
+		'articleCard.actions.markUnread': 'Mark as Unread',
+		'articleCard.actions.read': 'Mark as Read'
     }
 }

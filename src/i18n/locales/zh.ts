@@ -79,6 +79,10 @@ export default {
         'gallery.refreshSuccess': '已刷新文章列表',
         'gallery.refreshError': '刷新失败',
         'read.empty.syncTip': '提示：如果您刚开始使用，可能需要先同步RSS源获取文章',
-		'articleCard.status.read': '已读'
+		'articleCard.status.read': '已读',
+		'articleCard.actions.favorite': '收藏',
+		'articleCard.actions.unfavorite': '取消收藏',
+		'articleCard.actions.markUnread': '标记为未读',
+		'articleCard.actions.read': '标记为已读'
     }
 }
