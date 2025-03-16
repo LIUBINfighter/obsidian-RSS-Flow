@@ -5,7 +5,7 @@ import { Introduction } from './Introduction';
 import { RSSSource } from '../../types';
 import { parseOPML, generateOPML } from '../../utils/xml-utils';
 import { useTranslation } from 'react-i18next';
-// import { Sidebar } from './Sidebar';
+import { ensureString } from '../../utils/i18n-utils';
 
 interface ReadMeProps {
     app: App;

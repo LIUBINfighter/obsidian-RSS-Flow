@@ -1,6 +1,6 @@
 import type { TFunction as I18nTFunction } from 'i18next';
 
-type TFunction = I18nTFunction;
+type TFunction = I18nTFunction<'translation', string, string>;
 
 /**
  * 确保i18n翻译函数返回string类型

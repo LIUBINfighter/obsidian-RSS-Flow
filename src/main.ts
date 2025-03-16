@@ -7,6 +7,7 @@ import { GalleryView } from './views/gallery-view';
 import { dbService } from './services/db-service';
 import { rssService } from './services/rss-service';
 import { i18n } from './i18n';
+import { ensureString } from './utils/i18n-utils';
 
 const DEFAULT_SETTINGS: ReactLabSettings = {
     setting: 'default',
@@ -29,7 +30,7 @@ export default class RSSFlowPlugin extends Plugin {
             const feeds: RSSSource[] = data.feeds || [];
             
             if (feeds.length === 0) {
-                new Notice(i18n.t('noFeeds'));
+                new Notice(ensureString(i18n.t, 'noFeeds', '没有订阅源'));
                 return;
             }
             
@@ -66,11 +67,11 @@ export default class RSSFlowPlugin extends Plugin {
             progressNotice.hide();
             
             // 显示详细的结果通知
-            new Notice(i18n.t('syncComplete', { success: successCount, fail: failCount, total: totalItems }));
+            new Notice(ensureString(i18n.t, 'syncComplete', `同步完成：成功${successCount}个，失败${failCount}个，共${totalItems}篇文章`));
             
             // 如果有失败但也有成功，说明部分源可用，保持积极
             if (failCount > 0 && successCount > 0) {
-                new Notice(i18n.t('partialSyncFail'), 5000);
+                new Notice(ensureString(i18n.t, 'partialSyncFail', '部分源同步失败'), 5000);
             }
             
             // 添加同步统计
@@ -81,7 +82,7 @@ export default class RSSFlowPlugin extends Plugin {
             console.log(`同步完成. 总文章数: ${allItems.length}, 已读: ${readItems.length}, 收藏: ${favoriteItems.length}`);
             
             // 添加保留状态提示
-            new Notice(i18n.t('syncPreserveStatus'));
+            new Notice(ensureString(i18n.t, 'syncPreserveStatus', '已保留阅读状态'));
             
             new Notice('RSS源同步完成！');
         } catch (error) {

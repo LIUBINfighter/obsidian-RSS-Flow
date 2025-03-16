@@ -7,6 +7,10 @@ interface HeadingBlockProps {
     onFavorite: (content: string, blockId: number) => void;
 }
 
+// 声明动态标题标签类型
+type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
+type HeadingTagType = `h${HeadingLevel}`;
+
 export const HeadingBlockView: React.FC<HeadingBlockProps> = ({ block, onFavorite }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isFavorited, setIsFavorited] = useState(false);
@@ -24,7 +28,8 @@ export const HeadingBlockView: React.FC<HeadingBlockProps> = ({ block, onFavorit
     };
     
     // 动态渲染不同级别的标题
-    const HeadingTag = `h${block.level || 2}` as keyof JSX.IntrinsicElements;
+    const level = (block.level || 2) as HeadingLevel;
+    const HeadingTag = `h${level}` as HeadingTagType;
     
     return (
         <div 

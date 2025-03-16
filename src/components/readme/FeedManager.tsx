@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { setIcon, App, Notice } from 'obsidian';
 import { useTranslation } from 'react-i18next';
+import { ensureString } from '../../utils/i18n-utils';
 import { SourceForm } from './SourceForm';
 import { RSSSource } from '../../types';
 
@@ -16,7 +17,7 @@ export const FeedManager: React.FC<FeedManagerProps> = ({ app, feeds, onSave }) 
     const [showSourceForm, setShowSourceForm] = useState(false);
     const [editingSource, setEditingSource] = useState<RSSSource | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
-    const { t } = useTranslation();
+    const { t } = useTranslation<"translation">();
 
     const handleAddSource = useCallback(() => {
         setEditingSource(null);
@@ -88,8 +89,8 @@ export const FeedManager: React.FC<FeedManagerProps> = ({ app, feeds, onSave }) 
                 <h2>{t('rss.sources.title', '订阅源')}</h2>
             </div>
             
-            <button className="add-source-btn" ref={(el) => { if (el) setIcon(el, 'plus'); }} onClick={handleAddSource}>
-                {t('rss.sources.add', '添加新订阅源')}
+            <button className="add-source-btn" ref={(el) => { if (el) { setIcon(el, 'plus'); } }} onClick={handleAddSource}>
+                {ensureString(t, 'rss.sources.add', '添加新订阅源')}
             </button>
 
             {showSourceForm && !editingSource && (
@@ -133,13 +134,13 @@ export const FeedManager: React.FC<FeedManagerProps> = ({ app, feeds, onSave }) 
                             <button 
                                 className="rss-action-btn" 
                                 aria-label="编辑" 
-                                ref={el => el && setIcon(el, 'pencil')}
+                                ref={el => { if (el) { setIcon(el, 'pencil'); } }}
                                 onClick={() => handleEditSource({ name: feed.name, url: feed.url, folder: feed.folder })}
                             ></button>
                             <button 
                                 className={`rss-action-btn delete-btn ${deleteConfirm === feed.url ? 'confirm-delete' : ''}`}
                                 aria-label="删除" 
-                                ref={el => el && setIcon(el, 'trash')}
+                                ref={el => { if (el) { setIcon(el, 'trash'); } }}
                                 onClick={() => handleDeleteSource(feed.url)}
                             ></button>
                         </div>

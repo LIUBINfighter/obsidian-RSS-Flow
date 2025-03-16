@@ -81,13 +81,14 @@ export const ContentBlockView = memo(({ block, articleId, articleTitle }: Conten
 
     // 渲染标题块
     const renderHeadingBlock = () => {
-        const HeadingTag = `h${block.level || 2}` as keyof JSX.IntrinsicElements;
-        return (
-            <HeadingTag 
-                className={`heading-content heading-${block.level}`}
-                id={`heading-${block.id}`} // 为目录导航添加id
-                dangerouslySetInnerHTML={{ __html: block.content }}
-            />
+        const headingLevel = block.level || 2;
+        return React.createElement(
+            `h${headingLevel}`,
+            {
+                className: `heading-content heading-${block.level}`,
+                id: `heading-${block.id}`,
+                dangerouslySetInnerHTML: { __html: block.content }
+            }
         );
     };
 

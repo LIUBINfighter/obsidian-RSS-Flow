@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ensureString } from '../../utils/i18n-utils';
 
 interface RSSSource {
     name: string;
@@ -14,7 +15,8 @@ interface SourceFormProps {
 }
 
 export const SourceForm: React.FC<SourceFormProps> = ({ initialData, onSubmit, onCancel }) => {
-    const { t } = useTranslation();
+    // 修改这一行，添加明确的泛型参数以防止过深类型推断
+    const { t } = useTranslation<"translation">();
     const [formData, setFormData] = useState<RSSSource>(initialData || {
         name: '',
         url: '',
@@ -38,43 +40,43 @@ export const SourceForm: React.FC<SourceFormProps> = ({ initialData, onSubmit, o
         <div className="source-form-container">
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="name">{t('rss.sources.name', '名称')}</label>
+                    <label htmlFor="name">{ensureString(t, 'rss.sources.name', '名称')}</label>
                     <input
                         type="text"
                         id="name"
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        placeholder={t('rss.sources.namePlaceholder', '请输入订阅源名称')}
+                        placeholder={ensureString(t, 'rss.sources.namePlaceholder', '请输入订阅源名称')}
                         required
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="url">{t('rss.sources.url', 'URL')}</label>
+                    <label htmlFor="url">{ensureString(t, 'rss.sources.url', 'URL')}</label>
                     <input
                         type="url"
                         id="url"
                         name="url"
                         value={formData.url}
                         onChange={handleChange}
-                        placeholder={t('rss.sources.urlPlaceholder', '请输入订阅源URL')}
+                        placeholder={ensureString(t, 'rss.sources.urlPlaceholder', '请输入订阅源URL')}
                         required
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="folder">{t('rss.sources.folder', '分类')}</label>
+                    <label htmlFor="folder">{ensureString(t, 'rss.sources.folder', '分类')}</label>
                     <input
                         type="text"
                         id="folder"
                         name="folder"
                         value={formData.folder}
                         onChange={handleChange}
-                        placeholder={t('rss.sources.folderPlaceholder', '请输入分类')}
+                        placeholder={ensureString(t, 'rss.sources.folderPlaceholder', '请输入分类')}
                     />
                 </div>
                 <div className="form-actions">
-                    <button type="submit" className="form-submit-btn">{t('rss.sources.confirm', '确认')}</button>
-                    <button type="button" className="form-cancel-btn" onClick={onCancel}>{t('rss.sources.cancel', '取消')}</button>
+                    <button type="submit" className="form-submit-btn">{ensureString(t, 'rss.sources.confirm', '确认')}</button>
+                    <button type="button" className="form-cancel-btn" onClick={onCancel}>{ensureString(t, 'rss.sources.cancel', '取消')}</button>
                 </div>
             </form>
         </div>
