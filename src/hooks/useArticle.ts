@@ -3,6 +3,7 @@ import RSSFlowPlugin from '../main';
 import { dbService } from '../services/db-service';
 import { RSSItem, ContentBlock } from '../types';
 import { processHtmlContent } from '../utils/content-processor';
+import { ReadOrder, ReadFilter } from '../components/read/ReadOrderSelector';
 
 export const useArticle = (plugin: RSSFlowPlugin) => {
     const [article, setArticle] = useState<RSSItem | null>(null);
@@ -12,6 +13,8 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
     const [historyIndex, setHistoryIndex] = useState<number>(-1);
     const [folders, setFolders] = useState<string[]>(['all']);
     const [selectedFolder, setSelectedFolder] = useState<string>('all');
+    const [readOrder, setReadOrder] = useState<ReadOrder>('newest');
+    const [readFilter, setReadFilter] = useState<ReadFilter>('all');
     
     // 使用ref存储初始articleId，避免多次渲染问题
     const initialArticleIdRef = useRef<string | null>(plugin.currentArticleId);
@@ -78,16 +81,33 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         }
     }, [loadArticleById]);
     
-    // 随机加载文章，支持文件夹筛选
+    // 按照当前顺序和过滤器随机加载文章
     const handleRandomArticle = useCallback(async () => {
         setLoading(true);
         try {
             await dbService.init();
             
-            // 根据所选文件夹获取随机文章
-            const randomItem = await dbService.getRandomItem(selectedFolder !== 'all' ? selectedFolder : undefined);
+            // 准备查询选项
+            const options: any = {
+                folder: selectedFolder !== 'all' ? selectedFolder : undefined,
+                orderBy: 'random'
+            };
             
-            if (randomItem) {
+            // 应用已读/未读过滤器
+            if (readFilter === 'unread') {
+                options.isRead = false;
+            } else if (readFilter === 'read') {
+                options.isRead = true;
+            }
+            
+            // 获取符合条件的文章
+            const articles = await dbService.getArticlesByOptions(options);
+            
+            if (articles.length > 0) {
+                // 随机选择一篇
+                const randomIndex = Math.floor(Math.random() * articles.length);
+                const randomItem = articles[randomIndex];
+                
                 setArticle(randomItem);
                 setContentBlocks(processHtmlContent(randomItem.content));
                 await dbService.markItemAsRead(randomItem.id);
@@ -106,7 +126,7 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         } finally {
             setLoading(false);
         }
-    }, [historyIndex, selectedFolder]);
+    }, [historyIndex, selectedFolder, readOrder, readFilter]);
     
     // 同步RSS
     const handleSync = useCallback(async () => {
@@ -117,29 +137,108 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         }
     }, [plugin]);
     
-    // 加载下一篇文章
+    // 加载下一篇文章（按当前顺序和过滤条件）
     const handleNextArticle = useCallback(async () => {
         if (historyIndex < articleHistory.length - 1) {
             // 直接从历史中加载下一篇
             setHistoryIndex(historyIndex + 1);
             await loadArticleById(articleHistory[historyIndex + 1], false);
         } else {
-            // 没有下一篇，获取新的随机文章
-            await handleRandomArticle();
+            // 按条件获取下一篇
+            setLoading(true);
+            try {
+                // 准备查询选项
+                const options: any = {
+                    folder: selectedFolder !== 'all' ? selectedFolder : undefined,
+                    orderBy: readOrder === 'random' ? 'newest' : readOrder // 随机模式下默认按最新顺序
+                };
+                
+                // 应用已读/未读过滤器
+                if (readFilter === 'unread') {
+                    options.isRead = false;
+                } else if (readFilter === 'read') {
+                    options.isRead = true;
+                }
+                
+                const nextArticle = await dbService.getNextArticle(
+                    article?.id || null, 
+                    options
+                );
+                
+                if (nextArticle) {
+                    setArticle(nextArticle);
+                    setContentBlocks(processHtmlContent(nextArticle.content));
+                    await dbService.markItemAsRead(nextArticle.id);
+                    
+                    // 添加到历史记录
+                    setArticleHistory(prev => {
+                        const newHistory = [...prev.slice(0, historyIndex + 1), nextArticle.id];
+                        setHistoryIndex(newHistory.length - 1);
+                        return newHistory;
+                    });
+                }
+            } catch (error) {
+                console.error('加载下一篇文章失败:', error);
+            } finally {
+                setLoading(false);
+            }
         }
-    }, [historyIndex, articleHistory, handleRandomArticle, loadArticleById]);
+    }, [historyIndex, articleHistory, loadArticleById, article?.id, selectedFolder, readOrder, readFilter]);
     
     // 加载上一篇文章
     const handlePrevArticle = useCallback(async () => {
         if (historyIndex > 0) {
+            // 从历史中加载上一篇
             setHistoryIndex(historyIndex - 1);
             await loadArticleById(articleHistory[historyIndex - 1], false);
+        } else {
+            // 按条件获取上一篇
+            setLoading(true);
+            try {
+                // 准备查询选项
+                const options: any = {
+                    folder: selectedFolder !== 'all' ? selectedFolder : undefined,
+                    orderBy: readOrder === 'random' ? 'newest' : readOrder // 随机模式下默认按最新顺序
+                };
+                
+                // 应用已读/未读过滤器
+                if (readFilter === 'unread') {
+                    options.isRead = false;
+                } else if (readFilter === 'read') {
+                    options.isRead = true;
+                }
+                
+                const prevArticle = await dbService.getPrevArticle(
+                    article?.id || null, 
+                    options
+                );
+                
+                if (prevArticle) {
+                    setArticle(prevArticle);
+                    setContentBlocks(processHtmlContent(prevArticle.content));
+                    await dbService.markItemAsRead(prevArticle.id);
+                }
+            } catch (error) {
+                console.error('加载上一篇文章失败:', error);
+            } finally {
+                setLoading(false);
+            }
         }
-    }, [historyIndex, articleHistory, loadArticleById]);
+    }, [historyIndex, articleHistory, loadArticleById, article?.id, selectedFolder, readOrder, readFilter]);
 
     // 处理文件夹选择变更
     const handleFolderChange = useCallback((folder: string) => {
         setSelectedFolder(folder);
+    }, []);
+    
+    // 处理阅读顺序变更
+    const handleReadOrderChange = useCallback((order: ReadOrder) => {
+        setReadOrder(order);
+    }, []);
+    
+    // 处理阅读过滤器变更
+    const handleReadFilterChange = useCallback((filter: ReadFilter) => {
+        setReadFilter(filter);
     }, []);
 
     return { 
@@ -153,6 +252,10 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         loadArticle: loadArticleById,
         folders,
         selectedFolder,
-        handleFolderChange
+        handleFolderChange,
+        readOrder,
+        readFilter,
+        handleReadOrderChange,
+        handleReadFilterChange
     };
 };

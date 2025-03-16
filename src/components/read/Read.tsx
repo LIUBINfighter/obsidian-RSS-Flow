@@ -36,7 +36,11 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
         handlePrevArticle,
         folders,
         selectedFolder,
-        handleFolderChange
+        handleFolderChange,
+        readOrder,
+        readFilter,
+        handleReadOrderChange,
+        handleReadFilterChange
     } = useArticle(plugin);
     
     const { readingProgress } = useReadingProgress(plugin, article);
@@ -80,6 +84,10 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                 folders={folders}
                 selectedFolder={selectedFolder}
                 onFolderChange={handleFolderChange}
+                readOrder={readOrder}
+                readFilter={readFilter}
+                onReadOrderChange={handleReadOrderChange}
+                onReadFilterChange={handleReadFilterChange}
             />
             <div className="read-main-content">
                 {loading ? (

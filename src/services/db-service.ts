@@ -716,6 +716,151 @@ export class DBService {
             return false;
         }
     }
+
+    /**
+     * 按照指定条件获取文章
+     * @param options 查询选项
+     */
+    async getArticlesByOptions(options: {
+        folder?: string, 
+        isRead?: boolean,
+        orderBy?: 'newest' | 'oldest' | 'random'
+    }): Promise<RSSItem[]> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        return new Promise(async (resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            try {
+                // 先获取所有文章或按文件夹筛选的文章
+                let articles: RSSItem[] = [];
+                if (options.folder && options.folder !== 'all') {
+                    // 获取特定文件夹的文章
+                    const transaction = this.db.transaction([STORES.ITEMS], 'readonly');
+                    const store = transaction.objectStore(STORES.ITEMS);
+                    const index = store.index('folder');
+                    const request = index.getAll(options.folder);
+                    
+                    articles = await new Promise<RSSItem[]>((res, rej) => {
+                        request.onsuccess = () => res(request.result);
+                        request.onerror = (event) => {
+                            console.error('获取文件夹文章失败:', event);
+                            rej([]);
+                        };
+                    });
+                } else {
+                    // 获取所有文章
+                    articles = await this.getAllItems();
+                }
+
+                // 应用已读/未读筛选
+                if (options.isRead !== undefined) {
+                    articles = articles.filter(article => article.isRead === options.isRead);
+                }
+
+                // 应用排序
+                if (options.orderBy) {
+                    switch (options.orderBy) {
+                        case 'newest':
+                            articles.sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+                            break;
+                        case 'oldest':
+                            articles.sort((a, b) => new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime());
+                            break;
+                        case 'random':
+                            articles = this.shuffleArray(articles);
+                            break;
+                    }
+                }
+
+                resolve(articles);
+            } catch (error) {
+                console.error('按条件获取文章失败:', error);
+                reject([]);
+            }
+        });
+    }
+
+    /**
+     * 获取下一篇文章（按指定条件）
+     */
+    async getNextArticle(currentArticleId: string | null, options: {
+        folder?: string, 
+        isRead?: boolean,
+        orderBy?: 'newest' | 'oldest'
+    }): Promise<RSSItem | null> {
+        try {
+            // 获取符合条件的文章列表
+            const articles = await this.getArticlesByOptions(options);
+            
+            if (articles.length === 0) return null;
+            
+            // 如果没有当前文章，返回列表中的第一篇
+            if (!currentArticleId) return articles[0];
+            
+            // 找出当前文章在列表中的位置
+            const currentIndex = articles.findIndex(a => a.id === currentArticleId);
+            
+            // 如果找不到当前文章，返回第一篇
+            if (currentIndex === -1) return articles[0];
+            
+            // 返回下一篇文章，如果是最后一篇则循环到第一篇
+            const nextIndex = (currentIndex + 1) % articles.length;
+            return articles[nextIndex];
+        } catch (error) {
+            console.error('获取下一篇文章失败:', error);
+            return null;
+        }
+    }
+
+    /**
+     * 获取上一篇文章（按指定条件）
+     */
+    async getPrevArticle(currentArticleId: string | null, options: {
+        folder?: string, 
+        isRead?: boolean,
+        orderBy?: 'newest' | 'oldest'
+    }): Promise<RSSItem | null> {
+        try {
+            // 获取符合条件的文章列表
+            const articles = await this.getArticlesByOptions(options);
+            
+            if (articles.length === 0) return null;
+            
+            // 如果没有当前文章，返回列表中的最后一篇
+            if (!currentArticleId) return articles[articles.length - 1];
+            
+            // 找出当前文章在列表中的位置
+            const currentIndex = articles.findIndex(a => a.id === currentArticleId);
+            
+            // 如果找不到当前文章，返回最后一篇
+            if (currentIndex === -1) return articles[articles.length - 1];
+            
+            // 返回上一篇文章，如果是第一篇则循环到最后一篇
+            const prevIndex = (currentIndex - 1 + articles.length) % articles.length;
+            return articles[prevIndex];
+        } catch (error) {
+            console.error('获取上一篇文章失败:', error);
+            return null;
+        }
+    }
+    
+    /**
+     * 打乱数组顺序（Fisher-Yates洗牌算法）
+     */
+    private shuffleArray<T>(array: T[]): T[] {
+        const result = [...array];
+        for (let i = result.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [result[i], result[j]] = [result[j], result[i]];
+        }
+        return result;
+    }
 }
 
 // 导出单例

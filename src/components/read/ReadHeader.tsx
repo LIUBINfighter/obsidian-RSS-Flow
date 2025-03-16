@@ -4,6 +4,7 @@ import { VIEW_TYPES } from '../../types';
 import RSSFlowPlugin from '../../main';
 import { useTranslation } from 'react-i18next';
 import { FolderSelector } from '../gallery/FolderSelector';
+import { ReadOrderSelector, ReadOrder, ReadFilter } from './ReadOrderSelector';
 
 interface ReadHeaderProps {
     fontSize: number;
@@ -22,6 +23,10 @@ interface ReadHeaderProps {
     folders: string[];
     selectedFolder: string;
     onFolderChange: (folder: string) => void;
+    readOrder: ReadOrder;
+    readFilter: ReadFilter;
+    onReadOrderChange: (order: ReadOrder) => void;
+    onReadFilterChange: (filter: ReadFilter) => void;
 }
 
 export const ReadHeader: React.FC<ReadHeaderProps> = ({
@@ -40,7 +45,11 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     articleLink,
     folders,
     selectedFolder,
-    onFolderChange
+    onFolderChange,
+    readOrder,
+    readFilter,
+    onReadOrderChange,
+    onReadFilterChange
 }) => {
     const { t } = useTranslation();
     
@@ -99,14 +108,26 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     return (
         <div className="read-header">
             <div className="read-header-top">
-                <h2>{t('read.header.title', 'RSS Flow Reader')}</h2>
+                <div className="read-header-left">
+                    <h2>{t('read.header.title', 'RSS Flow Reader')}</h2>
+                    
+                    {/* 添加文件夹选择器 */}
+                    <div className="read-folder-selector">
+                        <FolderSelector
+                            folders={folders}
+                            selectedFolder={selectedFolder}
+                            onChange={onFolderChange}
+                        />
+                    </div>
+                </div>
                 
-                {/* 添加文件夹选择器 */}
-                <div className="read-folder-selector">
-                    <FolderSelector
-                        folders={folders}
-                        selectedFolder={selectedFolder}
-                        onChange={onFolderChange}
+                {/* 添加阅读顺序选择器 */}
+                <div className="read-header-right">
+                    <ReadOrderSelector
+                        readOrder={readOrder}
+                        readFilter={readFilter}
+                        onOrderChange={onReadOrderChange}
+                        onFilterChange={onReadFilterChange}
                     />
                 </div>
             </div>
