@@ -49,6 +49,7 @@ export default {
         syncComplete: 'RSS同步完成: {{success}}个成功, {{fail}}个失败, 共{{total}}篇文章',
         partialSyncFail: '部分RSS源同步失败，您仍可阅读成功同步的内容',
         syncFail: 'RSS同步失败，查看控制台了解详情',
+        syncPreserveStatus: '已保留所有文章的已读状态和收藏标记',
 
         // Commands
         openReadmeView: '打开ReadMe视图',
@@ -72,8 +73,11 @@ export default {
         'gallery.view.card': '卡片视图',
         'gallery.view.waterfall': '瀑布流视图',
         'gallery.actions.sync': '同步RSS源',
+        'gallery.actions.refresh': '刷新文章状态',
         'gallery.loading': '加载中...',
         'gallery.empty.noArticles': '没有找到文章',
+        'gallery.refreshSuccess': '已刷新文章列表',
+        'gallery.refreshError': '刷新失败',
         'read.empty.syncTip': '提示：如果您刚开始使用，可能需要先同步RSS源获取文章'
     }
 }

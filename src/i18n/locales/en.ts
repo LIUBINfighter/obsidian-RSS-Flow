@@ -49,6 +49,7 @@ export default {
         syncComplete: 'RSS sync completed: {{success}} succeeded, {{fail}} failed, {{total}} articles in total',
         partialSyncFail: 'Some RSS feeds failed to sync, you can still read the successfully synced content',
         syncFail: 'RSS sync failed, check console for details',
+        syncPreserveStatus: 'Read status and favorites have been preserved for all articles',
 
         // Commands
         openReadmeView: 'Open ReadMe View',
@@ -72,8 +73,11 @@ export default {
         'gallery.view.card': 'Card View',
         'gallery.view.waterfall': 'Waterfall View',
         'gallery.actions.sync': 'Sync RSS Feeds',
+        'gallery.actions.refresh': 'Refresh Article Status',
         'gallery.loading': 'Loading...',
         'gallery.empty.noArticles': 'No articles found',
+        'gallery.refreshSuccess': 'Articles list refreshed',
+        'gallery.refreshError': 'Refresh failed',
         'read.empty.syncTip': 'Tip: If you are just starting out, you may need to sync RSS feeds first to get articles'
     }
 }

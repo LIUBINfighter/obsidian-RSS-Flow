@@ -152,8 +152,8 @@ export class RSSService {
                         itemCount: rssItems.length
                     });
                     
-                    // 保存到数据库
-                    await dbService.saveItems(rssItems);
+                    // 修改这一行：使用保留状态的方法保存文章
+                    await dbService.saveItemsPreserveStatus(rssItems);
                     
                     return rssItems;
                 } catch (dbError) {

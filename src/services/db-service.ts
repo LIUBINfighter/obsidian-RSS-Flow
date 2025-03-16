@@ -108,21 +108,24 @@ export class DBService {
 
         try {
             // 对每篇文章进行处理
+            const processedItems: RSSItem[] = [];
+            
             for (const newItem of items) {
                 // 查询该文章是否已存在
                 const existingItem = await this.getItemById(newItem.id);
                 
-                // 如果文章已存在，保留已读状态和收藏状态
                 if (existingItem) {
-                    // 保留用户状态
+                    // 如果文章已存在，保留已读状态和收藏状态
                     newItem.isRead = existingItem.isRead;
                     newItem.isFavorite = existingItem.isFavorite;
                     console.log(`保留文章状态: ${newItem.title}, isRead: ${newItem.isRead}, isFavorite: ${newItem.isFavorite}`);
                 }
+                
+                processedItems.push(newItem);
             }
             
             // 批量保存处理后的文章
-            return await this.saveItems(items);
+            return await this.saveItems(processedItems);
         } catch (error) {
             console.error('保存文章并保留状态失败:', error);
             return false;

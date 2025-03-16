@@ -79,6 +79,9 @@ export default class RSSFlowPlugin extends Plugin {
             
             console.log(`同步完成. 总文章数: ${allItems.length}, 已读: ${readItems.length}, 收藏: ${favoriteItems.length}`);
             
+            // 添加保留状态提示
+            new Notice(i18n.t('syncPreserveStatus'));
+            
             new Notice('RSS源同步完成！');
         } catch (error) {
             console.error('同步RSS源时出错:', error);
