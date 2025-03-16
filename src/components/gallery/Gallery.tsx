@@ -5,6 +5,7 @@ import { ArticleCard } from './ArticleCard';
 import RSSFlowPlugin from '../../main';
 import { setIcon } from 'obsidian';
 import { useTranslation } from 'react-i18next';
+import { FolderSelector } from './FolderSelector'; // 导入新组件
 
 interface GalleryProps {
     plugin: RSSFlowPlugin;
@@ -19,6 +20,8 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
     const [view, setView] = useState<'card' | 'waterfall'>('card');
     const [filter, setFilter] = useState<'all' | 'favorite'>('all');
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [folders, setFolders] = useState<string[]>([]);
+    const [selectedFolder, setSelectedFolder] = useState<string>('all');
     
     // 使用refs存储DOM元素引用
     const clearButtonRef = useRef<HTMLButtonElement>(null);
@@ -48,6 +51,22 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         });
     }, [expandedFeeds]);
 
+    // 获取所有可用的文件夹
+    const loadFolders = useCallback(async () => {
+        try {
+            await dbService.init();
+            const stats = await dbService.getItemStatsByFolder();
+            const folderNames = stats.map(item => item.folder).filter(Boolean);
+            setFolders(['all', ...folderNames]);
+        } catch (error) {
+            console.error('加载文件夹失败:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadFolders();
+    }, [loadFolders]);
+    
     const loadData = useCallback(async () => {
         setLoading(true);
         try {
@@ -63,6 +82,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                 articlesData = await dbService.getFavoriteItems();
             } else {
                 articlesData = await dbService.getAllItems();
+            }
+            
+            // 应用文件夹筛选
+            if (selectedFolder !== 'all') {
+                articlesData = articlesData.filter(article => 
+                    article.folder === selectedFolder
+                );
             }
             
             // 应用搜索过滤
@@ -84,7 +110,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         } finally {
             setLoading(false);
         }
-    }, [filter, searchTerm]);
+    }, [filter, searchTerm, selectedFolder]);
 
     useEffect(() => {
         loadData();
@@ -116,6 +142,10 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         await plugin.syncRSSFeeds();
         loadData();
     }, [plugin, loadData]);
+
+    const handleFolderChange = useCallback((folder: string) => {
+        setSelectedFolder(folder);
+    }, []);
 
     // 按Feed分组文章
     const groupedArticles: Record<string, RSSItem[]> = {};
@@ -156,6 +186,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                             ref={clearButtonRef}
                         ></button>
                     </div>
+                    
+                    {/* 添加文件夹选择器 */}
+                    <FolderSelector 
+                        folders={folders}
+                        selectedFolder={selectedFolder}
+                        onChange={handleFolderChange}
+                    />
                     
                     <div className="gallery-filters">
                         <button 

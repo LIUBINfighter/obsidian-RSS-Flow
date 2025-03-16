@@ -1991,3 +1991,39 @@ input:checked + label .toggle-track:before {
 	margin-bottom: 15px;
   }
   
+/* 文件夹选择器样式 */
+.folder-selector {
+    display: flex;
+    align-items: center;
+    background-color: var(--background-secondary);
+    border-radius: 4px;
+    padding: 0 8px;
+    margin-right: 8px;
+}
+
+.folder-icon {
+    display: flex;
+    align-items: center;
+    margin-right: 5px;
+    color: var(--text-muted);
+}
+
+.folder-select {
+    background: transparent;
+    border: none;
+    color: var(--text-normal);
+    font-size: 14px;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.folder-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--interactive-accent);
+}
+
+.folder-select option {
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+}
