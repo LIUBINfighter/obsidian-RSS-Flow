@@ -37,7 +37,7 @@ export class ReadView extends ItemView {
 
     // 打开指定文章的方法
     async openArticle(articleId: string) {
-        console.log("ReadView: 准备打开文章ID:", articleId);
+        //console.log("ReadView: 准备打开文章ID:", articleId);
         
         // 设置currentArticleId
         this.plugin.currentArticleId = articleId;

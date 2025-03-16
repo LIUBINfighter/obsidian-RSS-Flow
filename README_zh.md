@@ -69,7 +69,7 @@ export const MyComponent = () => {
       - 列表项 2
       
       ```js
-      console.log('代码块');
+      //console.log('代码块');
       ```
     </MarkdownRenderer>
   );

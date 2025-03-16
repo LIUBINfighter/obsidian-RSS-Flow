@@ -118,7 +118,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
     // 编辑源
     const handleEditSource = async (source: RSSSource) => {
         // 在实际应用中，这里应该打开一个编辑模态框
-        console.log("编辑源:", source);
+        //console.log("编辑源:", source);
         
         // 这里只是演示，实际上应该根据用户输入来更新
         const updatedSources = sources.map(s => 
@@ -167,7 +167,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
                     try {
                         const content = e.target?.result as string;
                         // 添加日志以帮助调试
-                        console.log('OPML内容预览:', content.substring(0, 200) + '...');
+                        //console.log('OPML内容预览:', content.substring(0, 200) + '...');
                         
                         try {
                             const parsedSources = parseOPML(content);

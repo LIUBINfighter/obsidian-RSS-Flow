@@ -50,7 +50,7 @@ export class RSSService {
     // 获取并解析RSS源
     async fetchAndParseRSS(source: RSSSource): Promise<RSSItem[]> {
         try {
-            console.log(`正在获取RSS源: ${source.name} - ${source.url}`);
+            //console.log(`正在获取RSS源: ${source.name} - ${source.url}`);
             
             const response = await fetch(source.url, {
                 method: 'GET',
@@ -83,7 +83,7 @@ export class RSSService {
                 feedTitle = xmlDoc.querySelector("feed > title")?.textContent || source.name;
             }
             
-            console.log(`找到${items.length}条RSS条目`);
+            //console.log(`找到${items.length}条RSS条目`);
             
             const rssItems: RSSItem[] = [];
             for (const item of items) {

@@ -31,7 +31,7 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
                         try {
                             const content = e.target?.result as string;
                             // 添加日志以帮助调试
-                            console.log('OPML内容预览:', content.substring(0, 200) + '...');
+                            //console.log('OPML内容预览:', content.substring(0, 200) + '...');
                             
                             try {
                                 const parsedSources = parseOPML(content);

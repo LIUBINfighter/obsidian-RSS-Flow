@@ -25,7 +25,7 @@ export class DBService {
             
             request.onsuccess = (event) => {
                 this.db = (event.target as IDBOpenDBRequest).result;
-                console.log('IndexedDB连接成功');
+                //console.log('IndexedDB连接成功');
                 resolve(true);
             };
             
@@ -87,7 +87,7 @@ export class DBService {
             });
             
             transaction.oncomplete = () => {
-                console.log(`成功保存${successCount}篇文章`);
+                //console.log(`成功保存${successCount}篇文章`);
             };
             
             transaction.onerror = (event) => {
@@ -118,7 +118,7 @@ export class DBService {
                     // 如果文章已存在，保留已读状态和收藏状态
                     newItem.isRead = existingItem.isRead;
                     newItem.isFavorite = existingItem.isFavorite;
-                    console.log(`保留文章状态: ${newItem.title}, isRead: ${newItem.isRead}, isFavorite: ${newItem.isFavorite}`);
+                    //console.log(`保留文章状态: ${newItem.title}, isRead: ${newItem.isRead}, isFavorite: ${newItem.isFavorite}`);
                 }
                 
                 processedItems.push(newItem);
@@ -449,7 +449,7 @@ export class DBService {
             const request = store.delete(url);
             
             request.onsuccess = () => {
-                console.log(`成功删除Feed: ${url}`);
+                //console.log(`成功删除Feed: ${url}`);
                 resolve(true);
             };
             
@@ -496,7 +496,7 @@ export class DBService {
                     deleteRequest.onsuccess = () => {
                         deletedCount++;
                         if (deletedCount === items.length) {
-                            console.log(`成功删除${deletedCount}篇与Feed ${feedUrl} 相关的文章`);
+                            //console.log(`成功删除${deletedCount}篇与Feed ${feedUrl} 相关的文章`);
                             resolve(true);
                         }
                     };
@@ -532,11 +532,11 @@ export class DBService {
             const feedsToDelete = storedFeeds.filter(feed => !validFeedUrls.includes(feed.url));
             
             if (feedsToDelete.length === 0) {
-                console.log('没有需要删除的feeds');
+                //console.log('没有需要删除的feeds');
                 return true;
             }
             
-            console.log(`发现${feedsToDelete.length}个需要删除的feeds`);
+            //console.log(`发现${feedsToDelete.length}个需要删除的feeds`);
             
             // 对每个需要删除的feed执行删除操作
             for (const feed of feedsToDelete) {
@@ -547,7 +547,7 @@ export class DBService {
                 await this.deleteFeedByUrl(feed.url);
             }
             
-            console.log(`成功清理了${feedsToDelete.length}个过期的feeds及其相关文章`);
+            //console.log(`成功清理了${feedsToDelete.length}个过期的feeds及其相关文章`);
             return true;
         } catch (error) {
             console.error('清理过期feeds时出错:', error);
@@ -585,7 +585,7 @@ export class DBService {
                         const putRequest = store.put(item);
                         
                         putRequest.onsuccess = () => {
-                            console.log(`文章已标记为已读: ${itemId}`);
+                            //console.log(`文章已标记为已读: ${itemId}`);
                             resolve(true);
                         };
                         
@@ -716,7 +716,7 @@ export class DBService {
                 await this.saveFeedMeta(feed);
             }
             
-            console.log('数据库与配置同步完成');
+            //console.log('数据库与配置同步完成');
             return true;
         } catch (error) {
             console.error('数据库与配置同步失败:', error);

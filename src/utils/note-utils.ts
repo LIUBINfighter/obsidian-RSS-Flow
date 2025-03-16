@@ -128,7 +128,7 @@ export async function saveArticleToNote(article: any, contentBlocks: ContentBloc
         const fullPath = `${basePath}${filename}.md`;
         
         // 使用Obsidian API创建笔记
-        console.log('尝试保存文章笔记到路径:', fullPath);
+        //console.log('尝试保存文章笔记到路径:', fullPath);
         await plugin.app.vault.create(fullPath, noteContent);
         
         // 显示成功通知
@@ -185,7 +185,7 @@ export async function saveFavoritesToNote(article: any, favorites: FavoritedBloc
         const fullPath = `${basePath}${filename}.md`;
         
         // 使用Obsidian API创建笔记
-        console.log('尝试保存收藏笔记到路径:', fullPath);
+        //console.log('尝试保存收藏笔记到路径:', fullPath);
         await plugin.app.vault.create(fullPath, noteContent);
         
         // 显示成功通知
@@ -259,7 +259,7 @@ tags: [RSS-Flow, favorites]
         const fullPath = `${basePath}${filename}.md`;
         
         // 使用Obsidian API创建笔记
-        console.log('尝试保存所有收藏内容到路径:', fullPath);
+        //console.log('尝试保存所有收藏内容到路径:', fullPath);
         await plugin.app.vault.create(fullPath, noteContent);
         
         // 显示成功通知

@@ -138,14 +138,14 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
 
     const handleOpenInReadView = useCallback(async (articleId: string) => {
         // 添加更详细的日志
-        console.log('Gallery: 准备在Read View中打开文章，ID:', articleId);
+        //console.log('Gallery: 准备在Read View中打开文章，ID:', articleId);
         
         // 先设置ID再激活视图，确保ID不会丢失
         plugin.currentArticleId = articleId;
         
         try {
             await plugin.activateReadView(articleId);
-            console.log('Gallery: Read View激活成功');
+            //console.log('Gallery: Read View激活成功');
         } catch (error) {
             console.error('Gallery: 打开Read View失败:', error);
         }

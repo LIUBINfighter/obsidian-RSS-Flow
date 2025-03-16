@@ -54,7 +54,7 @@ export default class RSSFlowPlugin extends Plugin {
                         successCount++;
                         totalItems += items.length;
                     } else {
-                        console.log(`源 ${feeds[i].name} 没有新文章或同步失败`);
+                        //console.log(`源 ${feeds[i].name} 没有新文章或同步失败`);
                         failCount++;
                     }
                 } catch (error) {
@@ -79,7 +79,7 @@ export default class RSSFlowPlugin extends Plugin {
             const readItems = await dbService.getReadItems();
             const favoriteItems = await dbService.getFavoriteItems();
             
-            console.log(`同步完成. 总文章数: ${allItems.length}, 已读: ${readItems.length}, 收藏: ${favoriteItems.length}`);
+            //console.log(`同步完成. 总文章数: ${allItems.length}, 已读: ${readItems.length}, 收藏: ${favoriteItems.length}`);
             
             // 添加保留状态提示
             new Notice(ensureString(i18n.t, 'syncPreserveStatus', '已保留阅读状态'));
@@ -115,7 +115,7 @@ export default class RSSFlowPlugin extends Plugin {
     async activateReadView(articleId?: string): Promise<void> {
         // 如果有文章ID，先设置它
         if (articleId) {
-            console.log('设置currentArticleId:', articleId);
+            //console.log('设置currentArticleId:', articleId);
             this.currentArticleId = articleId;
         }
         

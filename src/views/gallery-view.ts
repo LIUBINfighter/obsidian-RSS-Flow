@@ -47,7 +47,7 @@ export class GalleryView extends ItemView {
             
             // 同步数据库与配置文件
             await dbService.synchronizeWithConfig(validFeeds);
-            console.log('Gallery视图打开时已同步数据库与配置');
+            //console.log('Gallery视图打开时已同步数据库与配置');
         } catch (error) {
             console.error('Gallery视图打开时同步数据失败:', error);
         }
