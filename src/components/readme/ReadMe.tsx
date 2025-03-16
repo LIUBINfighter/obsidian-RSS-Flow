@@ -40,31 +40,31 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
     const handleAddSource = async () => {
         // 创建一个模态框让用户输入
         const modal = new Modal(app);
-        modal.titleEl.setText(t('rss.sources.add'));
+        modal.titleEl.setText(ensureString(t, 'rss.sources.add', '添加源'));
 
         const contentEl = modal.contentEl;
         
         // 添加表单
         const nameField = contentEl.createEl("div", { cls: "form-group" });
-        nameField.createEl("label", { text: t('rss.sources.name') });
+        nameField.createEl("label", { text: ensureString(t, 'rss.sources.name', '名称') });
         const nameInput = nameField.createEl("input", {
             type: "text",
-            placeholder: t('rss.sources.namePlaceholder')
+            placeholder: ensureString(t, 'rss.sources.namePlaceholder', '请输入订阅源名称')
         });
         
         const urlField = contentEl.createEl("div", { cls: "form-group" });
-        urlField.createEl("label", { text: t('rss.sources.url') });
+        urlField.createEl("label", { text: ensureString(t, 'rss.sources.url', 'URL') });
         const urlInput = urlField.createEl("input", {
             type: "text",
-            placeholder: t('rss.sources.urlPlaceholder')
+            placeholder: ensureString(t, 'rss.sources.urlPlaceholder', '请输入订阅源URL')
         });
         
         const folderField = contentEl.createEl("div", { cls: "form-group" });
-        folderField.createEl("label", { text: t('rss.sources.folder') });
+        folderField.createEl("label", { text: ensureString(t, 'rss.sources.folder', '分类') });
         const folderInput = folderField.createEl("input", {
             type: "text",
-            placeholder: t('rss.sources.folderPlaceholder'),
-            value: t('rss.sources.folderPlaceholder')
+            placeholder: ensureString(t, 'rss.sources.folderPlaceholder', '请输入分类'),
+            value: ensureString(t, 'rss.sources.folderPlaceholder', '请输入分类')
         });
         
         // 添加按钮
@@ -73,14 +73,14 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
         // 取消按钮
         const cancelButton = buttonContainer.createEl("button", {
             cls: "form-cancel-btn",
-            text: t('rss.sources.cancel')
+            text: ensureString(t, 'rss.sources.cancel', '取消')
         });
         cancelButton.addEventListener("click", () => modal.close());
         
         // 添加按钮
         const submitButton = buttonContainer.createEl("button", {
             cls: "form-submit-btn",
-            text: t('rss.sources.add')
+            text: ensureString(t, 'rss.sources.add', '添加')
         });
         
         submitButton.addEventListener("click", async () => {
@@ -91,7 +91,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
             }
             
             const newSource: RSSSource = {
-                name: nameInput.value || t('rss.sources.namePlaceholder'),
+                name: nameInput.value || ensureString(t, 'rss.sources.namePlaceholder', '请输入订阅源名称'),
                 url: urlInput.value,
                 folder: folderInput.value || "默认分类"
             };

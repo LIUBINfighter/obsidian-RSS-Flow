@@ -172,21 +172,9 @@ export class RSSService {
     }
 
     // 同步单个RSS源
-    async syncFeed(feed: FeedConfig): Promise<number> {
+    async syncFeed(feed: RSSSource): Promise<number> {
         try {
-            // ...existing code...
-            
-            // 解析获取到的RSS内容
-            const parsedFeed = await this.parseFeedContent(response.text);
-            
-            // 处理文章，准备保存到数据库
-            const items = this.processItems(parsedFeed.items, feed);
-            
-            // 使用新方法保存文章，保留已读状态
-            await dbService.saveItemsPreserveStatus(items);
-            
-            // ...existing code...
-            
+            const items = await this.fetchAndParseRSS(feed);
             return items.length;
         } catch (error) {
             console.error(`同步源失败 ${feed.url}:`, error);

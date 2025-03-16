@@ -11,7 +11,8 @@ import { i18n } from './i18n';
 const DEFAULT_SETTINGS: ReactLabSettings = {
     setting: 'default',
     sidebarWidth: 250,
-    locale: 'en'  // 默认语言设置
+    locale: 'en',  // 默认语言设置
+    fontSize: 16
 };
 
 export default class RSSFlowPlugin extends Plugin {

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { setIcon } from 'obsidian';
-import { ContentBlock, ContentBlockType } from '../types';
+import { ContentBlock, ContentBlockType } from '../../types';
 
 interface MediaBlockProps {
     block: ContentBlock;

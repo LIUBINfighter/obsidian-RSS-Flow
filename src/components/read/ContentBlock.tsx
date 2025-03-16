@@ -1,6 +1,14 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { setIcon } from 'obsidian';
 import { ContentBlock, ContentBlockType } from '../../types';
+
+declare global {
+    namespace JSX {
+        interface IntrinsicElements {
+            [elemName: string]: any;
+        }
+    }
+}
 import { useFavorites } from './favorite-context';
 
 interface ContentBlockProps {

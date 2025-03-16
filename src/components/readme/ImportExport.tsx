@@ -3,6 +3,7 @@ import { setIcon, App, Modal, Notice } from 'obsidian';
 import { useTranslation } from 'react-i18next';
 import { parseOPML, generateOPML } from '../../utils/xml-utils';
 import { RSSSource } from '../../types';
+import { ensureString } from '../../utils/i18n-utils';
 
 interface ImportExportProps {
     app: App;
@@ -13,9 +14,8 @@ interface ImportExportProps {
 export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImportComplete }) => {
     const { t } = useTranslation();
 
-    const handleImport = useCallback(() => {
-        const modal = new Modal(app);
-        modal.titleEl.setText(t('rss.sources.import', '导入OPML文件'));
+    const handleImport = useCallback(() => {const modal = new Modal(app);
+        modal.titleEl.setText(ensureString(t, 'rss.sources.import', '导入OPML文件'));
         
         const fileInput = modal.contentEl.createEl('input', {
             type: 'file',
@@ -37,7 +37,7 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
                                 const parsedSources = parseOPML(content);
                                 
                                 if (parsedSources.length === 0) {
-                                    new Notice(t('rss.sources.importNoSource', '未找到有效的RSS源'));
+                                    new Notice(ensureString(t, 'rss.sources.importNoSource', '未找到有效的RSS源'));
                                     return;
                                 }
                                 
@@ -48,24 +48,24 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
                                 const updatedFeeds = [...feeds, ...newSources];
                                 onImportComplete(updatedFeeds);
                                 
-                                new Notice(t('rss.sources.importSuccess', {count: newSources.length}));
+                                new Notice(ensureString(t, 'rss.sources.importSuccess', `成功导入${newSources.length}个源`));
                             } catch (error) {
                                 console.error('导入OPML解析出错:', error);
-                                new Notice(t('rss.sources.importError', {message: (error as Error).message}));
+                                new Notice(ensureString(t, 'rss.sources.importError', `导入失败：${(error as Error).message}`));
                             }
                         } catch (error) {
                             console.error('导入OPML出错:', error);
-                            new Notice(t('rss.sources.importError', {message: (error as Error).message}));
+                            new Notice(ensureString(t, 'rss.sources.importError', `导入失败：${(error as Error).message}`));
                         }
                     };
                     reader.readAsText(file);
                 } catch (error) {
                     console.error('读取文件错误:', error);
-                    new Notice(t('rss.sources.importError', {message: '读取文件失败'}));
+                    new Notice(ensureString(t, 'rss.sources.importError', '读取文件失败'));
                 }
                 modal.close();
             } else {
-                new Notice(t('rss.sources.importNoSource', '请选择有效的OPML文件'));
+                new Notice(ensureString(t, 'rss.sources.importNoSource', '请选择有效的OPML文件'));
             }
         };
         
@@ -92,21 +92,21 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
             // 释放URL对象
             setTimeout(() => URL.revokeObjectURL(url), 100);
             
-            new Notice(t('rss.sources.exportSuccess', 'OPML文件导出成功'));
+            new Notice(ensureString(t, 'rss.sources.exportSuccess', 'OPML文件导出成功'));
         } catch (error) {
             console.error('导出OPML出错:', error);
-            new Notice(t('rss.sources.exportError', {message: (error as Error).message}));
+            new Notice(ensureString(t, 'rss.sources.exportError', `导出失败：${(error as Error).message}`));
         }
     }, [feeds]);
 
     return (
         <div className="rss-import-export">
             <div className="rss-import-export-actions">
-                <button className="rss-action-btn" aria-label="导入" ref={(el) => { if (el) setIcon(el, 'download'); }} onClick={handleImport}>
-                    {t('rss.importExport.import', '导入')}
+                <button className="rss-action-btn" aria-label={ensureString(t, 'rss.importExport.import', '导入')} ref={(el) => { if (el) setIcon(el, 'download'); }} onClick={handleImport}>
+                    {ensureString(t, 'rss.importExport.import', '导入')}
                 </button>
-                <button className="rss-action-btn" aria-label="导出" ref={(el) => { if (el) setIcon(el, 'upload'); }} onClick={handleExport}>
-                    {t('rss.importExport.export', '导出')}
+                <button className="rss-action-btn" aria-label={ensureString(t, 'rss.importExport.export', '导出')} ref={(el) => { if (el) setIcon(el, 'upload'); }} onClick={handleExport}>
+                    {ensureString(t, 'rss.importExport.export', '导出')}
                 </button>
             </div>
         </div>

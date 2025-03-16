@@ -188,40 +188,6 @@ export class DBService {
         });
     }
 
-    // 获取随机文章
-    async getRandomItem(): Promise<RSSItem | null> {
-        if (!this.db) {
-            await this.init();
-        }
-
-        return new Promise((resolve, reject) => {
-            if (!this.db) {
-                reject(new Error('数据库未初始化'));
-                return;
-            }
-
-            const transaction = this.db.transaction([STORES.ITEMS], 'readonly');
-            const store = transaction.objectStore(STORES.ITEMS);
-            
-            const request = store.getAll();
-            
-            request.onsuccess = () => {
-                const items = request.result as RSSItem[];
-                if (items.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * items.length);
-                    resolve(items[randomIndex]);
-                } else {
-                    resolve(null);
-                }
-            };
-            
-            request.onerror = (event) => {
-                console.error('获取随机文章失败:', event);
-                reject(null);
-            };
-        });
-    }
-
     // 获取随机文章，支持按文件夹筛选
     async getRandomItem(folder?: string): Promise<RSSItem | null> {
         if (!this.db) {
