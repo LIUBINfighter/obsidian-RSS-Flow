@@ -26,7 +26,19 @@ export const Read: React.FC<ReadProps> = ({ plugin }) => {
 
 // 内部组件，使用FavoriteContext
 const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
-    const { article, contentBlocks, loading, handleRandomArticle, handleSync, handleNextArticle, handlePrevArticle } = useArticle(plugin);
+    const { 
+        article, 
+        contentBlocks, 
+        loading, 
+        handleRandomArticle, 
+        handleSync, 
+        handleNextArticle, 
+        handlePrevArticle,
+        folders,
+        selectedFolder,
+        handleFolderChange
+    } = useArticle(plugin);
+    
     const { readingProgress } = useReadingProgress(plugin, article);
     const { fontSize, isDarkMode, handleFontSizeChange } = useReadingSettings(plugin);
     const { exportToMarkdown, getFavorites, removeFavorite, clearAllFavorites } = useFavorites();
@@ -65,6 +77,9 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
                 toggleSidebar={toggleSidebar}
                 isSidebarOpen={isSidebarOpen}
                 articleLink={article?.link}
+                folders={folders}
+                selectedFolder={selectedFolder}
+                onFolderChange={handleFolderChange}
             />
             <div className="read-main-content">
                 {loading ? (

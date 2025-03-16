@@ -3,6 +3,7 @@ import { setIcon } from 'obsidian';
 import { VIEW_TYPES } from '../../types';
 import RSSFlowPlugin from '../../main';
 import { useTranslation } from 'react-i18next';
+import { FolderSelector } from '../gallery/FolderSelector';
 
 interface ReadHeaderProps {
     fontSize: number;
@@ -18,6 +19,9 @@ interface ReadHeaderProps {
     toggleSidebar: () => void;
     isSidebarOpen: boolean;
     articleLink?: string;
+    folders: string[];
+    selectedFolder: string;
+    onFolderChange: (folder: string) => void;
 }
 
 export const ReadHeader: React.FC<ReadHeaderProps> = ({
@@ -33,7 +37,10 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
     exportToMarkdown,
     toggleSidebar,
     isSidebarOpen,
-    articleLink
+    articleLink,
+    folders,
+    selectedFolder,
+    onFolderChange
 }) => {
     const { t } = useTranslation();
     
@@ -93,6 +100,15 @@ export const ReadHeader: React.FC<ReadHeaderProps> = ({
         <div className="read-header">
             <div className="read-header-top">
                 <h2>{t('read.header.title', 'RSS Flow Reader')}</h2>
+                
+                {/* 添加文件夹选择器 */}
+                <div className="read-folder-selector">
+                    <FolderSelector
+                        folders={folders}
+                        selectedFolder={selectedFolder}
+                        onChange={onFolderChange}
+                    />
+                </div>
             </div>
             
             <div className="read-header-bottom">

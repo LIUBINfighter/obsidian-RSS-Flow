@@ -10,9 +10,28 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
     const [loading, setLoading] = useState(true);
     const [articleHistory, setArticleHistory] = useState<string[]>([]);
     const [historyIndex, setHistoryIndex] = useState<number>(-1);
+    const [folders, setFolders] = useState<string[]>(['all']);
+    const [selectedFolder, setSelectedFolder] = useState<string>('all');
     
     // 使用ref存储初始articleId，避免多次渲染问题
     const initialArticleIdRef = useRef<string | null>(plugin.currentArticleId);
+    
+    // 加载所有可用文件夹
+    const loadFolders = useCallback(async () => {
+        try {
+            await dbService.init();
+            const stats = await dbService.getItemStatsByFolder();
+            const folderNames = stats.map(item => item.folder).filter(Boolean);
+            setFolders(['all', ...folderNames]);
+        } catch (error) {
+            console.error('加载文件夹失败:', error);
+        }
+    }, []);
+
+    // 组件挂载时加载文件夹列表
+    useEffect(() => {
+        loadFolders();
+    }, [loadFolders]);
     
     // 加载文章内容
     const loadArticleById = useCallback(async (articleId: string, addToHistory = true) => {
@@ -59,12 +78,15 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         }
     }, [loadArticleById]);
     
-    // 随机加载文章
+    // 随机加载文章，支持文件夹筛选
     const handleRandomArticle = useCallback(async () => {
         setLoading(true);
         try {
             await dbService.init();
-            const randomItem = await dbService.getRandomItem();
+            
+            // 根据所选文件夹获取随机文章
+            const randomItem = await dbService.getRandomItem(selectedFolder !== 'all' ? selectedFolder : undefined);
+            
             if (randomItem) {
                 setArticle(randomItem);
                 setContentBlocks(processHtmlContent(randomItem.content));
@@ -84,7 +106,7 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         } finally {
             setLoading(false);
         }
-    }, [historyIndex]);
+    }, [historyIndex, selectedFolder]);
     
     // 同步RSS
     const handleSync = useCallback(async () => {
@@ -115,6 +137,11 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         }
     }, [historyIndex, articleHistory, loadArticleById]);
 
+    // 处理文件夹选择变更
+    const handleFolderChange = useCallback((folder: string) => {
+        setSelectedFolder(folder);
+    }, []);
+
     return { 
         article, 
         contentBlocks, 
@@ -123,6 +150,9 @@ export const useArticle = (plugin: RSSFlowPlugin) => {
         handleSync,
         handleNextArticle,
         handlePrevArticle,
-        loadArticle: loadArticleById
+        loadArticle: loadArticleById,
+        folders,
+        selectedFolder,
+        handleFolderChange
     };
 };
