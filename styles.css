@@ -632,56 +632,26 @@
     margin-top: var(--size-4-4);
 }
 
-.form-submit-btn,
-.form-cancel-btn {
-    padding: var(--size-4-2) var(--size-4-4);
-    border-radius: var(--radius-s);
-    cursor: pointer;
-    border: none;
-    font-size: var(--font-ui-small);
-}
-
 .form-submit-btn {
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent);
-}
-
-.form-submit-btn:hover {
-    background-color: var(--interactive-accent-hover);
+    composes: btn-base btn-primary;
 }
 
 .form-cancel-btn {
-    background-color: var(--background-secondary-alt);
-    color: var (--text-normal);
-}
-
-.form-cancel-btn:hover {
-    background-color: var(--background-modifier-active);
+    composes: btn-base btn-secondary;
 }
 
 .form-cancel-btn.confirm-delete {
-    color: var(--text-error);
-    background-color: var(--background-modifier-error);
+    composes: btn-base btn-danger;
 }
 
 .add-source-btn {
+    composes: btn-base btn-primary;
     width: 100%;
-    padding: 8px;
     margin-top: 12px;
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background-color 0.2s ease;
-}
-
-.add-source-btn:hover {
-    background-color: var(--interactive-accent-hover);
 }
 
 .rss-source-folder {
@@ -710,46 +680,21 @@
 }
 
 .rss-action-btn {
-    padding: 4px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--text-muted);
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.rss-action-btn:hover {
-    color: var(--text-normal);
-    background-color: var(--background-modifier-hover);
+    composes: btn-base btn-icon btn-sm;
 }
 
 .rss-action-btn.delete-btn.confirm-delete {
-    color: var(--text-error);
-    background-color: var(--background-modifier-error);
+    composes: btn-base btn-danger btn-icon btn-sm;
 }
 
 .add-source-btn {
+    composes: btn-base btn-primary;
     width: 100%;
-    padding: 8px;
     margin-top: 12px;
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    transition: background-color 0.2s ease;
-}
-
-.add-source-btn:hover {
-    background-color: var(--interactive-accent-hover);
 }
 
 /* 文章视图样式增强 */
@@ -769,35 +714,19 @@
     margin: 16px 0;
 }
 
-.article-sync-btn,
-.article-refresh-btn {
+.article-sync-btn {
+    composes: btn-base btn-primary;
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.article-sync-btn {
-    background-color: var(--interactive-accent);
-    color: var (--text-on-accent);
-    border: none;
-}
-
-.article-sync-btn:hover {
-    background-color: var(--interactive-accent-hover);
 }
 
 .article-refresh-btn {
-    background-color: var(--background-secondary-alt);
-    color: var(--text-normal);
-    border: 1px solid var(--background-modifier-border);
+    composes: btn-base btn-secondary;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
-
-.article-refresh-btn:hover {
-    background-color: var(--background-primary-alt);
 }
 
 .article-empty-tip {
