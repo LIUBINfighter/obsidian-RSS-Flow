@@ -790,7 +790,7 @@
     background-color: var(--background-primary-alt);
 }
 
-Gallery视图样式
+/* Gallery视图样式 */
 .gallery-view-container {
     padding: 20px;
     height: 100%;
@@ -1028,35 +1028,6 @@ Gallery视图样式
     border-top: 1px solid var(--background-modifier-border);
 }
 
-.article-card-action {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    background-color: var(--background-primary);
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.article-card-action:hover:not(:disabled) {
-    background-color: var(--background-modifier-hover);
-    color: var(--text-normal);
-}
-
-.article-card-action.active {
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent);
-    border-color: var(--interactive-accent);
-}
-
-.article-card-action:disabled {
-    opacity: 0.5;
-    cursor: wait;
-}
 
 /* 响应式设计 */
 @media screen and (max-width: 992px) {

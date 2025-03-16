@@ -132,7 +132,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
             
             <div className="article-card-actions">
                 <button
-                    className={`article-card-action ${isFavorite ? 'active' : ''}`}
+                    className={`rss-action ${isFavorite ? 'active' : ''}`}
                     onClick={handleToggleFavorite}
                     disabled={isLoading}
                     title={ensureString(t, isFavorite ? 'articleCard.actions.unfavorite' : 'articleCard.actions.favorite')}
@@ -140,7 +140,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                 ></button>
                 
                 <button
-                    className={`article-card-action ${isRead ? 'active' : ''}`}
+                    className={`rss-action ${isRead ? 'active' : ''}`}
                     onClick={handleToggleReadStatus}
                     disabled={isLoading}
                     title={ensureString(t, isRead ? 'articleCard.actions.markUnread' : 'articleCard.actions.markRead')}
@@ -148,14 +148,14 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                 ></button>
                 
                 <button
-                    className="article-card-action"
+                    className="rss-action"
                     onClick={handleOpenInBrowser}
                     title={ensureString(t, 'articleCard.actions.openBrowser', '在浏览器中打开')}
                     ref={browserButtonRef}
                 ></button>
                 
                 <button
-                    className="article-card-action"
+                    className="rss-action"
                     onClick={handleOpenInReadView}
                     title={ensureString(t, 'articleCard.actions.openReader', '在阅读器中打开')}
                     ref={readButtonRef}

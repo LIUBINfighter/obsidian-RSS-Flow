@@ -40,7 +40,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         if (clearButtonRef.current) setIcon(clearButtonRef.current, 'x');
         if (cardViewButtonRef.current) setIcon(cardViewButtonRef.current, 'layout-grid');
         if (waterfallViewButtonRef.current) setIcon(waterfallViewButtonRef.current, 'layout-columns');
-        if (syncButtonRef.current) setIcon(syncButtonRef.current, 'refresh-cw');
+        if (syncButtonRef.current) setIcon(syncButtonRef.current, 'rss');
         if (refreshButtonRef.current) setIcon(refreshButtonRef.current, 'rotate-cw');
     }, []);
     
