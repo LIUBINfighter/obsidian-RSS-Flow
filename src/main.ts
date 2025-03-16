@@ -6,27 +6,29 @@ import { ReadView } from './views/read-view';
 import { GalleryView } from './views/gallery-view';
 import { dbService } from './services/db-service';
 import { rssService } from './services/rss-service';
+import { i18n } from './i18n';
 
 const DEFAULT_SETTINGS: ReactLabSettings = {
     setting: 'default',
-    sidebarWidth: 250
-}
+    sidebarWidth: 250,
+    locale: 'en'  // 默认语言设置
+};
 
 export default class RSSFlowPlugin extends Plugin {
     settings: ReactLabSettings;
     currentArticleId: string | null = null;
     
-    // 同步RSS数据
+    // 同步RSS源
     async syncRSSFeeds(): Promise<void> {
         try {
-            new Notice('正在同步RSS订阅...');
+            new Notice('开始同步RSS源...');
             
             // 读取data.json中保存的RSS源
             const data = await this.loadData() || {};
             const feeds: RSSSource[] = data.feeds || [];
             
             if (feeds.length === 0) {
-                new Notice('没有找到RSS订阅源');
+                new Notice(i18n.t('noFeeds'));
                 return;
             }
             
@@ -41,7 +43,7 @@ export default class RSSFlowPlugin extends Plugin {
             // 显示进度通知
             const progressNotice = new Notice(`正在同步: 0/${feeds.length}`, 0);
             
-            // 依次处理每个源
+            // 对每个源进行同步
             for (let i = 0; i < feeds.length; i++) {
                 try {
                     progressNotice.setMessage(`正在同步: ${i+1}/${feeds.length}`);
@@ -63,15 +65,27 @@ export default class RSSFlowPlugin extends Plugin {
             progressNotice.hide();
             
             // 显示详细的结果通知
-            new Notice(`RSS同步完成: ${successCount}个成功, ${failCount}个失败, 共${totalItems}篇文章`);
+            new Notice(i18n.t('syncComplete', { success: successCount, fail: failCount, total: totalItems }));
             
             // 如果有失败但也有成功，说明部分源可用，保持积极
             if (failCount > 0 && successCount > 0) {
-                new Notice('部分RSS源同步失败，您仍可阅读成功同步的内容', 5000);
+                new Notice(i18n.t('partialSyncFail'), 5000);
             }
+            
+            // 添加同步统计
+            const allItems = await dbService.getAllItems();
+            const readItems = await dbService.getReadItems();
+            const favoriteItems = await dbService.getFavoriteItems();
+            
+            console.log(`同步完成. 总文章数: ${allItems.length}, 已读: ${readItems.length}, 收藏: ${favoriteItems.length}`);
+            
+            // 添加保留状态提示
+            new Notice(i18n.t('syncPreserveStatus'));
+            
+            new Notice('RSS源同步完成！');
         } catch (error) {
-            console.error('RSS同步失败', error);
-            new Notice('RSS同步失败，查看控制台了解详情');
+            console.error('同步RSS源时出错:', error);
+            new Notice('同步RSS源失败，请检查控制台获取详细信息。');
         }
     }
     
@@ -136,38 +150,45 @@ export default class RSSFlowPlugin extends Plugin {
 
     async onload() {
         await this.loadSettings();
+        
+        // 初始化语言设置
+        const savedData = await this.loadData() || {};
+        if (savedData.locale) {
+            i18n.changeLanguage(savedData.locale);
+        }
+        
         this.addSettingTab(new ReactLabSettingTab(this.app, this));
-
+        
         // 注册 ReadMe 视图
         // 确保在注册视图时传递 plugin 实例
         this.registerView(
             VIEW_TYPES.README,
             (leaf) => new ReadMeView(leaf, this)  // 传递 this
         );
-
+        
         this.registerView(
             VIEW_TYPES.READ,
             (leaf) => new ReadView(leaf, this)
-        );        
+        );
         
         this.registerView(
             VIEW_TYPES.GALLERY,
             (leaf) => new GalleryView(leaf, this)
         );
-
+        
         // 注册命令
         this.addCommand({
             id: 'open-readme-view',
-            name: 'Open ReadMe View',
+            name: i18n.t('openReadmeView'),
             callback: () => {
                 // 打开一个新的叶子
                 this.activateView(VIEW_TYPES.README);
             },
-        },);
+        });
 
         this.addCommand({
             id: 'open-read-view',
-            name: 'Read RSS messages',
+            name: i18n.t('readRSSMessages'),
             callback: () => {
                 this.activateReadView();
             },
@@ -176,7 +197,7 @@ export default class RSSFlowPlugin extends Plugin {
         // 修复gallery命令ID重复的问题
         this.addCommand({
             id: 'open-gallery-view',
-            name: 'RSS Gallery',
+            name: i18n.t('rssGallery'),
             callback: () => {
                 // 打开一个新的叶子
                 this.activateView(VIEW_TYPES.GALLERY);
@@ -186,28 +207,28 @@ export default class RSSFlowPlugin extends Plugin {
         // 添加同步RSS的命令
         this.addCommand({
             id: 'sync-rss-feeds',
-            name: '同步RSS订阅',
+            name: i18n.t('syncRSSFeeds'),
             callback: async () => {
                 await this.syncRSSFeeds();
             }
         });
 
         // 添加 ribbon icon
-        this.addRibbonIcon('file-volume-2','Manage RSS Setting',
+        this.addRibbonIcon('file-volume-2', i18n.t('manageRSSSetting'),
             (evt: MouseEvent) => {
                 // 激活视图
                 this.activateView(VIEW_TYPES.README);
             }
         );
 
-        this.addRibbonIcon('rss','Read RSS',
+        this.addRibbonIcon('rss', i18n.t('readRSS'),
             (evt: MouseEvent) => {
                 // 激活视图
                 this.activateView(VIEW_TYPES.READ);
             }
         );
         
-        this.addRibbonIcon('gallery-vertical-end','RSS Gallery',
+        this.addRibbonIcon('gallery-vertical-end', i18n.t('rssGalleryView'),
             (evt: MouseEvent) => {
                 // 激活视图
                 this.activateView(VIEW_TYPES.GALLERY);
@@ -217,7 +238,7 @@ export default class RSSFlowPlugin extends Plugin {
         // 在插件加载时自动同步RSS
         this.app.workspace.onLayoutReady(() => this.syncRSSFeeds());
     }
-
+    
     async onunload() {
         // 清除所有已注册的视图
         // 测试环境下可以注释掉

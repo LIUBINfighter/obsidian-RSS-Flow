@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { setIcon } from 'obsidian';
 import { saveAllFavoritesToNote } from '../../utils/note-utils';
+import { useTranslation } from 'react-i18next';
 
 interface FavoriteItem {
     id: number;
@@ -117,6 +118,8 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
         }
     }, [favorites, plugin]);
     
+    const { t } = useTranslation();
+
     return (
         <>
             {/* 边栏切换按钮 - 始终可见 */}
@@ -124,8 +127,8 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                 className="sidebar-toggle-floating clickable-icon" 
                 ref={toggleBtnRef}
                 onClick={onToggle}
-                aria-label={isOpen ? "收起边栏" : "展开边栏"}
-                title={isOpen ? "收起边栏" : "展开边栏"}
+                aria-label={isOpen ? t('read.header.tooltip.sidebar') : t('read.header.tooltip.sidebar')}
+                title={isOpen ? t('read.header.tooltip.sidebar') : t('read.header.tooltip.sidebar')}
                 style={{ 
                     position: 'fixed',
                     top: '80px',
@@ -197,7 +200,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                         alignItems: 'center',
                         marginBottom: '16px'
                     }}>
-                        <h3>收藏内容</h3>
+                        <h3>{t('read.sidebar.title')}</h3>
                         <div className="sidebar-actions" style={{
                             display: 'flex',
                             gap: '8px'
@@ -205,18 +208,18 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                             <button 
                                 className="mod-cta small-button"
                                 onClick={handleSaveAllFavorites}
-                                title="保存所有收藏内容到新的文件"
+                                title={t('read.header.tooltip.saveHighlights')}
                                 disabled={favorites.length === 0}
                             >
-                                保存全部
+                                {t('read.sidebar.saveAll')}
                             </button>
                             <button 
                                 className="mod-warning small-button"
                                 onClick={onClearAllFavorites}
-                                title="清空所有收藏内容"
+                                title={t('read.sidebar.clearAll')}
                                 disabled={favorites.length === 0}
                             >
-                                清空
+                                {t('read.sidebar.clearAll')}
                             </button>
                         </div>
                     </div>
@@ -224,7 +227,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                     
                     {currentArticleId && (
                         <>
-                            <h4>当前文章</h4>
+                            <h4>{t('read.sidebar.currentArticle')}</h4>
                             {currentArticleFavorites.length > 0 ? (
                                 <div className="favorites-list">
                                     {currentArticleFavorites.map(fav => (
@@ -240,7 +243,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                                                     <button 
                                                         className="remove-favorite small-button"
                                                         onClick={() => onRemoveFavorite(fav.articleId, fav.id)}
-                                                        title="移除收藏"
+                                                        title={t('read.sidebar.remove')}
                                                     >
                                                         移除
                                                     </button>
@@ -250,14 +253,14 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                                     ))}
                                 </div>
                             ) : (
-                                <p className="empty-message">当前文章没有收藏内容</p>
+                                <p className="empty-message">{t('read.sidebar.noFavorites')}</p>
                             )}
                         </>
                     )}
                     
                     {otherArticleFavorites.length > 0 && (
                         <>
-                            <h4>其他文章</h4>
+                            <h4>{t('read.sidebar.otherArticles')}</h4>
                             <div className="favorites-list other-articles">
                                 {otherArticleFavorites.map(fav => (
                                     <div key={`${fav.articleId}-${fav.id}`} className="favorite-item">
@@ -272,9 +275,9 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                                                 <button 
                                                     className="remove-favorite small-button"
                                                     onClick={() => onRemoveFavorite(fav.articleId, fav.id)}
-                                                    title="移除收藏"
+                                                    title={t('read.sidebar.remove')}
                                                 >
-                                                    移除
+                                                    {t('read.sidebar.remove')}
                                                 </button>
                                             )}
                                         </div>
@@ -285,7 +288,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                     )}
                     
                     {favorites.length === 0 && (
-                        <p className="empty-message">暂无收藏内容</p>
+                        <p className="empty-message">{t('read.sidebar.noFavorites')}</p>
                     )}
                 </div>
             </div>

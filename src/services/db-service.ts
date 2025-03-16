@@ -97,6 +97,41 @@ export class DBService {
         });
     }
 
+    /**
+     * 保存文章到数据库，保留现有文章的已读状态和收藏状态
+     * @param items 要保存的文章列表
+     */
+    async saveItemsPreserveStatus(items: RSSItem[]): Promise<boolean> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        try {
+            // 对每篇文章进行处理
+            const processedItems: RSSItem[] = [];
+            
+            for (const newItem of items) {
+                // 查询该文章是否已存在
+                const existingItem = await this.getItemById(newItem.id);
+                
+                if (existingItem) {
+                    // 如果文章已存在，保留已读状态和收藏状态
+                    newItem.isRead = existingItem.isRead;
+                    newItem.isFavorite = existingItem.isFavorite;
+                    console.log(`保留文章状态: ${newItem.title}, isRead: ${newItem.isRead}, isFavorite: ${newItem.isFavorite}`);
+                }
+                
+                processedItems.push(newItem);
+            }
+            
+            // 批量保存处理后的文章
+            return await this.saveItems(processedItems);
+        } catch (error) {
+            console.error('保存文章并保留状态失败:', error);
+            return false;
+        }
+    }
+
     // 添加或更新Feed元数据
     async saveFeedMeta(feedMeta: FeedMeta): Promise<boolean> {
         if (!this.db) {
@@ -184,6 +219,62 @@ export class DBService {
                 console.error('获取随机文章失败:', event);
                 reject(null);
             };
+        });
+    }
+
+    // 获取随机文章，支持按文件夹筛选
+    async getRandomItem(folder?: string): Promise<RSSItem | null> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        return new Promise((resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            const transaction = this.db.transaction([STORES.ITEMS], 'readonly');
+            const store = transaction.objectStore(STORES.ITEMS);
+            
+            // 如果指定了文件夹，使用索引查询
+            if (folder) {
+                const index = store.index('folder');
+                const request = index.getAll(folder);
+                
+                request.onsuccess = () => {
+                    const items = request.result as RSSItem[];
+                    if (items.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * items.length);
+                        resolve(items[randomIndex]);
+                    } else {
+                        resolve(null);
+                    }
+                };
+                
+                request.onerror = (event) => {
+                    console.error('获取随机文章失败:', event);
+                    reject(null);
+                };
+            } else {
+                // 无文件夹筛选，获取所有文章
+                const request = store.getAll();
+                
+                request.onsuccess = () => {
+                    const items = request.result as RSSItem[];
+                    if (items.length > 0) {
+                        const randomIndex = Math.floor(Math.random() * items.length);
+                        resolve(items[randomIndex]);
+                    } else {
+                        resolve(null);
+                    }
+                };
+                
+                request.onerror = (event) => {
+                    console.error('获取随机文章失败:', event);
+                    reject(null);
+                };
+            }
         });
     }
 
@@ -502,49 +593,55 @@ export class DBService {
      * 将文章标记为已读
      * @param itemId 文章ID
      */
-    async markItemAsRead(itemId: string): Promise<void> {
-        try {
-            // 确保数据库已初始化
-            if (!this.db) {
-                await this.init();
-            }
-            
-            if (!this.db) {
-                throw new Error('数据库未初始化');
-            }
-            
-            // 使用已存在的 db 属性而不是 getDB 方法
-            const transaction = this.db.transaction([STORES.ITEMS], 'readwrite');
-            const store = transaction.objectStore(STORES.ITEMS);
-            
-            // 获取文章
-            const getRequest = store.get(itemId);
-            
-            getRequest.onsuccess = () => {
-                const item = getRequest.result;
-                if (item) {
-                    // 更新已读状态
-                    item.isRead = true;
-                    const putRequest = store.put(item);
-                    
-                    putRequest.onsuccess = () => {
-                        console.log(`文章已标记为已读: ${itemId}`);
-                    };
-                    
-                    putRequest.onerror = (event) => {
-                        console.error('更新文章已读状态失败:', event);
-                    };
-                } else {
-                    console.warn(`未找到要标记为已读的文章: ${itemId}`);
-                }
-            };
-            
-            getRequest.onerror = (event) => {
-                console.error('获取文章失败:', event);
-            };
-        } catch (error) {
-            console.error('标记文章为已读时出错:', error);
+    async markItemAsRead(itemId: string): Promise<boolean> {
+        if (!this.db) {
+            await this.init();
         }
+
+        return new Promise(async (resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            try {
+                const transaction = this.db.transaction([STORES.ITEMS], 'readwrite');
+                const store = transaction.objectStore(STORES.ITEMS);
+                
+                // 获取文章
+                const getRequest = store.get(itemId);
+                
+                getRequest.onsuccess = () => {
+                    const item = getRequest.result;
+                    if (item) {
+                        // 更新已读状态
+                        item.isRead = true;
+                        const putRequest = store.put(item);
+                        
+                        putRequest.onsuccess = () => {
+                            console.log(`文章已标记为已读: ${itemId}`);
+                            resolve(true);
+                        };
+                        
+                        putRequest.onerror = (event) => {
+                            console.error('更新文章已读状态失败:', event);
+                            reject(new Error('更新文章已读状态失败'));
+                        };
+                    } else {
+                        console.warn(`未找到要标记为已读的文章: ${itemId}`);
+                        reject(new Error('文章不存在'));
+                    }
+                };
+                
+                getRequest.onerror = (event) => {
+                    console.error('获取文章失败:', event);
+                    reject(new Error('获取文章失败'));
+                };
+            } catch (error) {
+                console.error('标记文章为已读时出错:', error);
+                reject(error);
+            }
+        });
     }
 
     /**
@@ -659,6 +756,151 @@ export class DBService {
             console.error('数据库与配置同步失败:', error);
             return false;
         }
+    }
+
+    /**
+     * 按照指定条件获取文章
+     * @param options 查询选项
+     */
+    async getArticlesByOptions(options: {
+        folder?: string, 
+        isRead?: boolean,
+        orderBy?: 'newest' | 'oldest' | 'random'
+    }): Promise<RSSItem[]> {
+        if (!this.db) {
+            await this.init();
+        }
+
+        return new Promise(async (resolve, reject) => {
+            if (!this.db) {
+                reject(new Error('数据库未初始化'));
+                return;
+            }
+
+            try {
+                // 先获取所有文章或按文件夹筛选的文章
+                let articles: RSSItem[] = [];
+                if (options.folder && options.folder !== 'all') {
+                    // 获取特定文件夹的文章
+                    const transaction = this.db.transaction([STORES.ITEMS], 'readonly');
+                    const store = transaction.objectStore(STORES.ITEMS);
+                    const index = store.index('folder');
+                    const request = index.getAll(options.folder);
+                    
+                    articles = await new Promise<RSSItem[]>((res, rej) => {
+                        request.onsuccess = () => res(request.result);
+                        request.onerror = (event) => {
+                            console.error('获取文件夹文章失败:', event);
+                            rej([]);
+                        };
+                    });
+                } else {
+                    // 获取所有文章
+                    articles = await this.getAllItems();
+                }
+
+                // 应用已读/未读筛选
+                if (options.isRead !== undefined) {
+                    articles = articles.filter(article => article.isRead === options.isRead);
+                }
+
+                // 应用排序
+                if (options.orderBy) {
+                    switch (options.orderBy) {
+                        case 'newest':
+                            articles.sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+                            break;
+                        case 'oldest':
+                            articles.sort((a, b) => new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime());
+                            break;
+                        case 'random':
+                            articles = this.shuffleArray(articles);
+                            break;
+                    }
+                }
+
+                resolve(articles);
+            } catch (error) {
+                console.error('按条件获取文章失败:', error);
+                reject([]);
+            }
+        });
+    }
+
+    /**
+     * 获取下一篇文章（按指定条件）
+     */
+    async getNextArticle(currentArticleId: string | null, options: {
+        folder?: string, 
+        isRead?: boolean,
+        orderBy?: 'newest' | 'oldest'
+    }): Promise<RSSItem | null> {
+        try {
+            // 获取符合条件的文章列表
+            const articles = await this.getArticlesByOptions(options);
+            
+            if (articles.length === 0) return null;
+            
+            // 如果没有当前文章，返回列表中的第一篇
+            if (!currentArticleId) return articles[0];
+            
+            // 找出当前文章在列表中的位置
+            const currentIndex = articles.findIndex(a => a.id === currentArticleId);
+            
+            // 如果找不到当前文章，返回第一篇
+            if (currentIndex === -1) return articles[0];
+            
+            // 返回下一篇文章，如果是最后一篇则循环到第一篇
+            const nextIndex = (currentIndex + 1) % articles.length;
+            return articles[nextIndex];
+        } catch (error) {
+            console.error('获取下一篇文章失败:', error);
+            return null;
+        }
+    }
+
+    /**
+     * 获取上一篇文章（按指定条件）
+     */
+    async getPrevArticle(currentArticleId: string | null, options: {
+        folder?: string, 
+        isRead?: boolean,
+        orderBy?: 'newest' | 'oldest'
+    }): Promise<RSSItem | null> {
+        try {
+            // 获取符合条件的文章列表
+            const articles = await this.getArticlesByOptions(options);
+            
+            if (articles.length === 0) return null;
+            
+            // 如果没有当前文章，返回列表中的最后一篇
+            if (!currentArticleId) return articles[articles.length - 1];
+            
+            // 找出当前文章在列表中的位置
+            const currentIndex = articles.findIndex(a => a.id === currentArticleId);
+            
+            // 如果找不到当前文章，返回最后一篇
+            if (currentIndex === -1) return articles[articles.length - 1];
+            
+            // 返回上一篇文章，如果是第一篇则循环到最后一篇
+            const prevIndex = (currentIndex - 1 + articles.length) % articles.length;
+            return articles[prevIndex];
+        } catch (error) {
+            console.error('获取上一篇文章失败:', error);
+            return null;
+        }
+    }
+    
+    /**
+     * 打乱数组顺序（Fisher-Yates洗牌算法）
+     */
+    private shuffleArray<T>(array: T[]): T[] {
+        const result = [...array];
+        for (let i = result.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [result[i], result[j]] = [result[j], result[i]];
+        }
+        return result;
     }
 }
 

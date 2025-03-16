@@ -3,13 +3,16 @@ import { dbService } from '../../services/db-service';
 import { RSSItem, FeedMeta } from '../../types';
 import { ArticleCard } from './ArticleCard';
 import RSSFlowPlugin from '../../main';
-import { setIcon } from 'obsidian';
+import { setIcon, Notice } from 'obsidian';
+import { useTranslation } from 'react-i18next';
+import { FolderSelector } from './FolderSelector'; // 导入新组件
 
 interface GalleryProps {
     plugin: RSSFlowPlugin;
 }
 
 export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
+    const { t } = useTranslation();
     const [feeds, setFeeds] = useState<FeedMeta[]>([]);
     const [articles, setArticles] = useState<RSSItem[]>([]);
     const [expandedFeeds, setExpandedFeeds] = useState<Record<string, boolean>>({});
@@ -17,12 +20,16 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
     const [view, setView] = useState<'card' | 'waterfall'>('card');
     const [filter, setFilter] = useState<'all' | 'favorite'>('all');
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [folders, setFolders] = useState<string[]>([]);
+    const [selectedFolder, setSelectedFolder] = useState<string>('all');
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     
     // 使用refs存储DOM元素引用
     const clearButtonRef = useRef<HTMLButtonElement>(null);
     const cardViewButtonRef = useRef<HTMLButtonElement>(null);
     const waterfallViewButtonRef = useRef<HTMLButtonElement>(null);
     const syncButtonRef = useRef<HTMLButtonElement>(null);
+    const refreshButtonRef = useRef<HTMLButtonElement>(null);
     
     // 存储动态生成的折叠图标refs
     const toggleRefs = useRef<{[key: string]: HTMLSpanElement | null}>({});
@@ -33,6 +40,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         if (cardViewButtonRef.current) setIcon(cardViewButtonRef.current, 'layout-grid');
         if (waterfallViewButtonRef.current) setIcon(waterfallViewButtonRef.current, 'layout-columns');
         if (syncButtonRef.current) setIcon(syncButtonRef.current, 'refresh-cw');
+        if (refreshButtonRef.current) setIcon(refreshButtonRef.current, 'rotate-cw');
     }, []);
     
     // 更新切换图标状态
@@ -46,6 +54,22 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         });
     }, [expandedFeeds]);
 
+    // 获取所有可用的文件夹
+    const loadFolders = useCallback(async () => {
+        try {
+            await dbService.init();
+            const stats = await dbService.getItemStatsByFolder();
+            const folderNames = stats.map(item => item.folder).filter(Boolean);
+            setFolders(['all', ...folderNames]);
+        } catch (error) {
+            console.error('加载文件夹失败:', error);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadFolders();
+    }, [loadFolders]);
+    
     const loadData = useCallback(async () => {
         setLoading(true);
         try {
@@ -61,6 +85,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                 articlesData = await dbService.getFavoriteItems();
             } else {
                 articlesData = await dbService.getAllItems();
+            }
+            
+            // 应用文件夹筛选
+            if (selectedFolder !== 'all') {
+                articlesData = articlesData.filter(article => 
+                    article.folder === selectedFolder
+                );
             }
             
             // 应用搜索过滤
@@ -82,11 +113,27 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         } finally {
             setLoading(false);
         }
-    }, [filter, searchTerm]);
+    }, [filter, searchTerm, selectedFolder]);
 
     useEffect(() => {
         loadData();
     }, [loadData]);
+    
+    // 添加刷新按钮处理函数
+    const handleRefresh = useCallback(async () => {
+        if (isRefreshing) return; // 防止重复点击
+        
+        setIsRefreshing(true);
+        try {
+            await loadData();
+            new Notice(t('gallery.refreshSuccess', '已刷新文章列表'));
+        } catch (error) {
+            console.error('刷新失败:', error);
+            new Notice(t('gallery.refreshError', '刷新失败'));
+        } finally {
+            setIsRefreshing(false);
+        }
+    }, [loadData, isRefreshing]);
 
     const handleOpenInReadView = useCallback(async (articleId: string) => {
         // 添加更详细的日志
@@ -115,6 +162,10 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         loadData();
     }, [plugin, loadData]);
 
+    const handleFolderChange = useCallback((folder: string) => {
+        setSelectedFolder(folder);
+    }, []);
+
     // 按Feed分组文章
     const groupedArticles: Record<string, RSSItem[]> = {};
     articles.forEach(article => {
@@ -137,13 +188,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
     return (
         <div className="gallery-container">
             <div className="gallery-header">
-                <h2>RSS 文章库</h2>
+                <h2>{t('gallery.title')}</h2>
                 
                 <div className="gallery-controls">
                     <div className="gallery-search">
                         <input
                             type="text"
-                            placeholder="搜索文章..."
+                            placeholder={t('gallery.search.placeholder')}
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
@@ -155,18 +206,25 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                         ></button>
                     </div>
                     
+                    {/* 添加文件夹选择器 */}
+                    <FolderSelector 
+                        folders={folders}
+                        selectedFolder={selectedFolder}
+                        onChange={handleFolderChange}
+                    />
+                    
                     <div className="gallery-filters">
                         <button 
                             className={`gallery-filter ${filter === 'all' ? 'active' : ''}`}
                             onClick={() => setFilter('all')}
                         >
-                            全部
+                            {t('gallery.filter.all')}
                         </button>
                         <button 
                             className={`gallery-filter ${filter === 'favorite' ? 'active' : ''}`}
                             onClick={() => setFilter('favorite')}
                         >
-                            收藏
+                            {t('gallery.filter.favorite')}
                         </button>
                     </div>
                     
@@ -174,22 +232,31 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                         <button 
                             className={`gallery-view-btn ${view === 'card' ? 'active' : ''}`}
                             onClick={() => setView('card')}
-                            title="卡片视图"
+                            title={t('gallery.view.card')}
                             ref={cardViewButtonRef}
                         ></button>
                         <button 
                             className={`gallery-view-btn ${view === 'waterfall' ? 'active' : ''}`}
                             onClick={() => setView('waterfall')}
-                            title="瀑布流视图"
+                            title={t('gallery.view.waterfall')}
                             ref={waterfallViewButtonRef}
                             disabled
                         ></button>
                     </div>
                     
+                    {/* 添加刷新按钮 */}
+                    <button 
+                        className="gallery-refresh-btn"
+                        onClick={handleRefresh}
+                        title={t('gallery.actions.refresh', '刷新文章状态')}
+                        ref={refreshButtonRef}
+                        disabled={isRefreshing}
+                    ></button>
+                    
                     <button 
                         className="gallery-sync-btn"
                         onClick={handleSyncFeeds}
-                        title="同步RSS源"
+                        title={t('gallery.actions.sync', '同步RSS源')}
                         ref={syncButtonRef}
                     ></button>
                 </div>
@@ -198,16 +265,16 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
             {loading ? (
                 <div className="gallery-loading">
                     <div className="gallery-loading-spinner"></div>
-                    <p>加载中...</p>
+                    <p>{t('gallery.loading')}</p>
                 </div>
             ) : articles.length === 0 ? (
                 <div className="gallery-empty">
-                    <p>没有找到文章</p>
+                    <p>{t('gallery.empty.noArticles')}</p>
                     <button 
                         className="gallery-sync-btn-large"
                         onClick={handleSyncFeeds}
                     >
-                        同步RSS源
+                        {t('gallery.actions.sync')}
                     </button>
                 </div>
             ) : (

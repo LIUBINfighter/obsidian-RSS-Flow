@@ -1,85 +1,83 @@
 export default {
     translation: {
-        "sidebar": {
-            "title": "Sidebar Content",
-            "content": "This is the sidebar content"
-        },
-		"welcome": "Welcome",
-		"settings": {
-			"title": "Settings",
-			"content": "You can change the language in the top left corner."  // 更新这一行
-		},
-		"demos": {
-			"title": "React Component Demos",
-			"counter": {
-				"title": "Counter Demo",
-				"value": "Current count: {{count}}",
-				"increment": "Increment"
-			},
-			"todo": {
-				"title": "Todo List Demo",
-				"placeholder": "Enter new todo...",
-				"add": "Add"
-			}
-		},
-		"readme": {
-			"features": {
-				"title": "Features",
-				"markdown": "Full Markdown Support",
-				"internalLinks": "Obsidian Internal Links Support",
-				"math": "Math Formula Support",
-				"mermaid": "Mermaid Diagram Support"
-			},
-			"content": `# {{welcome}}
+        // Read View
+        'read.empty.title': 'Please select an article to read',
+        'read.empty.description': 'You can select an article from the gallery or read a random one',
+        'read.empty.goToGallery': 'Go to Gallery',
+        'read.empty.randomRead': 'Random Read',
+        'read.empty.syncNow': 'Sync Now',
+        'read.header.tooltip.random': 'Random Article',
+        'read.header.tooltip.sync': 'Sync RSS Feeds',
+        'read.header.tooltip.export': 'Export to Markdown',
+        'read.header.tooltip.decreaseFont': 'Decrease Font Size',
+        'read.header.tooltip.increaseFont': 'Increase Font Size',
+        'read.header.tooltip.readme': 'Open ReadMe',
+        'read.header.tooltip.gallery': 'Open Gallery',
+        'read.header.tooltip.sidebar': 'Toggle Sidebar',
+        'read.header.tooltip.prev': 'Previous Article',
+        'read.header.tooltip.next': 'Next Article',
+        'read.header.tooltip.browser': 'Open in Browser',
+        'read.header.tooltip.saveArticle': 'Save Article to Note',
+        'read.header.tooltip.saveHighlights': 'Save Highlights to Note',
+        'read.sidebar.title': 'Favorites',
+        'read.sidebar.currentArticle': 'Current Article',
+        'read.sidebar.otherArticles': 'Other Articles',
+        'read.sidebar.clearAll': 'Clear All',
+        'read.sidebar.saveAll': 'Save All to Note',
+        'read.sidebar.noFavorites': 'No favorites yet',
+        'read.sidebar.remove': 'Remove',
+        // RSS sources
+        'rss.sources.title': 'RSS Sources',
+        'rss.sources.add': 'Add New RSS Source',
+        'rss.sources.name': 'Name',
+        'rss.sources.namePlaceholder': 'Enter source name',
+        'rss.sources.url': 'URL',
+        'rss.sources.urlPlaceholder': 'Enter source URL',
+        'rss.sources.folder': 'Category',
+        'rss.sources.folderPlaceholder': 'Enter category',
+        'rss.sources.confirm': 'Confirm',
+        'rss.sources.cancel': 'Cancel',
+        'rss.sources.import': 'Import OPML File',
+        'rss.sources.importSuccess': 'Successfully imported {{count}} RSS sources',
+        'rss.sources.importNoSource': 'No valid RSS sources found',
+        'rss.sources.importError': 'Failed to import OPML file: {{message}}',
+        'rss.sources.exportSuccess': 'OPML file exported successfully',
+        'rss.sources.exportError': 'Failed to export OPML file: {{message}}',
+        // RSS sync messages
+        syncing: 'Syncing RSS feeds...',
+        noFeeds: 'No RSS feeds found',
+        syncComplete: 'RSS sync completed: {{success}} succeeded, {{fail}} failed, {{total}} articles in total',
+        partialSyncFail: 'Some RSS feeds failed to sync, you can still read the successfully synced content',
+        syncFail: 'RSS sync failed, check console for details',
+        syncPreserveStatus: 'Read status and favorites have been preserved for all articles',
 
-## {{settings.title}}
+        // Commands
+        openReadmeView: 'Open ReadMe View',
+        readRSSMessages: 'Read RSS messages',
+        rssGallery: 'RSS Gallery',
+        syncRSSFeeds: 'Sync RSS Feeds',
 
-{{settings.content}}
+        // Ribbon icons
+        manageRSSSetting: 'Manage RSS Setting',
+        readRSS: 'Read RSS',
+        rssGalleryView: 'RSS Gallery',
 
-## {{readme.features.title}}
+        // ReadMe
+        'rss.readme.welcome': 'Welcome to RSS Flow, a plugin for reading and managing RSS feeds in Obsidian.',
 
-- {{readme.features.markdown}}
-- {{readme.features.internalLinks}}
-- {{readme.features.math}}
-- {{readme.features.mermaid}}
-
-### Internal Links Demo
-
-[[Idea Inbox]]
-
-### Math Formula Demo
-
-$$
-\\begin{align}
-T(v) &= x_1T(u_1) + x_2 T(u_2) + \\ldots + x_n T(u_n) \\\\
-&= (A_{11}x_1 + A_{12}x_2 + \\ldots + A_{1n}x_n,\\\\
-& A_{21}x_1 + A_{22}x_2 + \\ldots + A_{2n}x_n,\\\\
-&\\ldots \\\\
-&A_{m1}x_1 + A_{m2}x_2 + \\ldots + A_{mn}x_n)
-\\end{align}
-$$
-
-### Mermaid Demo
-
-\`\`\`mermaid
-graph LR
-    A[Start] --> B{Initialized?}
-    B -->|Yes| C[Load Settings]
-    B -->|No| D[Init Settings]
-    C --> E[Render UI]
-    D --> E
-\`\`\`
-
-### React Component Demos
-
-#### {{demos.counter.title}}
-
-<demo-counter></demo-counter>
-
-#### {{demos.todo.title}}
-
-<demo-todo></demo-todo>
-`
-        }
+        // Gallery
+        'gallery.title': 'RSS Gallery',
+        'gallery.search.placeholder': 'Search articles...',
+        'gallery.filter.all': 'All',
+        'gallery.filter.favorite': 'Favorites',
+        'gallery.view.card': 'Card View',
+        'gallery.view.waterfall': 'Waterfall View',
+        'gallery.actions.sync': 'Sync RSS Feeds',
+        'gallery.actions.refresh': 'Refresh Article Status',
+        'gallery.loading': 'Loading...',
+        'gallery.empty.noArticles': 'No articles found',
+        'gallery.refreshSuccess': 'Articles list refreshed',
+        'gallery.refreshError': 'Refresh failed',
+        'read.empty.syncTip': 'Tip: If you are just starting out, you may need to sync RSS feeds first to get articles'
     }
-};
+}

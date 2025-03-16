@@ -152,8 +152,8 @@ export class RSSService {
                         itemCount: rssItems.length
                     });
                     
-                    // 保存到数据库
-                    await dbService.saveItems(rssItems);
+                    // 修改这一行：使用保留状态的方法保存文章
+                    await dbService.saveItemsPreserveStatus(rssItems);
                     
                     return rssItems;
                 } catch (dbError) {
@@ -168,6 +168,29 @@ export class RSSService {
         } catch (error) {
             console.error(`处理RSS源失败: ${source.name}`, error);
             return [];
+        }
+    }
+
+    // 同步单个RSS源
+    async syncFeed(feed: FeedConfig): Promise<number> {
+        try {
+            // ...existing code...
+            
+            // 解析获取到的RSS内容
+            const parsedFeed = await this.parseFeedContent(response.text);
+            
+            // 处理文章，准备保存到数据库
+            const items = this.processItems(parsedFeed.items, feed);
+            
+            // 使用新方法保存文章，保留已读状态
+            await dbService.saveItemsPreserveStatus(items);
+            
+            // ...existing code...
+            
+            return items.length;
+        } catch (error) {
+            console.error(`同步源失败 ${feed.url}:`, error);
+            return 0;
         }
     }
 }

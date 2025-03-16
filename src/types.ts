@@ -7,6 +7,7 @@ export const VIEW_TYPES = {
 export interface ReactLabSettings {
     setting: string;
     sidebarWidth: number;
+    locale: string;
 }
 
 // RSS源订阅的接口定义
