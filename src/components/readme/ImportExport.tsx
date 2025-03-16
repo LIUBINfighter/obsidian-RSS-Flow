@@ -12,7 +12,7 @@ interface ImportExportProps {
 }
 
 export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImportComplete }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation<"translation">();
 
     const handleImport = useCallback(() => {const modal = new Modal(app);
         modal.titleEl.setText(ensureString(t, 'rss.sources.import', '导入OPML文件'));

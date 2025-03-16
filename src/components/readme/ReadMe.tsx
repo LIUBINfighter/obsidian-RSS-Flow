@@ -14,7 +14,7 @@ interface ReadMeProps {
 }
 
 export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) => {
-    const { t } = useTranslation();
+    const { t } = useTranslation<"translation">();
     const [sources, setSources] = useState<RSSSource[]>([]);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     
