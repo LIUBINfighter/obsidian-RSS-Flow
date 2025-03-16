@@ -5,7 +5,8 @@ import { ArticleCard } from './ArticleCard';
 import RSSFlowPlugin from '../../main';
 import { setIcon, Notice } from 'obsidian';
 import { useTranslation } from 'react-i18next';
-import { FolderSelector } from './FolderSelector'; // 导入新组件
+import { FolderSelector } from './FolderSelector';
+import { ensureString } from '../../utils/i18n-utils';
 
 interface GalleryProps {
     plugin: RSSFlowPlugin;
@@ -126,10 +127,10 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
         setIsRefreshing(true);
         try {
             await loadData();
-            new Notice(t('gallery.refreshSuccess', '已刷新文章列表'));
+            new Notice(ensureString(t, 'gallery.refreshSuccess', '已刷新文章列表'));
         } catch (error) {
             console.error('刷新失败:', error);
-            new Notice(t('gallery.refreshError', '刷新失败'));
+            new Notice(ensureString(t, 'gallery.refreshError', '刷新失败'));
         } finally {
             setIsRefreshing(false);
         }
@@ -188,13 +189,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
     return (
         <div className="gallery-container">
             <div className="gallery-header">
-                <h2>{t('gallery.title')}</h2>
+                <h2>{ensureString(t, 'gallery.title', 'RSS Flow Gallery')}</h2>
                 
                 <div className="gallery-controls">
                     <div className="gallery-search">
                         <input
                             type="text"
-                            placeholder={t('gallery.search.placeholder')}
+                            placeholder={ensureString(t, 'gallery.search.placeholder', '搜索文章...')}
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
@@ -232,13 +233,13 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                         <button 
                             className={`gallery-view-btn ${view === 'card' ? 'active' : ''}`}
                             onClick={() => setView('card')}
-                            title={t('gallery.view.card')}
+                            title={ensureString(t, 'gallery.view.card', '卡片视图')}
                             ref={cardViewButtonRef}
                         ></button>
                         <button 
                             className={`gallery-view-btn ${view === 'waterfall' ? 'active' : ''}`}
                             onClick={() => setView('waterfall')}
-                            title={t('gallery.view.waterfall')}
+                            title={ensureString(t, 'gallery.view.waterfall', '瀑布流视图')}
                             ref={waterfallViewButtonRef}
                             disabled
                         ></button>
@@ -248,7 +249,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                     <button 
                         className="gallery-refresh-btn"
                         onClick={handleRefresh}
-                        title={t('gallery.actions.refresh', '刷新文章状态')}
+                        title={ensureString(t, 'gallery.actions.refresh', '刷新文章状态')}
                         ref={refreshButtonRef}
                         disabled={isRefreshing}
                     ></button>
@@ -256,7 +257,7 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                     <button 
                         className="gallery-sync-btn"
                         onClick={handleSyncFeeds}
-                        title={t('gallery.actions.sync', '同步RSS源')}
+                        title={ensureString(t, 'gallery.actions.sync', '同步RSS源')}
                         ref={syncButtonRef}
                     ></button>
                 </div>

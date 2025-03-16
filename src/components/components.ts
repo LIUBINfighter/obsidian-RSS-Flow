@@ -11,13 +11,17 @@ import {
 
 import {
   SourceForm,
-  Introduction
+  Introduction,
+  FeedManager,
+  ImportExport,
+  ReadMe
 } from './readme';
 
 import {
   ArticleView,
   ArticleCard,
-  Gallery
+  Gallery,
+  FolderSelector
 } from './gallery';
 
 import { Sidebar } from './Sidebar';
@@ -31,6 +35,9 @@ export {
   
   // 介绍和设置相关组件
   Introduction,
+  FeedManager,
+  ImportExport,
+  ReadMe,
   
   // 阅读视图相关组件
   ReadSidebar,
@@ -43,6 +50,7 @@ export {
   ArticleView,
   ArticleCard,
   Gallery,
+  FolderSelector,
   
   // 侧边栏
   Sidebar

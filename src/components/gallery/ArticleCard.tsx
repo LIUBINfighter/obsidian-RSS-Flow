@@ -3,6 +3,7 @@ import { RSSItem } from '../../types';
 import { setIcon } from 'obsidian';
 import { dbService } from '../../services/db-service';
 import { useTranslation } from 'react-i18next';
+import { ensureString } from '../../utils/i18n-utils';
 
 interface ArticleCardProps {
     article: RSSItem;
@@ -134,7 +135,7 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                     className={`article-card-action ${isFavorite ? 'active' : ''}`}
                     onClick={handleToggleFavorite}
                     disabled={isLoading}
-                    title={t(isFavorite ? 'articleCard.actions.unfavorite' : 'articleCard.actions.favorite')}
+                    title={ensureString(t, isFavorite ? 'articleCard.actions.unfavorite' : 'articleCard.actions.favorite')}
                     ref={favoriteButtonRef}
                 ></button>
                 
@@ -142,21 +143,21 @@ export const ArticleCard: React.FC<ArticleCardProps> = ({ article, onOpenInReadV
                     className={`article-card-action ${isRead ? 'active' : ''}`}
                     onClick={handleToggleReadStatus}
                     disabled={isLoading}
-                    title={t(isRead ? 'articleCard.actions.markUnread' : 'articleCard.actions.markRead')}
+                    title={ensureString(t, isRead ? 'articleCard.actions.markUnread' : 'articleCard.actions.markRead')}
                     ref={readStatusButtonRef}
                 ></button>
                 
                 <button
                     className="article-card-action"
                     onClick={handleOpenInBrowser}
-                    title={t('articleCard.actions.openBrowser')}
+                    title={ensureString(t, 'articleCard.actions.openBrowser', '在浏览器中打开')}
                     ref={browserButtonRef}
                 ></button>
                 
                 <button
                     className="article-card-action"
                     onClick={handleOpenInReadView}
-                    title={t('articleCard.actions.openReader')}
+                    title={ensureString(t, 'articleCard.actions.openReader', '在阅读器中打开')}
                     ref={readButtonRef}
                 ></button>
             </div>

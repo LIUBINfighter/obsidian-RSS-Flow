@@ -1,11 +1,11 @@
 import { setIcon } from 'obsidian';
 import React, { useEffect, useRef } from 'react';
 import { ContentBlockView } from '../read/ContentBlock';
-import { Article, ContentBlock, RSSItem } from '../../types';
+import { ContentBlock, RSSItem } from '../../types';
 
 // 统一接口，支持RSSItem和Article两种类型
 interface ArticleViewProps {
-    article: RSSItem | Article;
+    article: RSSItem;
     contentBlocks: ContentBlock[];
     tableOfContents: any[];
     showToc: boolean;

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { setIcon } from 'obsidian';
 import { useTranslation } from 'react-i18next';
+import { ensureString } from '../../utils/i18n-utils';
 
 interface FolderSelectorProps {
     folders: string[];
@@ -29,11 +30,11 @@ export const FolderSelector: React.FC<FolderSelectorProps> = ({
                 value={selectedFolder} 
                 onChange={(e) => onChange(e.target.value)}
                 className="folder-select"
-                title={t('gallery.folder.select', '按文件夹筛选')}
+                title={ensureString(t, 'gallery.folder.select', '按文件夹筛选')}
             >
                 {folders.map(folder => (
                     <option key={folder} value={folder}>
-                        {folder === 'all' ? t('gallery.folder.all', '全部文件夹') : folder}
+                        {folder === 'all' ? ensureString(t, 'gallery.folder.all', '全部文件夹') : folder}
                     </option>
                 ))}
             </select>

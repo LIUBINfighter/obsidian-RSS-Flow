@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { setIcon } from 'obsidian';
+import { setIcon, Notice } from 'obsidian';
 import { saveAllFavoritesToNote } from '../../utils/note-utils';
 import { useTranslation } from 'react-i18next';
+import { ensureString } from '../../utils/i18n-utils';
 
 interface FavoriteItem {
     id: number;
@@ -127,8 +128,8 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                 className="sidebar-toggle-floating clickable-icon" 
                 ref={toggleBtnRef}
                 onClick={onToggle}
-                aria-label={isOpen ? t('read.header.tooltip.sidebar') : t('read.header.tooltip.sidebar')}
-                title={isOpen ? t('read.header.tooltip.sidebar') : t('read.header.tooltip.sidebar')}
+                aria-label={ensureString(t, 'read.header.tooltip.sidebar', '收藏列表')}
+                title={ensureString(t, 'read.header.tooltip.sidebar', '收藏列表')}
                 style={{ 
                     position: 'fixed',
                     top: '80px',
@@ -180,10 +181,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                         width: '6px',
                         height: '100%',
                         cursor: 'col-resize',
-                        backgroundColor: 'transparent',
-                        '&:hover': {
-                            backgroundColor: 'var(--interactive-accent)'
-                        }
+                        backgroundColor: 'transparent'
                     }}
                 />
                 
@@ -208,7 +206,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                             <button 
                                 className="mod-cta small-button"
                                 onClick={handleSaveAllFavorites}
-                                title={t('read.header.tooltip.saveHighlights')}
+                                title={ensureString(t, 'read.header.tooltip.saveHighlights')}
                                 disabled={favorites.length === 0}
                             >
                                 {t('read.sidebar.saveAll')}
@@ -216,7 +214,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                             <button 
                                 className="mod-warning small-button"
                                 onClick={onClearAllFavorites}
-                                title={t('read.sidebar.clearAll')}
+                                title={ensureString(t, 'read.sidebar.clearAll')}
                                 disabled={favorites.length === 0}
                             >
                                 {t('read.sidebar.clearAll')}
@@ -243,7 +241,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                                                     <button 
                                                         className="remove-favorite small-button"
                                                         onClick={() => onRemoveFavorite(fav.articleId, fav.id)}
-                                                        title={t('read.sidebar.remove')}
+                                                        title={ensureString(t, 'read.sidebar.remove')}
                                                     >
                                                         移除
                                                     </button>
@@ -275,7 +273,7 @@ export const ReadSidebar: React.FC<ReadSidebarProps> = ({
                                                 <button 
                                                     className="remove-favorite small-button"
                                                     onClick={() => onRemoveFavorite(fav.articleId, fav.id)}
-                                                    title={t('read.sidebar.remove')}
+                                                    title={ensureString(t, 'read.sidebar.remove')}
                                                 >
                                                     {t('read.sidebar.remove')}
                                                 </button>

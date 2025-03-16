@@ -8,6 +8,7 @@ export interface ReactLabSettings {
     setting: string;
     sidebarWidth: number;
     locale: string;
+    fontSize: number;
 }
 
 // RSS源订阅的接口定义
@@ -57,6 +58,8 @@ export interface ContentBlock {
     sourceUrl?: string; // 媒体资源的原始URL
     level?: number;     // 用于标题级别 (h1-h6) 或列表嵌套级别
     language?: string;  // 用于代码块的语言
+    src?: string;      // 图片资源URL
+    alt?: string;      // 图片替代文本
 }
 
 // Feed元数据接口定义
