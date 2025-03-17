@@ -1,7 +1,6 @@
 import React from 'react';
 import { App } from 'obsidian';
 import { FeedManager } from './FeedManager';
-import { ImportExport } from './ImportExport';
 import { RSSSource } from '../../types';
 
 interface IntroductionProps {
@@ -51,21 +50,11 @@ export const Introduction: React.FC<IntroductionProps> = ({
 
     return (
         <div className="rss-flow-container">
-            <div className="rss-sources-section">
-                <div className="rss-controls-container">
-                    <ImportExport 
-                        app={app} 
-                        feeds={sources} 
-                        onImportComplete={handleSourcesUpdate} 
-                    />
-                </div>
-                
-                <FeedManager 
-                    app={app} 
-                    feeds={sources} 
-                    onSave={handleSourcesUpdate} 
-                />
-            </div>
+            <FeedManager 
+                app={app} 
+                feeds={sources} 
+                onSave={handleSourcesUpdate} 
+            />
         </div>
     );
 };

@@ -30,9 +30,7 @@
 
 
 /* 当边栏打开时的内容区域样式 */
-.sidebar-open .content {
-    margin-right: 250px; /* 与边栏宽度相同 */
-}
+
 
 
 
@@ -124,7 +122,10 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding: 16px 0;
+    padding: 16px;
+    width: 80%;
+    max-width: 600px;         /* 添加最大宽度限制 */
+    margin: 0 auto;           /* 居中对齐 */
 }
 
 .sidebar-tab {
@@ -556,15 +557,6 @@
     composes: btn-base btn-danger;
 }
 
-.add-source-btn {
-    composes: btn-base btn-primary;
-    width: 100%;
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
 
 .rss-source-folder {
     padding: 2px 8px;
@@ -605,15 +597,6 @@
     color: var(--text-on-accent);
 }
 
-.add-source-btn {
-    composes: btn-base btn-primary;
-    width: 100%;
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
 
 /* 文章视图样式增强 */
 .article-empty {
@@ -1425,10 +1408,10 @@ input:checked + label .toggle-track:before {
     margin-top: 4px;
 }
 
-.read-actions {
+/* .read-actions {
     display: flex;
     align-items: center;
-}
+} */
 
 .primary-actions {
     gap: 16px;
@@ -1630,14 +1613,14 @@ input:checked + label .toggle-track:before {
 	justify-content: flex-end;
 	margin-bottom: 15px;
 	padding: 0 10px;
-  }
+}
   
-  .rss-import-export-actions {
+.rss-import-export-actions {
 	display: flex;
 	gap: 10px;
-  }
+}
   
-  .rss-import-export-actions button {
+.rss-import-export-actions button {
 	background-color: var(--interactive-accent);
 	color: var(--text-on-accent);
 	border: none;
@@ -1648,18 +1631,19 @@ input:checked + label .toggle-track:before {
 	gap: 5px;
 	cursor: pointer;
 	transition: background-color 0.2s;
-  }
+}
   
-  .rss-import-export-actions button:hover {
+.rss-import-export-actions button:hover {
 	background-color: var(--interactive-accent-hover);
-  }
+}
   
-  .rss-controls-container {
-	display: flex;
+.rss-controls-container {
+    display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 15px;
-  }
+	margin-top: 15px;
+}
   
 /* 文件夹选择器样式 */
 .folder-selector {

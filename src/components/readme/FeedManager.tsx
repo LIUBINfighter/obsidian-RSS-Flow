@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { ensureString } from '../../utils/i18n-utils';
 import { SourceForm } from './SourceForm';
 import { RSSSource } from '../../types';
+import { ImportExport } from './ImportExport';
+
 
 interface FeedManagerProps {
     app: App;
@@ -93,10 +95,17 @@ export const FeedManager: React.FC<FeedManagerProps> = ({ app, feeds, onSave }) 
 					<span>{t('rss.sources.description.usage', '你可以单独添加为 RSS Feed 的命名，链接和分类。（目前只支持一个分类）。')}</span>
 				</div>
             </div>
-            
-            <button className="add-source-btn" ref={(el) => { if (el) { setIcon(el, 'plus'); } }} onClick={handleAddSource}>
-                {ensureString(t, 'rss.sources.add', '添加新订阅源')}
-            </button>
+			<div className="rss-controls-container">
+                <ImportExport 
+                    app={app} 
+                    feeds={feeds} 
+                    onImportComplete={onSave} 
+                />
+                <button className="rss-action-btn" ref={(el) => { if (el) { setIcon(el, 'plus'); } }} onClick={handleAddSource}>
+                    {ensureString(t, 'rss.sources.add', '添加新订阅源')}
+                </button>
+            </div>
+
 
             {showSourceForm && !editingSource && (
                 <SourceForm
