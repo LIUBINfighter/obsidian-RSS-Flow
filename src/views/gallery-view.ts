@@ -54,7 +54,7 @@ export class GalleryView extends ItemView {
         
         const container = this.containerEl.children[1];
         container.empty();
-        container.addClass('gallery-view-container');
+        container.addClass('view-container');
         
         // 添加主容器类名，用于响应式布局
         container.addClass('main-content-container');

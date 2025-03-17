@@ -27,42 +27,15 @@
     transition: margin-right 0.3s ease;
 }
 
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
-    .content.with-sidebar {
-        margin-right: 0;
-        transform: translateX(-250px);
-    }
-    
-    .sidebar-container {
-        position: absolute;
-    }
-}
+
 
 /* 当边栏打开时的内容区域样式 */
 .sidebar-open .content {
     margin-right: 250px; /* 与边栏宽度相同 */
 }
 
-/* 响应式布局调整 */
-@media screen and (max-width: 768px) {
-    .content {
-        margin-right: 0 !important;
-        padding: 12px;
-    }
-    
-    .sidebar-open .content {
-        margin-right: 0;
-        opacity: 0.7; /* 当边栏打开时，使主内容略微模糊 */
-    }
-}
 
-.readme-view-container {
-    padding: 20px;
-    height: 100%;
-    overflow-y: auto;
-    position: relative;
-}
+
 .sidebar-container {
     position: fixed;
     right: 0;
@@ -103,34 +76,6 @@
     background-color: var(--background-modifier-hover);
 }
 
-/* 当滚动页面时，保持边栏切换按钮在可见位置 */
-@media (max-height: 500px) {
-    .sidebar-toggle {
-        /* 在小屏幕上进一步调整位置 */
-        top: 60px;
-    }
-}
-
-/* RSS Flow 样式 */
-.rss-flow-container {
-    padding: 20px;
-}
-
-.rss-sources-section {
-    margin-bottom: 20px;
-}
-
-.rss-sources-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.rss-sources-actions {
-    display: flex;
-    gap: 8px;
-}
 .rss-source-item {
     position: relative;
     display: flex;
@@ -418,24 +363,7 @@
     background: var(--interactive-accent) !important;
     color: var(--text-on-accent) !important;
 }
-/* 响应式设计 */
-@media screen and (max-width: 768px) {
-    .board-content {
-        flex-direction: column;
-        align-items: stretch;
-    }
-.column {
-        min-width: auto;
-        max-width: none;
-    }
-.board-tabs {
-        flex-wrap: wrap;
-    }
-.export-btn {
-        width: 100%;
-        margin-top: 8px;
-    }
-}
+
 /* 三列布局基础样式 */
 .three-column-layout {
     display: flex;
@@ -515,23 +443,7 @@
 .column-right.collapsed .column-toggle-right {
     left: -24px;
 }
-/* 响应式布局 */
-@media screen and (max-width: 768px) {
-    .three-column-layout {
-        flex-direction: column;
-    }
-.column-left,
-.column-right {
-        width: 100% !important;
-        height: 300px;
-    }
-.resizer {
-        display: none;
-    }
-.column-toggle {
-        display: none;
-    }
-}
+
 /* 纵向选项卡样式 */
 .vertical-tabs {
     display: flex;
@@ -687,6 +599,12 @@
     composes: btn-base btn-danger btn-icon btn-sm;
 }
 
+.rss-action-btn.active {
+    composes: btn-base btn-icon btn-sm;
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
 .add-source-btn {
     composes: btn-base btn-primary;
     width: 100%;
@@ -791,11 +709,7 @@
 }
 
 /* Gallery视图样式 */
-.gallery-view-container {
-    padding: 20px;
-    height: 100%;
-    overflow-y: auto;
-}
+
 
 .gallery-container {
     padding: 20px;
@@ -1028,33 +942,6 @@
     border-top: 1px solid var(--background-modifier-border);
 }
 
-
-/* 响应式设计 */
-@media screen and (max-width: 992px) {
-    .gallery-articles.waterfall-view {
-        column-count: 2;
-    }
-}
-
-@media screen and (max-width: 768px) {
-    .gallery-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .gallery-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .gallery-search {
-        width: 100%;
-    }
-    
-    .gallery-articles.waterfall-view {
-        column-count: 1;
-    }
-}
 
 /* 文章查看视图增强样式 */
 .read-container {
@@ -1514,12 +1401,7 @@ input:checked + label .toggle-track:before {
     transition: width 0.3s ease;
 }
 
-/* 响应式调整 */
-@media screen and (max-width: 768px) {
-    .article-toc, .reading-settings {
-        display: none; /* 在小屏幕上隐藏目录和设置 */
-    }
-}
+
 
 /* 阅读视图头部布局 */
 .read-header {
@@ -1593,21 +1475,17 @@ input:checked + label .toggle-track:before {
 }
 
 /* 阅读视图容器 */
-.read-view-container {
+  
+.view-container {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
     position: relative;
-  }
-  
-  /* .read-main-content {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
-   */
+    max-width: 100%;          /* 设置最大宽度为父容器的90% */
+    margin: 0 auto;          /* 水平居中 */
+}
+
   /* 响应式边栏样式 */
   .read-sidebar {
     position: fixed;
@@ -1709,25 +1587,7 @@ input:checked + label .toggle-track:before {
     padding: 20px;
   }
   
-  /* 响应式布局调整 */
-  @media (max-width: 768px) {
-    .read-sidebar {
-      width: 100%;
-    }
-  }
-  
-  /* 适应移动设备 */
-  @media (max-width: 480px) {
-    .favorite-actions {
-      flex-direction: column;
-      gap: 4px;
-      align-items: flex-start;
-    }
-    
-    .favorite-timestamp {
-      text-align: left;
-    }
-  }
+
   
   /* 暗黑模式适配 */
   .theme-dark .read-sidebar {
@@ -1903,55 +1763,4 @@ input:checked + label .toggle-track:before {
 
 .filter-btn.active {
     background-color: var(--background-modifier-border);
-}
-
-/* 添加通用基础按钮样式 */
-.gallery-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--background-secondary);
-    border: 1px solid var(--background-modifier-border);
-    border-radius: 4px;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.gallery-btn:hover:not(:disabled) {
-    background-color: var(--background-modifier-hover);
-    color: var(--text-normal);
-}
-
-.gallery-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.gallery-btn.active {
-    background-color: var(--interactive-accent);
-    color: var(--text-on-accent);
-    border-color: var(--interactive-accent);
-}
-
-/* 图标按钮（正方形） */
-.gallery-btn-icon {
-    width: 32px;
-    height: 32px;
-}
-
-/* 文本按钮 */
-.gallery-btn-text {
-    padding: 6px 12px;
-}
-
-/* 修改现有的样式使用新的基础类 */
-.gallery-filter {
-    composes: gallery-btn gallery-btn-text;
-}
-
-.gallery-view-btn, 
-.gallery-sync-btn,
-.gallery-refresh-btn {
-    composes: gallery-btn gallery-btn-icon;
 }

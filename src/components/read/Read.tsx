@@ -66,7 +66,7 @@ const ReadContent: React.FC<ReadProps> = ({ plugin }) => {
     }, [article, plugin, getFavorites]);
 
     return (
-        <div className="read-view-container" style={{ fontSize: `${fontSize}px` }}>
+        <div className="view-container" style={{ fontSize: `${fontSize}px` }}>
             <ReadHeader 
                 fontSize={fontSize}
                 plugin={plugin}

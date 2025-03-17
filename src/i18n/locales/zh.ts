@@ -29,6 +29,8 @@ export default {
         // RSS sources
         'rss.sources.title': '订阅源',
         'rss.sources.add': '添加新订阅源',
+		'rss.sources.description': '支持拖动进行排序。',
+		'rss.sources.description.usage': '你可以单独添加为 RSS Feed 的命名，链接和分类。（目前只支持一个分类）',
         'rss.sources.name': '名称',
         'rss.sources.namePlaceholder': '请输入订阅源名称',
         'rss.sources.url': 'URL',

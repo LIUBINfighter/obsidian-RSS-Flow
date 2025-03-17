@@ -58,7 +58,7 @@ export class ReadView extends ItemView {
         
         const container = this.containerEl.children[1];
         container.empty();
-        container.addClass('read-view-container');
+        container.addClass('view-container');
         container.addClass('main-content-container');
         
         const mountPoint = container.createDiv('react-root');
@@ -79,7 +79,7 @@ export class ReadView extends ItemView {
 
         const container = this.containerEl.children[1];
         container.empty();
-        container.addClass('read-view-container');
+        container.addClass('view-container');
         container.addClass('main-content-container');
 
         const mountPoint = container.createDiv('react-root');

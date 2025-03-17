@@ -208,15 +208,15 @@ export const Gallery: React.FC<GalleryProps> = ({ plugin }) => {
                         onChange={handleFolderChange}
                     />
                     
-                    <div className="gallery-filters">
+                    <div className="rss-action-btn">
                         <button 
-                            className={`gallery-filter ${filter === 'all' ? 'active' : ''}`}
+                            className={`rss-action-btn ${filter === 'all' ? 'active' : ''}`}
                             onClick={() => setFilter('all')}
                         >
                             {t('gallery.filter.all')}
                         </button>
                         <button 
-                            className={`gallery-filter ${filter === 'favorite' ? 'active' : ''}`}
+                            className={`rss-action-btn ${filter === 'favorite' ? 'active' : ''}`}
                             onClick={() => setFilter('favorite')}
                         >
                             {t('gallery.filter.favorite')}

@@ -87,6 +87,11 @@ export const FeedManager: React.FC<FeedManagerProps> = ({ app, feeds, onSave }) 
         <div className="rss-feed-manager">
             <div className="rss-sources-header">
                 <h2>{t('rss.sources.title', '订阅源')}</h2>
+				<div className="rss-description">
+					<span>{t('rss.sources.description', '拖动进行排序。')}</span>
+					<br/>
+					<span>{t('rss.sources.description.usage', '你可以单独添加为 RSS Feed 的命名，链接和分类。（目前只支持一个分类）。')}</span>
+				</div>
             </div>
             
             <button className="add-source-btn" ref={(el) => { if (el) { setIcon(el, 'plus'); } }} onClick={handleAddSource}>

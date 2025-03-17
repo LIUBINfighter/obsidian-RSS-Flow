@@ -281,7 +281,7 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
                         <option value="zh">中文</option>
                     </select>
                 </div>
-                <div className="readme-view-container">
+                <div className="view-container">
                     <h1>RSS Flow</h1>
                     <p>{t('rss.readme.welcome')}</p>
                     
