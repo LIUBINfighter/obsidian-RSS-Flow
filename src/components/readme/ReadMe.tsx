@@ -6,6 +6,9 @@ import { RSSSource } from '../../types';
 import { parseOPML, generateOPML } from '../../utils/xml-utils';
 import { useTranslation } from 'react-i18next';
 import { ensureString } from '../../utils/i18n-utils';
+import { FeedManager } from './FeedManager';
+import { ImportExport } from './ImportExport';
+// 移除 Introduction 的导入
 
 interface ReadMeProps {
     app: App;
@@ -270,10 +273,6 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
 
     return (
         <div className={`readme-container ${isSidebarOpen ? 'sidebar-open' : ''}`}>
-            {/* <Sidebar
-                isOpen={isSidebarOpen}
-                onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
-            /> */}
             <div className={`content ${isSidebarOpen ? 'with-sidebar' : ''}`}>
                 <div className="language-selector">
                     <select onChange={handleLanguageChange}>
@@ -285,16 +284,15 @@ export const ReadMe: React.FC<ReadMeProps> = ({ app, plugin, onLocaleChange }) =
                     <h1>RSS Flow</h1>
                     <p>{t('rss.readme.welcome')}</p>
                     
-                    <Introduction 
-                        app={app}
-                        sources={sources}
-                        onAddSource={handleAddSource}
-                        onEditSource={handleEditSource}
-                        onDeleteSource={handleDeleteSource}
-                        onImport={handleImport}
-                        onExport={handleExport}
-                        onSaveSources={handleSaveSources}
-                    />
+                    <div className="rss-flow-container">
+                        <div className="rss-sources-section">
+                            <FeedManager 
+                                app={app} 
+                                feeds={sources} 
+                                onSave={handleSaveSources} 
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, View } from 'obsidian';
+import { Notice, Plugin } from 'obsidian';
 import { VIEW_TYPES, ReactLabSettings, RSSSource } from "./types";
 import { ReactLabSettingTab } from "./setting-tab";
 import { ReadMeView } from "./views/readme-view";

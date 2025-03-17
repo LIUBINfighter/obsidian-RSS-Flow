@@ -18,27 +18,9 @@ interface IntroductionProps {
 export const Introduction: React.FC<IntroductionProps> = ({ 
     app, 
     sources,
-    onAddSource,
-    onEditSource,
-    onDeleteSource,
-    onImport,
-    onExport,
     onSaveOrder,
     onSaveSources
 }) => {
-    // 如果提供了外部导入/导出回调，则使用它们
-    const handleImport = () => {
-        if (onImport) {
-            onImport();
-        }
-    };
-
-    const handleExport = () => {
-        if (onExport) {
-            onExport();
-        }
-    };
-
     // 处理源的更新
     const handleSourcesUpdate = (updatedSources: RSSSource[]) => {
         if (onSaveOrder) {

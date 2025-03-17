@@ -1608,7 +1608,7 @@ input:checked + label .toggle-track:before {
 }
 
 
-.rss-import-export {
+/* .rss-import-export {
 	display: flex;
 	justify-content: flex-end;
 	margin-bottom: 15px;
@@ -1635,7 +1635,7 @@ input:checked + label .toggle-track:before {
   
 .rss-import-export-actions button:hover {
 	background-color: var(--interactive-accent-hover);
-}
+} */
   
 .rss-controls-container {
     display: flex;

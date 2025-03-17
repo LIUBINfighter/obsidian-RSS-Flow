@@ -100,15 +100,13 @@ export const ImportExport: React.FC<ImportExportProps> = ({ app, feeds, onImport
     }, [feeds]);
 
     return (
-        <div className="rss-import-export">
-            <div className="rss-import-export-actions">
-                <button className="rss-action-btn" aria-label={ensureString(t, 'rss.importExport.import', '导入')} ref={(el) => { if (el) setIcon(el, 'download'); }} onClick={handleImport}>
-                    {ensureString(t, 'rss.importExport.import', '导入')}
-                </button>
-                <button className="rss-action-btn" aria-label={ensureString(t, 'rss.importExport.export', '导出')} ref={(el) => { if (el) setIcon(el, 'upload'); }} onClick={handleExport}>
-                    {ensureString(t, 'rss.importExport.export', '导出')}
-                </button>
-            </div>
+        <div className="rss-action-btn">
+            <button className="rss-action-btn" aria-label={ensureString(t, 'rss.importExport.import', '导入')} ref={(el) => { if (el) setIcon(el, 'download'); }} onClick={handleImport}>
+                {ensureString(t, 'rss.importExport.import', '导入')}
+            </button>
+            <button className="rss-action-btn" aria-label={ensureString(t, 'rss.importExport.export', '导出')} ref={(el) => { if (el) setIcon(el, 'upload'); }} onClick={handleExport}>
+                {ensureString(t, 'rss.importExport.export', '导出')}
+            </button>
         </div>
     );
 };

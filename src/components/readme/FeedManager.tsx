@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { setIcon, App, Notice } from 'obsidian';
+import { setIcon, App } from 'obsidian';
 import { useTranslation } from 'react-i18next';
 import { ensureString } from '../../utils/i18n-utils';
 import { SourceForm } from './SourceForm';
